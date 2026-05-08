@@ -11,22 +11,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import {
-  AlertTriangle,
-  CheckCircle2,
-  Clock,
-  Printer,
-  RotateCcw,
-  XCircle,
-} from "lucide-react";
+import { AlertTriangle, CheckCircle2, Clock, RotateCcw } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  SctInstructionsStep,
-  SctReadyStep,
-  SctTestStep,
-  SctThankYouStep,
-  SctTrialStep,
-} from "./SctComponents";
 
 // ─── Grid definition ────────────────────────────────────────────────────────
 const TARGET_POSITIONS: number[][] = [
@@ -64,47 +50,6 @@ const GRID = buildGrid().map((row, ri) => ({
   cells: row.map((letter, ci) => ({ id: `${ri}-${ci}`, letter, ci, ri })),
 }));
 
-// ─── SCT Grid definition ─────────────────────────────────────────────────────
-const SCT_TARGET = "★";
-const SCT_DISTRACTORS = ["◆", "○", "△", "✦", "⬡"];
-const SCT_TARGET_POSITIONS: number[][] = [
-  [0, 3, 6, 10, 14, 17, 21, 24, 27, 30, 34, 37, 41, 44, 47, 50, 8, 28],
-  [1, 4, 8, 12, 15, 19, 22, 26, 29, 32, 36, 39, 43, 46, 49, 2, 11, 35],
-  [2, 5, 9, 13, 16, 20, 23, 25, 28, 31, 35, 38, 42, 45, 48, 51, 6, 40],
-  [0, 4, 7, 11, 15, 18, 22, 26, 29, 33, 36, 40, 43, 47, 50, 3, 19, 44],
-  [1, 5, 8, 12, 14, 17, 21, 24, 27, 31, 34, 38, 41, 46, 49, 9, 16, 37],
-  [2, 6, 9, 13, 18, 20, 23, 25, 28, 32, 35, 39, 42, 45, 48, 0, 12, 30],
-];
-
-function buildSctGrid(): string[][] {
-  const grid: string[][] = [];
-  for (let r = 0; r < 6; r++) {
-    const row: string[] = [];
-    const targetSet = new Set(SCT_TARGET_POSITIONS[r]);
-    let dtIdx = (r * 7) % SCT_DISTRACTORS.length;
-    for (let c = 0; c < 52; c++) {
-      if (targetSet.has(c)) {
-        row.push(SCT_TARGET);
-      } else {
-        row.push(SCT_DISTRACTORS[dtIdx % SCT_DISTRACTORS.length]);
-        dtIdx++;
-      }
-    }
-    grid.push(row);
-  }
-  return grid;
-}
-
-const SCT_GRID = buildSctGrid().map((row, ri) => ({
-  id: `srow${ri}`,
-  rowNum: ri,
-  cells: row.map((symbol, ci) => ({ id: `s${ri}-${ci}`, symbol, ci, ri })),
-}));
-const SCT_TOTAL_TARGETS = SCT_TARGET_POSITIONS.reduce(
-  (acc, row) => acc + row.length,
-  0,
-);
-
 // ─── Types ───────────────────────────────────────────────────────────────────
 interface PatientDetails {
   name: string;
@@ -116,7 +61,6 @@ interface PatientDetails {
 }
 
 type Language = "en" | "hi" | "kn";
-type TestType = "dlct" | "sct";
 
 const LANG_LABELS: Record<Language, string> = {
   en: "English",
@@ -135,73 +79,6 @@ const THERAPIST_SCRIPTS = {
   hi: "रोगी से कहें: 'मैं आपको अक्षरों की एक शीट दिखाऊँगा। आपको हर C और E अक्षर को काटना है। ऊपर बाईं ओर से शुरू करें और पंक्ति दर पंक्ति काम करें।'",
   kn: "ರೋಗಿಗೆ ಹೇಳಿ: 'ನಾನು ನಿಮಗೆ ಅಕ್ಷರಗಳ ಒಂದು ಶೀಟ್ ತೋರಿಸುತ್ತೇನೆ. ನೀವು ಪ್ರತಿ C ಮತ್ತು E ಅಕ್ಷರವನ್ನು ಅಡ್ಡಗೆರೆ ಎಳೆಯಬೇಕು.'",
 };
-
-// ─── SCT Multilingual Content ─────────────────────────────────────────────────
-const SCT_INSTRUCTIONS: Record<Language, string> = {
-  en: "You will see rows of symbols. Your task is to mark every ★ (filled star) you find by clicking on it. Look carefully at each symbol. Work as quickly and accurately as possible. Do not skip any rows. You will have limited time.",
-  hi: "आपको प्रतीकों की पंक्तियाँ दिखाई देंगी। आपका काम है कि आप हर ★ (भरा हुआ तारा) पर क्लिक करके उसे चिह्नित करें। जितना हो सके जल्दी और सटीकता से काम करें।",
-  kn: "ನಿಮಗೆ ಚಿಹ್ನೆಗಳ ಸಾಲುಗಳನ್ನು ತೋರಿಸಲಾಗುವುದು. ನೀವು ಪ್ರತಿ ★ (ತುಂಬಿದ ನಕ್ಷತ್ರ) ಅನ್ನು ಕ್ಲಿಕ್ ಮಾಡಿ ಗುರುತಿಸಬೇಕು. ಸಾಧ್ಯವಾದಷ್ಟು ಬೇಗ ಮತ್ತು ನಿಖರವಾಗಿ ಕೆಲಸ ಮಾಡಿ.",
-};
-
-const SCT_THERAPIST_SCRIPTS: Record<Language, string> = {
-  en: "Say to the patient: 'I am going to show you a sheet with rows of symbols. I want you to mark every filled star ★ you see. The other symbols — diamond ◆, circle ○, triangle △, four-point star ✦, hexagon ⬡ — should be ignored. Start from the top left and work row by row. Work as fast as you can without making mistakes. You have about 2 minutes. Do you understand?'",
-  hi: "रोगी से कहें: 'मैं आपको प्रतीकों की एक शीट दिखाऊँगा। आपको हर भरे हुए तारे ★ को चिह्नित करना है। अन्य प्रतीकों — हीरा ◆, वृत्त ○, त्रिकोण △, चार-बिंदु तारा ✦, षट्भुज ⬡ — को नजरअंदाज करें। ऊपर बाईं ओर से शुरू करें।'",
-  kn: "ರೋಗಿಗೆ ಹೇಳಿ: 'ನಾನು ನಿಮಗೆ ಚಿಹ್ನೆಗಳ ಒಂದು ಶೀಟ್ ತೋರಿಸುತ್ತೇನೆ. ನೀವು ಪ್ರತಿ ತುಂಬಿದ ನಕ್ಷತ್ರ ★ ಅನ್ನು ಗುರುತಿಸಬೇಕು. ಇತರ ಚಿಹ್ನೆಗಳು — ◆ ○ △ ✦ ⬡ — ನಿರ್ಲಕ್ಷಿಸಿ. ಮೇಲ್ಭಾಗದ ಎಡದಿಂದ ಪ್ರಾರಂಭಿಸಿ.'",
-};
-
-const SCT_TRIAL_INSTRUCTIONS: Record<
-  Language,
-  {
-    heading: string;
-    badge: string;
-    body: string;
-    proceed: string;
-    note: string;
-  }
-> = {
-  en: {
-    heading: "Practice Round",
-    badge: "Step 5 of 8 — Practice Trial",
-    body: "This is a practice round. Click on every ★ (filled star) you see. This does not affect your real test results.",
-    proceed: "Start Real Test →",
-    note: "This trial does not count toward your final score.",
-  },
-  hi: {
-    heading: "अभ्यास दौर",
-    badge: "चरण 5 में से 8 — अभ्यास परीक्षण",
-    body: "यह एक अभ्यास दौर है। नीचे दी गई पंक्तियों में हर ★ (भरे हुए तारे) पर क्लिक करें। यह आपके वास्तविक परीक्षण परिणामों को प्रभावित नहीं करता।",
-    proceed: "वास्तविक परीक्षण शुरू करें →",
-    note: "यह अभ्यास आपके अंतिम स्कोर में नहीं गिना जाता।",
-  },
-  kn: {
-    heading: "ಅಭ್ಯಾಸ ಸುತ್ತು",
-    badge: "ಹಂತ 5 ರಲ್ಲಿ 8 — ಅಭ್ಯಾಸ ಪರೀಕ್ಷೆ",
-    body: "ಇದು ಒಂದು ಅಭ್ಯಾಸ ಸುತ್ತು. ಕೆಳಗಿನ ಸಾಲುಗಳಲ್ಲಿ ಪ್ರತಿ ★ (ತುಂಬಿದ ನಕ್ಷತ್ರ) ಅನ್ನು ಕ್ಲಿಕ್ ಮಾಡಿ. ಇದು ನಿಮ್ಮ ನಿಜವಾದ ಪರೀಕ್ಷೆಯ ಫಲಿತಾಂಶಗಳ ಮೇಲೆ ಪರಿಣಾಮ ಬೀರುವುದಿಲ್ಲ.",
-    proceed: "ನಿಜವಾದ ಪರೀಕ್ಷೆ ಪ್ರಾರಂಭಿಸಿ →",
-    note: "ಈ ಅಭ್ಯಾಸವು ನಿಮ್ಮ ಅಂತಿಮ ಸ್ಕೋರ್‌ಗೆ ಲೆಕ್ಕಿಸುವುದಿಲ್ಲ.",
-  },
-};
-
-// Build SCT practice trial rows (2 rows of 26 symbols each)
-function buildSctTrialRow(seed: number): { id: string; symbol: string }[] {
-  const targetPositions = [2, 5, 8, 11, 14, 17, 20, 23];
-  const row: string[] = Array(26).fill("");
-  const targetSet = new Set(targetPositions.map((p) => (p + seed) % 26));
-  let dtIdx = seed % SCT_DISTRACTORS.length;
-  for (let i = 0; i < 26; i++) {
-    if (targetSet.has(i)) {
-      row[i] = SCT_TARGET;
-    } else {
-      row[i] = SCT_DISTRACTORS[dtIdx % SCT_DISTRACTORS.length];
-      dtIdx++;
-    }
-  }
-  return row.map((symbol, i) => ({ id: `st${seed}-${i}`, symbol }));
-}
-
-const SCT_TRIAL_ROW_1 = buildSctTrialRow(0);
-const SCT_TRIAL_ROW_2 = buildSctTrialRow(3);
-const SCT_TRIAL_ITEMS = [...SCT_TRIAL_ROW_1, ...SCT_TRIAL_ROW_2];
 
 // ─── Step 1: Patient Details ─────────────────────────────────────────────────
 function PatientDetailsStep({
@@ -226,14 +103,7 @@ function PatientDetailsStep({
       newErrors.highestEducation = "Highest Education is required";
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
-    onNext({
-      name,
-      age,
-      gender,
-      highestEducation,
-      patientId,
-      doctorName,
-    });
+    onNext({ name, age, gender, highestEducation, patientId, doctorName });
   };
 
   return (
@@ -242,7 +112,7 @@ function PatientDetailsStep({
         <div className="mb-8 text-center">
           <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-4">
             <span className="w-2 h-2 rounded-full bg-primary inline-block" />
-            Clinical Assessment Suite
+            Double Alphabet Test — Clinical Assessment
           </div>
           <h1 className="text-3xl font-bold text-foreground mb-1">
             Patient Details
@@ -254,14 +124,14 @@ function PatientDetailsStep({
 
         <Card className="shadow-md border-border">
           <CardContent className="p-8 space-y-6">
-            {/* Clinical Reference — Patient ID & Doctor's Name — TOP PRIORITY */}
+            {/* Clinical Reference */}
             <div className="rounded-xl border-2 border-primary/40 bg-primary/5 px-6 py-5">
               <h2 className="text-xs font-bold uppercase tracking-widest text-primary mb-4 flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-primary inline-block" />
                 Clinical Reference
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-1.5 flex flex-col items-center">
+                <div className="space-y-1.5">
                   <Label
                     htmlFor="patientId"
                     className="text-base font-semibold text-foreground"
@@ -427,102 +297,6 @@ function PatientDetailsStep({
   );
 }
 
-// ─── Step 1.5: Test Selection ─────────────────────────────────────────────────
-function TestSelectionStep({ onSelect }: { onSelect: (t: TestType) => void }) {
-  return (
-    <div className="min-h-screen bg-background flex items-center justify-center px-4">
-      <div className="w-full max-w-2xl">
-        <div className="mb-10 text-center">
-          <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-4">
-            <span className="w-2 h-2 rounded-full bg-primary inline-block" />
-            Clinical Assessment Suite
-          </div>
-          <h1 className="text-3xl font-bold text-foreground mb-2">
-            Select Test
-          </h1>
-          <p className="text-muted-foreground text-sm">
-            Choose the assessment to administer to the patient.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-          {/* Double Alphabet Test */}
-          <button
-            type="button"
-            data-ocid="test-selection.dlct.button"
-            onClick={() => onSelect("dlct")}
-            className="group text-left rounded-2xl border-2 border-border bg-card hover:border-primary hover:shadow-md transition-all duration-200 p-7 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          >
-            <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-5 group-hover:bg-primary/20 transition-colors">
-              <span className="font-mono text-2xl font-bold text-primary">
-                CE
-              </span>
-            </div>
-            <h2 className="text-xl font-bold text-foreground mb-2">
-              Double Alphabet Test
-            </h2>
-            <p className="text-sm text-muted-foreground leading-relaxed mb-4">
-              Double Letter Cancellation Test (DLCT). Patient marks all
-              instances of the letters C and E across a 6×52 letter grid.
-            </p>
-            <div className="flex flex-wrap gap-2">
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium">
-                6 × 52 grid
-              </span>
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium">
-                105 targets
-              </span>
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium">
-                Letters C & E
-              </span>
-            </div>
-            <div className="mt-5 flex items-center gap-2 text-primary font-semibold text-sm group-hover:gap-3 transition-all">
-              Select this test
-              <span className="text-base">→</span>
-            </div>
-          </button>
-
-          {/* Symbol Test */}
-          <button
-            type="button"
-            data-ocid="test-selection.sct.button"
-            onClick={() => onSelect("sct")}
-            className="group text-left rounded-2xl border-2 border-border bg-card hover:border-primary hover:shadow-md transition-all duration-200 p-7 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          >
-            <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-5 group-hover:bg-primary/20 transition-colors">
-              <span className="font-mono text-2xl font-bold text-primary">
-                ★
-              </span>
-            </div>
-            <h2 className="text-xl font-bold text-foreground mb-2">
-              Symbol Test
-            </h2>
-            <p className="text-sm text-muted-foreground leading-relaxed mb-4">
-              Symbol Cancellation Test (SCT). Patient marks all instances of the
-              filled star ★ among distractor symbols across a 6×52 grid.
-            </p>
-            <div className="flex flex-wrap gap-2">
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium">
-                6 × 52 grid
-              </span>
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium">
-                105 targets
-              </span>
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium">
-                Symbol ★
-              </span>
-            </div>
-            <div className="mt-5 flex items-center gap-2 text-primary font-semibold text-sm group-hover:gap-3 transition-all">
-              Select this test
-              <span className="text-base">→</span>
-            </div>
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 // ─── Step 2: Language Selection ───────────────────────────────────────────────
 function LanguageStep({ onNext }: { onNext: (l: Language) => void }) {
   return (
@@ -530,7 +304,7 @@ function LanguageStep({ onNext }: { onNext: (l: Language) => void }) {
       <div className="w-full max-w-md text-center">
         <div className="mb-8">
           <Badge variant="outline" className="mb-4 text-sm px-4 py-1.5">
-            Step 2 of 7
+            Step 2 of 6
           </Badge>
           <h1 className="text-3xl font-bold text-foreground mb-2">
             Select Language
@@ -567,7 +341,7 @@ function InstructionsStep({
       <div className="w-full max-w-2xl">
         <div className="mb-8 text-center">
           <Badge variant="outline" className="mb-4 text-sm px-4 py-1.5">
-            Step 3 of 7
+            Step 3 of 6
           </Badge>
           <h1 className="text-3xl font-bold text-foreground mb-1">
             Test Instructions
@@ -633,7 +407,7 @@ function ConfirmationStep({ onNext }: { onNext: () => void }) {
     <div className="min-h-screen bg-background flex items-center justify-center px-4">
       <div className="w-full max-w-md text-center">
         <Badge variant="outline" className="mb-6 text-sm px-4 py-1.5">
-          Step 4 of 7
+          Step 4 of 6
         </Badge>
         <h1 className="text-3xl font-bold text-foreground mb-4">
           Do you understand the instructions?
@@ -680,21 +454,21 @@ const TRIAL_INSTRUCTIONS: Record<
 > = {
   en: {
     heading: "Practice Round",
-    badge: "Step 5 of 8 — Practice Trial",
+    badge: "Step 5 of 6 — Practice Trial",
     body: "This is a practice round. Click on every letter C and every letter E you see. This does not affect your real test results.",
     proceed: "Start Real Test →",
     note: "This trial does not count toward your final score.",
   },
   hi: {
     heading: "अभ्यास दौर",
-    badge: "चरण 5 में से 8 — अभ्यास परीक्षण",
+    badge: "चरण 5 में से 6 — अभ्यास परीक्षण",
     body: "यह एक अभ्यास दौर है। नीचे दी गई पंक्तियों में हर C और E अक्षर पर क्लिक करें। यह आपके वास्तविक परीक्षण परिणामों को प्रभावित नहीं करता।",
     proceed: "वास्तविक परीक्षण शुरू करें →",
     note: "यह अभ्यास आपके अंतिम स्कोर में नहीं गिना जाता।",
   },
   kn: {
     heading: "ಅಭ್ಯಾಸ ಸುತ್ತು",
-    badge: "ಹಂತ 5 ರಲ್ಲಿ 8 — ಅಭ್ಯಾಸ ಪರೀಕ್ಷೆ",
+    badge: "ಹಂತ 5 ರಲ್ಲಿ 6 — ಅಭ್ಯಾಸ ಪರೀಕ್ಷೆ",
     body: "ಇದು ಒಂದು ಅಭ್ಯಾಸ ಸುತ್ತು. ಕೆಳಗಿನ ಸಾಲುಗಳಲ್ಲಿ ಪ್ರತಿ C ಮತ್ತು E ಅಕ್ಷರವನ್ನು ಕ್ಲಿಕ್ ಮಾಡಿ. ಇದು ನಿಮ್ಮ ನಿಜವಾದ ಪರೀಕ್ಷೆಯ ಫಲಿತಾಂಶಗಳ ಮೇಲೆ ಪರಿಣಾಮ ಬೀರುವುದಿಲ್ಲ.",
     proceed: "ನಿಜವಾದ ಪರೀಕ್ಷೆ ಪ್ರಾರಂಭಿಸಿ →",
     note: "ಈ ಅಭ್ಯಾಸವು ನಿಮ್ಮ ಅಂತಿಮ ಸ್ಕೋರ್‌ಗೆ ಲೆಕ್ಕಿಸುವುದಿಲ್ಲ.",
@@ -875,7 +649,7 @@ function TrialStep({
           </CardContent>
         </Card>
 
-        {/* Feedback Banner (after submit) */}
+        {/* Feedback Banner */}
         {submitted && (
           <div
             className={`rounded-xl border-2 px-5 py-4 mb-5 ${
@@ -920,7 +694,7 @@ function TrialStep({
           </div>
         )}
 
-        {/* Live progress (before submit) */}
+        {/* Live progress */}
         {!submitted && marked.size > 0 && (
           <div
             className="flex items-center gap-3 bg-muted/40 border border-border rounded-xl px-5 py-3 mb-5"
@@ -977,13 +751,13 @@ function TrialStep({
   );
 }
 
-// ─── Step 6: Ready to Begin ───────────────────────────────────────────────────
+// ─── Step 5 (between trial and test): Ready to Begin ─────────────────────────
 function ReadyStep({ onStart }: { onStart: () => void }) {
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4">
       <div className="w-full max-w-lg text-center">
         <Badge variant="outline" className="mb-6 text-sm px-4 py-1.5">
-          Step 6 of 7
+          Step 6 of 6
         </Badge>
         <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
           <Clock className="w-10 h-10 text-primary" />
@@ -1020,21 +794,17 @@ function TestStep({
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
-    // Lock viewport — no zoom allowed during test
     const ZOOM_LOCKED =
       "width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no";
     const meta = document.querySelector("meta[name=viewport]");
     if (meta) meta.setAttribute("content", ZOOM_LOCKED);
 
-    // Block wheel-based zoom (Ctrl + scroll)
     const blockWheelZoom = (e: WheelEvent) => {
       if (e.ctrlKey || e.metaKey) {
         e.preventDefault();
         e.stopPropagation();
       }
     };
-
-    // Block keyboard zoom shortcuts (Ctrl +/-, Ctrl+0)
     const blockKeyZoom = (e: KeyboardEvent) => {
       if (
         (e.ctrlKey || e.metaKey) &&
@@ -1052,16 +822,12 @@ function TestStep({
         e.stopPropagation();
       }
     };
-
-    // Block touch pinch-zoom
     const blockTouchZoom = (e: TouchEvent) => {
       if (e.touches.length > 1) {
         e.preventDefault();
         e.stopPropagation();
       }
     };
-
-    // Block Safari gesture zoom
     const blockGesture = (e: Event) => {
       e.preventDefault();
     };
@@ -1081,9 +847,7 @@ function TestStep({
 
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
-      // Keep zoom locked even on cleanup — test should never allow zoom
       if (meta) meta.setAttribute("content", ZOOM_LOCKED);
-
       document.removeEventListener("wheel", blockWheelZoom);
       document.removeEventListener("keydown", blockKeyZoom);
       document.removeEventListener("touchstart", blockTouchZoom);
@@ -1123,7 +887,7 @@ function TestStep({
       style={{ touchAction: "pan-x pan-y", userSelect: "none" }}
     >
       {/* Timer Bar */}
-      <div className="w-full max-w-[900px] flex items-center justify-between mb-4 bg-white rounded-xl shadow-sm border border-border px-6 py-3">
+      <div className="w-full max-w-[900px] flex items-center justify-between mb-4 bg-card rounded-xl shadow-sm border border-border px-6 py-3">
         <div className="flex items-center gap-3">
           <Clock className="w-5 h-5 text-primary" />
           <span className="text-sm font-medium text-muted-foreground">
@@ -1150,10 +914,10 @@ function TestStep({
       {/* Paper Sheet */}
       <div
         style={{ minHeight: "1100px", touchAction: "pan-x pan-y" }}
-        className="w-fit mx-auto bg-white shadow-xl border border-gray-200 rounded-sm px-8 py-6"
+        className="w-fit mx-auto bg-card shadow-xl border border-border rounded-sm px-8 py-6"
       >
         {/* Strike-through example heading */}
-        <div className="flex items-center gap-3 mb-5 pb-3 border-b border-gray-200">
+        <div className="flex items-center gap-3 mb-5 pb-3 border-b border-border">
           <span
             style={{
               fontFamily: "'Great Vibes', cursive",
@@ -1212,7 +976,7 @@ function TestStep({
               className="flex items-center gap-2 flex-wrap"
               data-ocid={`test.row.${rowNum + 1}`}
             >
-              <span className="text-[11px] text-gray-400 w-16 text-right font-mono shrink-0">
+              <span className="text-[11px] text-muted-foreground w-16 text-right font-mono shrink-0">
                 Row {rowNum + 1}
               </span>
               <div className="flex flex-wrap">
@@ -1224,7 +988,7 @@ function TestStep({
                       type="button"
                       onClick={() => toggleCell(cellId)}
                       className={[
-                        "font-mono text-[14px] font-normal text-center select-none cursor-pointer transition-colors duration-100 hover:bg-blue-50 rounded-sm w-[18px] h-[24px] leading-[24px]",
+                        "font-mono text-[14px] font-normal text-center select-none cursor-pointer transition-colors duration-100 hover:bg-primary/10 rounded-sm w-[18px] h-[24px] leading-[24px]",
                         isMarked
                           ? "text-red-600 line-through"
                           : "text-foreground",
@@ -1247,7 +1011,7 @@ function TestStep({
   );
 }
 
-// ─── Step 7: Results ─────────────────────────────────────────────────────────
+// ─── Step 7: Thank You ────────────────────────────────────────────────────────
 function ThankYouStep({ onNewTest }: { onNewTest: () => void }) {
   return (
     <div
@@ -1291,946 +1055,17 @@ function ThankYouStep({ onNewTest }: { onNewTest: () => void }) {
   );
 }
 
-function ScoreBox({
-  label,
-  value,
-  sub,
-}: { label: string; value: string; sub: string }) {
-  return (
-    <div className="bg-muted/60 rounded-lg px-4 py-3 text-center">
-      <p className="text-xs text-muted-foreground mb-1">{label}</p>
-      <p className="text-2xl font-bold text-foreground tabular-nums">{value}</p>
-      <p className="text-[11px] text-muted-foreground mt-0.5">{sub}</p>
-    </div>
-  );
-}
-
 // ═══════════════════════════════════════════════════════════════════════════════
-// ROOT APP — State Machine (SCT components moved to SctComponents.tsx)
-// ═══════════════════════════════════════════════════════════════════════════════
-
-// placeholder to maintain file structure — SCT workflow is in SctComponents.tsx
-function _SctPlaceholder({
-  language,
-  onNext,
-}: { language: Language; onNext: () => void }) {
-  return (
-    <div className="min-h-screen bg-background flex items-start justify-center py-10 px-4">
-      <div className="w-full max-w-2xl">
-        <div className="mb-8 text-center">
-          <Badge variant="outline" className="mb-4 text-sm px-4 py-1.5">
-            Step 3 of 7 — Symbol Test
-          </Badge>
-          <h1 className="text-3xl font-bold text-foreground mb-1">
-            Test Instructions
-          </h1>
-          <p className="text-muted-foreground text-sm">
-            Read carefully before proceeding.
-          </p>
-        </div>
-
-        <Card className="shadow-md mb-5">
-          <CardContent className="p-8">
-            <p className="text-lg leading-relaxed text-foreground">
-              {SCT_INSTRUCTIONS[language].split(/(★)/).map((part, i) =>
-                part === "★" ? (
-                  // biome-ignore lint/suspicious/noArrayIndexKey: static instruction string split
-                  <strong key={i} className="font-bold text-xl">
-                    {part}
-                  </strong>
-                ) : (
-                  part
-                ),
-              )}
-            </p>
-          </CardContent>
-        </Card>
-
-        {/* Symbol reference */}
-        <Card className="shadow-sm mb-5 border-primary/20 bg-primary/5">
-          <CardContent className="p-5">
-            <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-3">
-              Symbol Guide
-            </p>
-            <div className="flex flex-wrap gap-4">
-              <div className="flex items-center gap-2">
-                <span className="font-mono text-xl font-bold text-foreground">
-                  ★
-                </span>
-                <span className="text-sm text-foreground font-semibold">
-                  = Target (mark this)
-                </span>
-              </div>
-              <div className="w-px h-5 bg-border self-center" />
-              <div className="flex items-center gap-2">
-                <span className="font-mono text-xl text-muted-foreground">
-                  ◆ ○ △ ✦ ⬡
-                </span>
-                <span className="text-sm text-muted-foreground">
-                  = Distractors (ignore)
-                </span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Therapist Note */}
-        <div className="rounded-xl border-2 border-amber-400 bg-amber-50 p-6 mb-8">
-          <h3 className="font-bold text-amber-800 text-sm uppercase tracking-widest mb-4 flex items-center gap-2">
-            <AlertTriangle className="w-4 h-4" />
-            Therapist Administration Script
-          </h3>
-          <div className="space-y-4">
-            {(["en", "hi", "kn"] as Language[]).map((lang) => (
-              <div key={lang}>
-                <span className="text-xs font-semibold text-amber-700 uppercase tracking-wider">
-                  {LANG_LABELS[lang]}
-                </span>
-                <p className="mt-1 text-amber-900 text-sm leading-relaxed">
-                  {SCT_THERAPIST_SCRIPTS[lang]}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <Button
-          type="button"
-          data-ocid="sct-instructions.primary_button"
-          onClick={onNext}
-          className="w-full h-12 text-base font-semibold"
-        >
-          Next →
-        </Button>
-      </div>
-    </div>
-  );
-}
-
-// ─── SCT Step 4: SCT Confirmation (legacy — skipped in new routing) ──────────
-function _OldSctConfirmationStep({ onNext }: { onNext: () => void }) {
-  return (
-    <div className="min-h-screen bg-background flex items-center justify-center px-4">
-      <div className="w-full max-w-md text-center">
-        <Badge variant="outline" className="mb-6 text-sm px-4 py-1.5">
-          Step 4 of 7 — Symbol Test
-        </Badge>
-        <h1 className="text-3xl font-bold text-foreground mb-4">
-          Do you understand the instructions?
-        </h1>
-        <p className="text-muted-foreground mb-10">
-          Press the button below to confirm you are ready to proceed with the
-          Symbol Test.
-        </p>
-        <Button
-          type="button"
-          data-ocid="sct-confirm.primary_button"
-          onClick={onNext}
-          size="lg"
-          className="h-14 px-12 text-lg font-bold"
-        >
-          I Understand
-        </Button>
-      </div>
-    </div>
-  );
-}
-
-// ─── SCT Step 5: SCT Practice Trial (legacy — replaced by SctComponents.tsx) ─
-function _OldSctTrialStep({
-  language,
-  onNext,
-}: { language: Language; onNext: () => void }) {
-  const [marked, setMarked] = useState<Set<string>>(new Set());
-  const [submitted, setSubmitted] = useState(false);
-
-  const t = SCT_TRIAL_INSTRUCTIONS[language];
-
-  const toggleCell = (id: string) => {
-    setMarked((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  };
-
-  const trialTargets = new Set(
-    SCT_TRIAL_ITEMS.filter((item) => item.symbol === SCT_TARGET).map(
-      (item) => item.id,
-    ),
-  );
-  const correctCount = [...marked].filter((id) => trialTargets.has(id)).length;
-  const commissions = [...marked].filter((id) => !trialTargets.has(id)).length;
-  const total = trialTargets.size;
-  const isPerfect = correctCount === total && commissions === 0;
-
-  const handleSubmit = () => setSubmitted(true);
-  const handleReset = () => {
-    setMarked(new Set());
-    setSubmitted(false);
-  };
-
-  const renderSctRow = (items: typeof SCT_TRIAL_ROW_1, rowLabel: string) => (
-    <div className="mb-2">
-      <div className="flex items-center gap-2 mb-1">
-        <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground w-10 text-right shrink-0">
-          {rowLabel}
-        </span>
-        <div
-          className="flex flex-wrap bg-muted/20 border border-border rounded-lg px-3 py-2 gap-0"
-          data-ocid={`sct-trial.${rowLabel.toLowerCase().replace(" ", "")}`}
-        >
-          {items.map(({ id, symbol }) => {
-            const isTarget = symbol === SCT_TARGET;
-            const isMarked = marked.has(id);
-            const isWrong = submitted && isMarked && !isTarget;
-            const isMissed = submitted && !isMarked && isTarget;
-            return (
-              <button
-                key={id}
-                type="button"
-                onClick={() => toggleCell(id)}
-                data-ocid={`sct-trial.item.${id}`}
-                className={[
-                  "font-mono text-[14px] font-normal w-[22px] h-[28px] leading-[28px] text-center select-none cursor-pointer transition-colors duration-100 rounded-sm",
-                  isTarget ? "hover:bg-primary/10" : "hover:bg-muted/50",
-                  isMarked && !isWrong ? "text-red-600 line-through" : "",
-                  isWrong ? "text-orange-500 line-through bg-orange-50" : "",
-                  isMissed ? "bg-yellow-100 rounded" : "",
-                  !isMarked && !isMissed ? "text-foreground" : "",
-                ]
-                  .filter(Boolean)
-                  .join(" ")}
-              >
-                {symbol}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-    </div>
-  );
-
-  return (
-    <div className="min-h-screen bg-background flex items-start justify-center py-10 px-4">
-      <div className="w-full max-w-3xl">
-        <div className="mb-8 text-center">
-          <Badge variant="outline" className="mb-4 text-sm px-4 py-1.5">
-            {t.badge}
-          </Badge>
-          <h1 className="text-3xl font-bold text-foreground mb-2">
-            {t.heading}
-          </h1>
-          <p className="text-muted-foreground text-sm max-w-lg mx-auto leading-relaxed">
-            {t.body.split(/(★)/).map((part, i) =>
-              part === "★" ? (
-                // biome-ignore lint/suspicious/noArrayIndexKey: static instruction string split
-                <strong key={i} className="font-bold text-base text-foreground">
-                  {part}
-                </strong>
-              ) : (
-                part
-              ),
-            )}
-          </p>
-        </div>
-
-        {/* Visual hint strip */}
-        <div className="flex items-center justify-center gap-6 mb-6 bg-primary/5 border border-primary/20 rounded-xl px-6 py-3 flex-wrap">
-          <div className="flex items-center gap-2">
-            <span className="font-mono text-[16px] font-normal text-foreground">
-              ★
-            </span>
-            <span className="text-sm text-muted-foreground ml-1">
-              = target to mark
-            </span>
-          </div>
-          <div className="w-px h-5 bg-border" />
-          <div className="flex items-center gap-2">
-            <span className="font-mono text-[14px] text-muted-foreground">
-              ◆ ○ △ ✦ ⬡
-            </span>
-            <span className="text-sm text-muted-foreground ml-1">= ignore</span>
-          </div>
-          <div className="w-px h-5 bg-border" />
-          <div className="flex items-center gap-2">
-            <span className="font-mono text-[14px] font-normal text-red-600 line-through">
-              ★
-            </span>
-            <span className="text-sm text-muted-foreground ml-1">= marked</span>
-          </div>
-        </div>
-
-        <Card className="shadow-md mb-5 border-primary/20">
-          <CardHeader className="pb-2 pt-5">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                Practice Grid
-              </CardTitle>
-              <span className="text-xs text-muted-foreground">
-                {marked.size} marked · {correctCount}/{total} targets found
-              </span>
-            </div>
-          </CardHeader>
-          <CardContent className="pb-5 px-6">
-            {renderSctRow(SCT_TRIAL_ROW_1, "Row 1")}
-            {renderSctRow(SCT_TRIAL_ROW_2, "Row 2")}
-          </CardContent>
-        </Card>
-
-        {/* Feedback Banner */}
-        {submitted && (
-          <div
-            className={`rounded-xl border-2 px-5 py-4 mb-5 ${
-              isPerfect
-                ? "bg-green-50 border-green-400"
-                : "bg-amber-50 border-amber-400"
-            }`}
-            data-ocid="sct-trial.success_state"
-          >
-            <div className="flex items-start gap-3">
-              {isPerfect ? (
-                <CheckCircle2 className="w-5 h-5 text-green-600 shrink-0 mt-0.5" />
-              ) : (
-                <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
-              )}
-              <div className="flex-1">
-                <p
-                  className={`text-sm font-semibold mb-1 ${isPerfect ? "text-green-800" : "text-amber-800"}`}
-                >
-                  {isPerfect
-                    ? `Excellent! You found all ${total} targets correctly. You're ready for the real test.`
-                    : `You've marked ${marked.size} symbol(s) — ${correctCount} correct out of ${total} targets. Review and try again, or proceed when ready.`}
-                </p>
-                {!isPerfect && (
-                  <div className="text-xs text-amber-700 mt-1 space-y-0.5">
-                    <p>
-                      ✓ Correct hits: {correctCount} / {total}
-                    </p>
-                    {commissions > 0 && (
-                      <p>✗ False marks (wrong symbols): {commissions}</p>
-                    )}
-                    {total - correctCount > 0 && (
-                      <p>
-                        ◯ Missed targets: {total - correctCount} (highlighted in
-                        yellow)
-                      </p>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Live progress */}
-        {!submitted && marked.size > 0 && (
-          <div
-            className="flex items-center gap-3 bg-muted/40 border border-border rounded-xl px-5 py-3 mb-5"
-            data-ocid="sct-trial.loading_state"
-          >
-            <span className="text-sm text-muted-foreground">
-              {marked.size} symbol(s) marked
-            </span>
-            <span className="text-border">·</span>
-            <span className="text-sm text-foreground font-medium">
-              {correctCount} correct of {total} targets
-            </span>
-          </div>
-        )}
-
-        <div className="flex gap-3">
-          {submitted && !isPerfect && (
-            <Button
-              type="button"
-              data-ocid="sct-trial.secondary_button"
-              variant="outline"
-              onClick={handleReset}
-              className="h-12 px-6 font-semibold"
-            >
-              Try Again
-            </Button>
-          )}
-          {!submitted ? (
-            <Button
-              type="button"
-              data-ocid="sct-trial.submit_button"
-              onClick={handleSubmit}
-              className="flex-1 h-12 text-base font-semibold"
-              disabled={marked.size === 0}
-            >
-              Submit Trial
-            </Button>
-          ) : (
-            <Button
-              type="button"
-              data-ocid="sct-trial.primary_button"
-              onClick={onNext}
-              className="flex-1 h-12 text-base font-semibold"
-            >
-              {t.proceed}
-            </Button>
-          )}
-        </div>
-        <p className="text-center text-xs text-muted-foreground mt-4">
-          {t.note}
-        </p>
-      </div>
-    </div>
-  );
-}
-
-// ─── SCT Step 6: SCT Ready Screen (legacy — replaced by SctComponents.tsx) ───
-function _OldSctReadyStep({ onStart }: { onStart: () => void }) {
-  return (
-    <div className="min-h-screen bg-background flex items-center justify-center px-4">
-      <div className="w-full max-w-lg text-center">
-        <Badge variant="outline" className="mb-6 text-sm px-4 py-1.5">
-          Step 6 of 7 — Symbol Test
-        </Badge>
-        <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
-          <Clock className="w-10 h-10 text-primary" />
-        </div>
-        <h1 className="text-3xl font-bold text-foreground mb-4">
-          Ready to Begin Symbol Test
-        </h1>
-        <p className="text-muted-foreground mb-10 text-lg leading-relaxed">
-          The Symbol Cancellation Test is about to begin. When you press Start
-          Timer, the clock will start and you should begin marking the{" "}
-          <span className="font-bold text-foreground">★</span> symbols
-          immediately.
-        </p>
-        <Button
-          type="button"
-          data-ocid="sct-ready.primary_button"
-          onClick={onStart}
-          size="lg"
-          className="h-14 px-12 text-lg font-bold bg-green-600 hover:bg-green-700 text-white"
-        >
-          Start Timer
-        </Button>
-      </div>
-    </div>
-  );
-}
-
-// ─── SCT Step 7: SCT Test Page (legacy — replaced by SctComponents.tsx) ─────
-function _OldSctTestStep({
-  onStop,
-}: {
-  onStop: (marked: Set<string>, elapsed: number) => void;
-}) {
-  const [marked, setMarked] = useState<Set<string>>(new Set());
-  const [elapsed, setElapsed] = useState(0);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
-  useEffect(() => {
-    // Lock viewport — no zoom allowed during SCT test
-    const ZOOM_LOCKED =
-      "width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no";
-    const meta = document.querySelector("meta[name=viewport]");
-    if (meta) meta.setAttribute("content", ZOOM_LOCKED);
-
-    const blockWheelZoom = (e: WheelEvent) => {
-      if (e.ctrlKey || e.metaKey) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
-    };
-    const blockKeyZoom = (e: KeyboardEvent) => {
-      if (
-        (e.ctrlKey || e.metaKey) &&
-        (e.key === "+" ||
-          e.key === "-" ||
-          e.key === "=" ||
-          e.key === "0" ||
-          e.code === "Equal" ||
-          e.code === "Minus" ||
-          e.code === "Digit0" ||
-          e.code === "NumpadAdd" ||
-          e.code === "NumpadSubtract")
-      ) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
-    };
-    const blockTouchZoom = (e: TouchEvent) => {
-      if (e.touches.length > 1) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
-    };
-    const blockGesture = (e: Event) => {
-      e.preventDefault();
-    };
-
-    document.addEventListener("wheel", blockWheelZoom, { passive: false });
-    document.addEventListener("keydown", blockKeyZoom, { passive: false });
-    document.addEventListener("touchstart", blockTouchZoom, { passive: false });
-    document.addEventListener("touchmove", blockTouchZoom, { passive: false });
-    document.addEventListener("gesturestart", blockGesture, { passive: false });
-    document.addEventListener("gesturechange", blockGesture, {
-      passive: false,
-    });
-    document.addEventListener("gestureend", blockGesture, { passive: false });
-    document.body.classList.add("test-zoom-locked");
-
-    intervalRef.current = setInterval(() => setElapsed((e) => e + 1), 1000);
-
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-      if (meta) meta.setAttribute("content", ZOOM_LOCKED);
-      document.removeEventListener("wheel", blockWheelZoom);
-      document.removeEventListener("keydown", blockKeyZoom);
-      document.removeEventListener("touchstart", blockTouchZoom);
-      document.removeEventListener("touchmove", blockTouchZoom);
-      document.removeEventListener("gesturestart", blockGesture);
-      document.removeEventListener("gesturechange", blockGesture);
-      document.removeEventListener("gestureend", blockGesture);
-      document.body.classList.remove("test-zoom-locked");
-    };
-  }, []);
-
-  const formatTime = (s: number) => {
-    const m = Math.floor(s / 60)
-      .toString()
-      .padStart(2, "0");
-    const sec = (s % 60).toString().padStart(2, "0");
-    return `${m}:${sec}`;
-  };
-
-  const toggleCell = useCallback((key: string) => {
-    setMarked((prev) => {
-      const next = new Set(prev);
-      if (next.has(key)) next.delete(key);
-      else next.add(key);
-      return next;
-    });
-  }, []);
-
-  const handleStop = () => {
-    if (intervalRef.current) clearInterval(intervalRef.current);
-    onStop(marked, elapsed);
-  };
-
-  return (
-    <div
-      className="min-h-screen bg-muted flex flex-col items-center py-6 px-4"
-      style={{ touchAction: "pan-x pan-y", userSelect: "none" }}
-    >
-      {/* Timer Bar */}
-      <div className="w-full max-w-[900px] flex items-center justify-between mb-4 bg-white rounded-xl shadow-sm border border-border px-6 py-3">
-        <div className="flex items-center gap-3">
-          <Clock className="w-5 h-5 text-primary" />
-          <span className="text-sm font-medium text-muted-foreground">
-            Elapsed Time
-          </span>
-          <span
-            data-ocid="sct-test.panel"
-            className="font-mono text-2xl font-bold text-foreground tabular-nums"
-          >
-            {formatTime(elapsed)}
-          </span>
-        </div>
-        <Button
-          type="button"
-          data-ocid="sct-test.primary_button"
-          onClick={handleStop}
-          variant="destructive"
-          className="font-semibold"
-        >
-          Stop Test
-        </Button>
-      </div>
-
-      {/* Paper Sheet */}
-      <div className="w-full bg-white shadow-xl border border-gray-200 rounded-sm px-8 py-6">
-        <div className="space-y-1.5">
-          {SCT_GRID.map(({ id, rowNum, cells }) => (
-            <div
-              key={id}
-              className="flex items-center gap-2 flex-wrap"
-              data-ocid={`sct-test.row.${rowNum + 1}`}
-            >
-              <span className="text-[11px] text-gray-400 w-16 text-right font-mono shrink-0">
-                Row {rowNum + 1}
-              </span>
-              <div className="flex flex-wrap">
-                {cells.map(({ id: cellId, symbol }) => {
-                  const isMarked = marked.has(cellId);
-                  return (
-                    <button
-                      key={cellId}
-                      type="button"
-                      onClick={() => toggleCell(cellId)}
-                      className={[
-                        "font-mono text-[14px] font-normal text-center select-none cursor-pointer transition-colors duration-100 hover:bg-blue-50 rounded-sm w-[22px] h-[24px] leading-[24px]",
-                        isMarked
-                          ? "text-red-600 line-through"
-                          : "text-foreground",
-                      ].join(" ")}
-                    >
-                      {symbol}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <p className="mt-4 text-xs text-muted-foreground">
-        Click symbols to mark/unmark. Press "Stop Test" when done.
-      </p>
-    </div>
-  );
-}
-
-// ─── SCT Step 8: SCT Results (legacy — replaced by SctComponents.tsx) ───────
-function _OldSctResultsStep({
-  patient,
-  marked,
-  elapsed,
-  onNewTest,
-}: {
-  patient: PatientDetails;
-  marked: Set<string>;
-  elapsed: number;
-  onNewTest: () => void;
-}) {
-  let correctHits = 0;
-  let leftHits = 0;
-  let rightHits = 0;
-  let commissions = 0;
-
-  for (const key of marked) {
-    const [ri, ci] = key.replace("s", "").split("-").map(Number);
-    const isTarget = SCT_TARGET_POSITIONS[ri]?.includes(ci);
-    if (isTarget) {
-      correctHits++;
-      if (ci <= 25) leftHits++;
-      else rightHits++;
-    } else {
-      commissions++;
-    }
-  }
-
-  const omissions = SCT_TOTAL_TARGETS - correctHits;
-  const accuracy = Math.round((correctHits / SCT_TOTAL_TARGETS) * 100);
-
-  let totalLeftTargets = 0;
-  let totalRightTargets = 0;
-  for (let r = 0; r < 6; r++) {
-    for (const c of SCT_TARGET_POSITIONS[r]) {
-      if (c <= 25) totalLeftTargets++;
-      else totalRightTargets++;
-    }
-  }
-
-  const hemiNeglect =
-    totalRightTargets > 0 && leftHits < 0.7 * rightHits
-      ? "Left"
-      : totalLeftTargets > 0 && rightHits < 0.7 * leftHits
-        ? "Right"
-        : null;
-
-  // SCT attention performance classification
-  let perfLevel: "normal" | "mild" | "impaired";
-  if (omissions <= 5 && elapsed <= 120) perfLevel = "normal";
-  else if (omissions > 15 || elapsed > 180) perfLevel = "impaired";
-  else perfLevel = "mild";
-
-  const perfConfig = {
-    normal: {
-      label: "Normal Performance",
-      desc: "Attention within normal limits. Consistent with healthy adult performance on symbol cancellation.",
-      bg: "bg-green-50",
-      border: "border-green-400",
-      text: "text-green-800",
-      icon: <CheckCircle2 className="w-6 h-6 text-green-600" />,
-    },
-    mild: {
-      label: "Mild Impairment",
-      desc: "Mildly reduced attentional performance. Some difficulty with selective attention. Clinical review recommended.",
-      bg: "bg-amber-50",
-      border: "border-amber-400",
-      text: "text-amber-800",
-      icon: <AlertTriangle className="w-6 h-6 text-amber-600" />,
-    },
-    impaired: {
-      label: "Significant Impairment",
-      desc: "Markedly reduced attentional performance. Consistent with significant attentional deficit. Immediate clinical evaluation recommended.",
-      bg: "bg-red-50",
-      border: "border-red-400",
-      text: "text-red-800",
-      icon: <XCircle className="w-6 h-6 text-red-600" />,
-    },
-  };
-
-  const cfg = perfConfig[perfLevel];
-  const formatTime = (s: number) => {
-    const m = Math.floor(s / 60)
-      .toString()
-      .padStart(2, "0");
-    const sec = (s % 60).toString().padStart(2, "0");
-    return `${m}:${sec}`;
-  };
-
-  return (
-    <div className="min-h-screen bg-background py-10 px-4">
-      <div className="max-w-2xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <Badge className="mb-4 text-sm px-4 py-1.5">Test Complete</Badge>
-          <h1 className="text-3xl font-bold text-foreground mb-1">
-            SCT Results
-          </h1>
-          <p className="text-muted-foreground text-sm">
-            Symbol Cancellation Test — Assessment Report
-          </p>
-        </div>
-
-        {/* Patient Info */}
-        <Card className="mb-5 shadow-sm">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm uppercase tracking-widest text-muted-foreground font-semibold">
-              Patient Information
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-0 grid grid-cols-2 sm:grid-cols-3 gap-3">
-            <div>
-              <p className="text-xs text-muted-foreground">Name</p>
-              <p className="font-semibold">{patient.name}</p>
-            </div>
-            <div>
-              <p className="text-xs text-muted-foreground">Age</p>
-              <p className="font-semibold">{patient.age}</p>
-            </div>
-            <div>
-              <p className="text-xs text-muted-foreground">Gender</p>
-              <p className="font-semibold">{patient.gender}</p>
-            </div>
-            {patient.patientId && (
-              <div>
-                <p className="text-xs text-muted-foreground">Patient ID</p>
-                <p className="font-semibold">{patient.patientId}</p>
-              </div>
-            )}
-            {patient.doctorName && (
-              <div>
-                <p className="text-xs text-muted-foreground">Doctor's Name</p>
-                <p className="font-semibold">{patient.doctorName}</p>
-              </div>
-            )}
-            {patient.highestEducation && (
-              <div>
-                <p className="text-xs text-muted-foreground">
-                  Highest Education
-                </p>
-                <p className="font-semibold text-sm">
-                  {patient.highestEducation}
-                </p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Score Summary */}
-        <Card className="mb-5 shadow-sm">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm uppercase tracking-widest text-muted-foreground font-semibold">
-              Score Summary
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-0">
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              <ScoreBox
-                label="Accuracy"
-                value={`${accuracy}%`}
-                sub={`${correctHits}/${SCT_TOTAL_TARGETS}`}
-              />
-              <ScoreBox
-                label="Omissions"
-                value={omissions.toString()}
-                sub="Missed targets"
-              />
-              <ScoreBox
-                label="Commissions"
-                value={commissions.toString()}
-                sub="False marks"
-              />
-              <ScoreBox
-                label="Time Taken"
-                value={formatTime(elapsed)}
-                sub={`${elapsed}s total`}
-              />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Left/Right Comparison */}
-        <Card className="mb-5 shadow-sm">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm uppercase tracking-widest text-muted-foreground font-semibold">
-              Left / Right Comparison
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-0">
-            <div className="grid grid-cols-2 gap-4">
-              <ScoreBox
-                label="Left Side Hits"
-                value={leftHits.toString()}
-                sub={`of ${totalLeftTargets} targets`}
-              />
-              <ScoreBox
-                label="Right Side Hits"
-                value={rightHits.toString()}
-                sub={`of ${totalRightTargets} targets`}
-              />
-            </div>
-            {hemiNeglect ? (
-              <div
-                className="mt-4 flex items-center gap-3 bg-orange-50 border border-orange-300 rounded-lg px-4 py-3"
-                data-ocid="sct-results.error_state"
-              >
-                <AlertTriangle className="w-4 h-4 text-orange-600 shrink-0" />
-                <p className="text-sm text-orange-800 font-medium">
-                  Possible {hemiNeglect}-sided Hemi-neglect detected.{" "}
-                  {hemiNeglect} side hits significantly lower than opposite
-                  side.
-                </p>
-              </div>
-            ) : (
-              <div
-                className="mt-4 flex items-center gap-3 bg-green-50 border border-green-300 rounded-lg px-4 py-3"
-                data-ocid="sct-results.success_state"
-              >
-                <CheckCircle2 className="w-4 h-4 text-green-600 shrink-0" />
-                <p className="text-sm text-green-800 font-medium">
-                  No significant hemispatial asymmetry detected.
-                </p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Attention Performance Card */}
-        <div
-          className={`rounded-xl border-2 ${cfg.border} ${cfg.bg} p-6 mb-5`}
-          data-ocid="sct-results.card"
-        >
-          <div className="flex items-center gap-3 mb-3">
-            {cfg.icon}
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-widest text-gray-500 mb-0.5">
-                Attention Performance Assessment
-              </p>
-              <p className={`text-xl font-bold ${cfg.text}`}>{cfg.label}</p>
-            </div>
-          </div>
-          <p className={`text-sm leading-relaxed ${cfg.text}`}>{cfg.desc}</p>
-          <Separator className="my-4 opacity-40" />
-          <div className="grid grid-cols-3 gap-3 text-center text-sm">
-            <div
-              className={`rounded-lg bg-green-100 border border-green-300 px-3 py-2 ${perfLevel === "normal" ? "ring-2 ring-green-500" : "opacity-60"}`}
-            >
-              <p className="font-bold text-green-800">Normal</p>
-              <p className="text-[11px] text-green-700">≤5 omissions, ≤120s</p>
-            </div>
-            <div
-              className={`rounded-lg bg-amber-100 border border-amber-300 px-3 py-2 ${perfLevel === "mild" ? "ring-2 ring-amber-500" : "opacity-60"}`}
-            >
-              <p className="font-bold text-amber-800">Mild Impairment</p>
-              <p className="text-[11px] text-amber-700">
-                6–15 omissions or 121–180s
-              </p>
-            </div>
-            <div
-              className={`rounded-lg bg-red-100 border border-red-300 px-3 py-2 ${perfLevel === "impaired" ? "ring-2 ring-red-500" : "opacity-60"}`}
-            >
-              <p className="font-bold text-red-800">Impaired</p>
-              <p className="text-[11px] text-red-700">
-                &gt;15 omissions or &gt;180s
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Reference Norms */}
-        <Card className="mb-8 shadow-sm bg-muted/40">
-          <CardContent className="p-4">
-            <p className="text-xs text-muted-foreground">
-              <span className="font-semibold text-foreground">
-                Reference Norms:
-              </span>{" "}
-              Mesulam (1985): Healthy adults complete SCT in under 2 minutes
-              with few errors.
-            </p>
-          </CardContent>
-        </Card>
-
-        {/* Actions */}
-        <div className="flex flex-col sm:flex-row gap-3">
-          <Button
-            type="button"
-            data-ocid="sct-results.secondary_button"
-            variant="outline"
-            onClick={() => window.print()}
-            className="flex-1 h-12 font-semibold"
-          >
-            <Printer className="w-4 h-4 mr-2" />
-            Print Report
-          </Button>
-          <Button
-            type="button"
-            data-ocid="sct-results.primary_button"
-            onClick={onNewTest}
-            className="flex-1 h-12 font-semibold"
-          >
-            <RotateCcw className="w-4 h-4 mr-2" />
-            New Test
-          </Button>
-        </div>
-
-        <p className="text-center text-xs text-muted-foreground mt-8">
-          © {new Date().getFullYear()}. Built with love using{" "}
-          <a
-            href={`https://caffeine.ai?utm_source=caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(window.location.hostname)}`}
-            className="underline hover:text-foreground transition-colors"
-            target="_blank"
-            rel="noreferrer"
-          >
-            caffeine.ai
-          </a>
-        </p>
-      </div>
-    </div>
-  );
-}
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// ROOT APP — State Machine
+// ROOT APP — DLCT State Machine
 // ═══════════════════════════════════════════════════════════════════════════════
 export default function App() {
   const [step, setStep] = useState(1);
-  const [testType, setTestType] = useState<TestType>("dlct");
-  const [patient, setPatient] = useState<PatientDetails | null>(null);
+  const [, setPatient] = useState<PatientDetails | null>(null);
   const [language, setLanguage] = useState<Language>("en");
-  const [, setTestMarked] = useState<Set<string>>(new Set());
-  const [, setTestElapsed] = useState(0);
-  const [, setSctAnswers] = useState<string[]>([]);
-  const [, setSctSymbols] = useState<number[]>([]);
 
   const handlePatient = (d: PatientDetails) => {
     setPatient(d);
-    setStep(1.5); // Test selection
-  };
-
-  const handleTestSelect = (t: TestType) => {
-    setTestType(t);
-    setStep(2); // Language selection
+    setStep(2);
   };
 
   const handleLanguage = (l: Language) => {
@@ -2239,83 +1074,28 @@ export default function App() {
   };
 
   const handleStop = (marked: Set<string>, elapsed: number) => {
-    setTestMarked(marked);
-    setTestElapsed(elapsed);
-    setStep(8);
+    // Test complete — record for future use if needed
+    void marked;
+    void elapsed;
+    setStep(7);
   };
-
-  const handleSctStop = useCallback(
-    (elapsed: number, answers: string[], symbols: number[]) => {
-      setSctAnswers(answers);
-      setSctSymbols(symbols);
-      setTestElapsed(elapsed);
-      setStep(8);
-    },
-    [],
-  );
 
   const handleNewTest = () => {
     setStep(1);
     setPatient(null);
     setLanguage("en");
-    setTestType("dlct");
-    setTestMarked(new Set());
-    setTestElapsed(0);
-    setSctAnswers([]);
-    setSctSymbols([]);
   };
 
-  // Step 1: Patient Details (always same regardless of test type)
   if (step === 1) return <PatientDetailsStep onNext={handlePatient} />;
-
-  // Step 1.5: Test Selection
-  if (step === 1.5) return <TestSelectionStep onSelect={handleTestSelect} />;
-
-  // Step 2: Language Selection (shared for both)
   if (step === 2) return <LanguageStep onNext={handleLanguage} />;
-
-  // Steps 3–8: Branch based on testType
-  if (testType === "dlct") {
-    if (step === 3)
-      return <InstructionsStep language={language} onNext={() => setStep(4)} />;
-    if (step === 4) return <ConfirmationStep onNext={() => setStep(5)} />;
-    if (step === 5)
-      return <TrialStep language={language} onNext={() => setStep(6)} />;
-    if (step === 6) return <ReadyStep onStart={() => setStep(7)} />;
-    if (step === 7) return <TestStep onStop={handleStop} />;
-    if (step === 8) return <ThankYouStep onNewTest={handleNewTest} />;
-  }
-
-  if (testType === "sct" && patient) {
-    if (step === 3)
-      return (
-        <SctInstructionsStep
-          patient={patient}
-          language={language}
-          onLanguageChange={setLanguage}
-          onContinue={() => setStep(5)}
-        />
-      );
-    if (step === 5)
-      return (
-        <SctTrialStep
-          patient={patient}
-          language={language}
-          onComplete={() => setStep(6)}
-        />
-      );
-    if (step === 6)
-      return <SctReadyStep patient={patient} onStart={() => setStep(7)} />;
-    if (step === 7)
-      return (
-        <SctTestStep
-          patient={patient}
-          language={language}
-          onComplete={handleSctStop}
-        />
-      );
-    if (step === 8) return <SctThankYouStep onNewTest={handleNewTest} />;
-  }
+  if (step === 3)
+    return <InstructionsStep language={language} onNext={() => setStep(4)} />;
+  if (step === 4) return <ConfirmationStep onNext={() => setStep(5)} />;
+  if (step === 5)
+    return <TrialStep language={language} onNext={() => setStep(5.5)} />;
+  if (step === 5.5) return <ReadyStep onStart={() => setStep(6)} />;
+  if (step === 6) return <TestStep onStop={handleStop} />;
+  if (step === 7) return <ThankYouStep onNewTest={handleNewTest} />;
 
   return null;
 }
