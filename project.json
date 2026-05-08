@@ -1,0 +1,25 @@
+{
+  "overview": "A clinical cognitive assessment app that administers both the Double Letter Cancellation Test (DLCT) and Symbol Cancellation Test (SCT). Clinicians collect patient details once, then choose which attention test to administer. Both tests include practice trials, timed test grids, and detailed results with scoring, error analysis, and printable reports.",
+  "features": [
+    "Patient details collection with Clinical Reference (ID + doctor)",
+    "Test selection screen: Double Alphabet Test or Symbol Cancellation Test",
+    "Double Letter Cancellation Test (DLCT) — 6×52 grid, 105 C/E targets, practice trial, Alzheimer's Stage Assessment",
+    "Symbol Cancellation Test (SCT) — symbol grid, practice trial, omission/commission scoring",
+    "Multi-language support (English, Hindi, Kannada)",
+    "Live MM:SS timer with zoom-lock on all test screens",
+    "Click-to-mark with red strikethrough; randomized grids on each refresh",
+    "Printable results report with patient ID and doctor's name"
+  ],
+  "category": "health-medical",
+  "tags": [
+    "clinical",
+    "neuropsychology",
+    "attention-test",
+    "cancellation-test",
+    "dlct",
+    "symbol-test",
+    "cognitive-assessment",
+    "multilingual"
+  ],
+  "last_updated": "2026-04-28T10:08:45.234Z"
+}

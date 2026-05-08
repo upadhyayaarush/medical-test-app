@@ -1,0 +1,22 @@
+type TestSession = 
+ record {
+   endTime: nat;
+   languageSelected: text;
+   patientId: text;
+   startTime: nat;
+ };
+type Patient = 
+ record {
+   age: nat;
+   gender: text;
+   name: text;
+   patientId: text;
+ };
+service : {
+  getAllPatients: () -> (vec Patient) query;
+  getAllTestSessions: () -> (vec TestSession) query;
+  getPatient: (patientId: text) -> (opt Patient) query;
+  getSessionsByPatientId: (patientId: text) -> (vec TestSession) query;
+  savePatient: (patient: Patient) -> ();
+  saveTestSession: (session: TestSession) -> ();
+}

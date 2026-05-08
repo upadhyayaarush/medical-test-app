@@ -1,0 +1,61 @@
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --radius: 0.625rem;
+
+    /* Medical blue palette */
+    --background: 0.968 0.01 240;
+    --foreground: 0.155 0.012 265;
+    --card: 1 0 0;
+    --card-foreground: 0.155 0.012 265;
+    --popover: 1 0 0;
+    --popover-foreground: 0.155 0.012 265;
+    --primary: 0.585 0.18 250;
+    --primary-foreground: 1 0 0;
+    --secondary: 0.92 0.05 250;
+    --secondary-foreground: 0.585 0.18 250;
+    --muted: 0.95 0.012 240;
+    --muted-foreground: 0.52 0.01 250;
+    --accent: 0.93 0.05 250;
+    --accent-foreground: 0.585 0.18 250;
+    --destructive: 0.577 0.245 27.325;
+    --destructive-foreground: 1 0 0;
+    --border: 0.925 0.012 240;
+    --input: 0.925 0.012 240;
+    --ring: 0.585 0.18 250;
+    --chart-1: 0.585 0.18 250;
+    --chart-2: 0.6 0.118 184.704;
+    --chart-3: 0.398 0.07 227.392;
+    --chart-4: 0.828 0.189 84.429;
+    --chart-5: 0.769 0.188 70.08;
+    --sidebar: 0.978 0.008 240;
+    --sidebar-foreground: 0.155 0.012 265;
+    --sidebar-primary: 0.585 0.18 250;
+    --sidebar-primary-foreground: 1 0 0;
+    --sidebar-accent: 0.92 0.05 250;
+    --sidebar-accent-foreground: 0.585 0.18 250;
+    --sidebar-border: 0.925 0.012 240;
+    --sidebar-ring: 0.585 0.18 250;
+
+    /* Custom */
+    --timer-bg: 0.93 0.05 250;
+  }
+
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-body;
+  }
+
+  /* Applied via JS class when TestStep is active */
+  body.test-zoom-locked,
+  body.test-zoom-locked * {
+    touch-action: pan-x pan-y !important;
+  }
+}
