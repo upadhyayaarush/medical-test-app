@@ -19,6 +19,15 @@ import {
   useSessionsByDoctor,
 } from "@/hooks/useQueries";
 import type { PatientFullRecord } from "@/hooks/useQueries";
+import { useReportCapture } from "@/hooks/useReportCapture";
+import type { CaptureStatus } from "@/hooks/useReportCapture";
+import {
+  savePatientToSupabase,
+  saveTestResultToSupabase,
+  type SupabasePatientData,
+  type SupabaseTestResultData,
+} from "./lib/supabaseService";
+import { useSupabaseDashboard, type DashboardPatient, type SupabaseTestResultRecord } from "./hooks/useSupabaseDashboard";
 import {
   Activity,
   AlertTriangle,
@@ -29,7 +38,10 @@ import {
   ChevronRight,
   ChevronUp,
   Clock,
+  Download,
+  FileText,
   LayoutDashboard,
+  Loader2,
   Minus,
   RefreshCw,
   RotateCcw,
@@ -315,15 +327,7 @@ function LandingStep({
       {/* Footer */}
       <footer className="bg-muted/40 border-t border-border py-4 px-6">
         <p className="text-center text-xs text-muted-foreground">
-          © {new Date().getFullYear()}. Built with love using{" "}
-          <a
-            href={`https://caffeine.ai?utm_source=caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(window.location.hostname)}`}
-            className="underline hover:text-foreground transition-colors"
-            target="_blank"
-            rel="noreferrer"
-          >
-            caffeine.ai
-          </a>
+          © {new Date().getFullYear()}.
         </p>
       </footer>
     </div>
@@ -343,7 +347,7 @@ function DoctorDashboardStep({
     isLoading,
     refetch,
     isRefetching,
-  } = useSessionsByDoctor(loggedDoctorName);
+  } = useSupabaseDashboard(loggedDoctorName);
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
 
   const toggleExpand = (id: string) => {
@@ -386,21 +390,19 @@ function DoctorDashboardStep({
     return `${m}:${sec}`;
   };
 
-  const formatDateTime = (ns: bigint) => {
-    if (ns === 0n) return "—";
+  const formatDateTime = (dateStr: string) => {
+    if (!dateStr) return "—";
     try {
-      return new Date(Number(ns) / 1_000_000).toLocaleString();
+      return new Date(dateStr).toLocaleString();
     } catch {
       return "—";
     }
   };
 
-  const totalSessions = records.reduce((sum, r) => sum + r.sessions.length, 0);
+  const totalSessions = records.reduce((sum, r) => sum + r.results.length, 0);
   const aboveAvgCount = records.reduce(
     (sum, r) =>
-      sum +
-      r.sessions.filter((s) => s.testResult?.classification === "Above Average")
-        .length,
+      sum + r.results.filter((s) => s.classification === "Above Average").length,
     0,
   );
 
@@ -549,26 +551,26 @@ function DoctorDashboardStep({
               </div>
 
               <div className="divide-y divide-border">
-                {records.map((record: PatientFullRecord, i: number) => {
+                {records.map((record, i) => {
                   const p = record.patient;
-                  const isExpanded = expandedIds.has(p.patientId);
+                  const isExpanded = expandedIds.has(p.patient_id);
                   return (
                     <div
-                      key={p.patientId}
+                      key={p.patient_id}
                       data-ocid={`dashboard.item.${i + 1}`}
                     >
                       {/* Row */}
                       <button
                         type="button"
                         className="w-full grid grid-cols-[2fr_1.2fr_0.7fr_0.8fr_1.5fr_0.8fr_2rem] gap-3 px-5 py-4 hover:bg-muted/20 transition-colors text-left items-center"
-                        onClick={() => toggleExpand(p.patientId)}
+                        onClick={() => toggleExpand(p.patient_id)}
                         data-ocid={`dashboard.item.${i + 1}.toggle`}
                       >
                         <span className="font-medium text-foreground text-sm truncate">
-                          {p.name}
+                          {p.full_name}
                         </span>
                         <span className="font-mono text-xs text-muted-foreground truncate">
-                          {p.patientId}
+                          {p.patient_id}
                         </span>
                         <span className="text-sm text-foreground tabular-nums">
                           {Number(p.age) > 0 ? Number(p.age) : "—"}
@@ -577,10 +579,10 @@ function DoctorDashboardStep({
                           {p.gender}
                         </span>
                         <span className="text-sm text-muted-foreground truncate">
-                          {p.highestEducation}
+                          {p.highest_education}
                         </span>
                         <span className="text-sm text-foreground text-right tabular-nums">
-                          {record.sessions.length}
+                          {record.results.length}
                         </span>
                         {isExpanded ? (
                           <ChevronUp className="w-4 h-4 text-muted-foreground" />
@@ -603,7 +605,7 @@ function DoctorDashboardStep({
                                   Full Name
                                 </span>
                                 <p className="font-medium text-foreground">
-                                  {p.name}
+                                  {p.full_name}
                                 </p>
                               </div>
                               <div>
@@ -611,7 +613,7 @@ function DoctorDashboardStep({
                                   Patient ID
                                 </span>
                                 <p className="font-mono text-foreground">
-                                  {p.patientId}
+                                  {p.patient_id}
                                 </p>
                               </div>
                               <div>
@@ -635,7 +637,7 @@ function DoctorDashboardStep({
                                   Education
                                 </span>
                                 <p className="font-medium text-foreground">
-                                  {p.highestEducation || "—"}
+                                  {p.highest_education || "—"}
                                 </p>
                               </div>
                               <div>
@@ -643,7 +645,7 @@ function DoctorDashboardStep({
                                   Doctor
                                 </span>
                                 <p className="font-medium text-foreground">
-                                  {p.doctorName}
+                                  {p.doctor_name}
                                 </p>
                               </div>
                               <div>
@@ -660,9 +662,9 @@ function DoctorDashboardStep({
                           {/* Sessions */}
                           <div>
                             <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">
-                              Test Sessions ({record.sessions.length})
+                              Test Sessions ({record.results.length})
                             </h3>
-                            {record.sessions.length === 0 ? (
+                            {record.results.length === 0 ? (
                               <p
                                 className="text-sm text-muted-foreground italic"
                                 data-ocid={`dashboard.item.${i + 1}.empty_state`}
@@ -670,168 +672,103 @@ function DoctorDashboardStep({
                                 No test sessions recorded yet.
                               </p>
                             ) : (
-                              <div className="space-y-3">
-                                {record.sessions.map(
-                                  (session: TestSession, si: number) => (
-                                    <div
-                                      key={`${session.patientId}-${si}`}
-                                      className="rounded-lg border border-border bg-card p-4"
-                                      data-ocid={`dashboard.item.${i + 1}.session.${si + 1}`}
-                                    >
-                                      <div className="flex items-center justify-between mb-3">
-                                        <div className="flex items-center gap-2">
-                                          <Clock className="w-4 h-4 text-muted-foreground" />
-                                          <span className="text-xs font-semibold text-muted-foreground">
-                                            {formatDateTime(session.startTime)}
-                                          </span>
-                                        </div>
-                                        <span className="text-xs bg-muted/50 text-muted-foreground rounded-full px-2 py-0.5">
-                                          {LANG_LABELS_FULL[
-                                            session.languageSelected
-                                          ] ?? session.languageSelected}
+                              <div className="space-y-4">
+                                {record.results.map((session, si) => (
+                                  <div
+                                    key={session.id}
+                                    className="rounded-lg border border-border bg-card p-4 shadow-sm"
+                                    data-ocid={`dashboard.item.${i + 1}.session.${si + 1}`}
+                                  >
+                                    <div className="flex items-center justify-between mb-3 border-b border-border pb-3">
+                                      <div className="flex items-center gap-2">
+                                        <Clock className="w-4 h-4 text-muted-foreground" />
+                                        <span className="text-sm font-semibold text-foreground">
+                                          {formatDateTime(session.created_at)}
                                         </span>
                                       </div>
+                                      {classificationBadge(session.classification)}
+                                    </div>
 
-                                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                        {/* Practice Trial */}
-                                        {session.trialResult && (
-                                          <div className="rounded-lg bg-muted/30 border border-border p-3">
-                                            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-2">
-                                              Practice Trial
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                      {/* Scores */}
+                                      <div>
+                                        <div className="grid grid-cols-2 gap-y-4 gap-x-2">
+                                          <div>
+                                            <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wider font-semibold">Correct Strikes</p>
+                                            <p className="text-2xl font-bold text-green-700 tabular-nums">
+                                              {session.correct_strikes}
                                             </p>
-                                            <div className="grid grid-cols-2 gap-1 text-xs">
-                                              <span className="text-muted-foreground">
-                                                Total Targets
-                                              </span>
-                                              <span className="font-mono tabular-nums text-right">
-                                                {Number(
-                                                  session.trialResult
-                                                    .totalTargets,
-                                                )}
-                                              </span>
-                                              <span className="text-muted-foreground">
-                                                Correct Strikes
-                                              </span>
-                                              <span className="font-mono tabular-nums text-right text-green-700">
-                                                {Number(
-                                                  session.trialResult
-                                                    .correctStrikes,
-                                                )}
-                                              </span>
-                                              <span className="text-muted-foreground">
-                                                Omissions
-                                              </span>
-                                              <span className="font-mono tabular-nums text-right text-amber-700">
-                                                {Number(
-                                                  session.trialResult.omissions,
-                                                )}
-                                              </span>
-                                              <span className="text-muted-foreground">
-                                                Commissions
-                                              </span>
-                                              <span className="font-mono tabular-nums text-right text-red-700">
-                                                {Number(
-                                                  session.trialResult
-                                                    .commissions,
-                                                )}
-                                              </span>
-                                            </div>
                                           </div>
-                                        )}
+                                          <div>
+                                            <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wider font-semibold">Time Taken</p>
+                                            <p className="text-2xl font-bold text-foreground tabular-nums">
+                                              {formatTime(session.elapsed_seconds)}
+                                            </p>
+                                          </div>
+                                          <div>
+                                            <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wider font-semibold">Omissions</p>
+                                            <p className="text-2xl font-bold text-amber-700 tabular-nums">
+                                              {session.omissions}
+                                            </p>
+                                          </div>
+                                          <div>
+                                            <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wider font-semibold">Commissions</p>
+                                            <p className="text-2xl font-bold text-red-700 tabular-nums">
+                                              {session.commissions}
+                                            </p>
+                                          </div>
+                                        </div>
+                                      </div>
 
-                                        {/* Real Test */}
-                                        {session.testResult && (
-                                          <div className="rounded-lg bg-muted/30 border border-border p-3">
-                                            <div className="flex items-center justify-between mb-2">
-                                              <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-                                                Real Test
-                                              </p>
-                                              {classificationBadge(
-                                                session.testResult
-                                                  .classification,
-                                              )}
+                                      {/* Attachments */}
+                                      <div className="bg-muted/30 rounded-lg p-3 border border-border">
+                                        <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">
+                                          Report Attachments
+                                        </p>
+                                        
+                                        <div className="space-y-3">
+                                          {session.screenshot_url ? (
+                                            <div className="rounded overflow-hidden border border-border shadow-sm group relative">
+                                              <img 
+                                                src={session.screenshot_url} 
+                                                alt="Result screenshot" 
+                                                className="w-full h-auto object-cover max-h-32"
+                                              />
+                                              <a 
+                                                href={session.screenshot_url} 
+                                                target="_blank" 
+                                                rel="noreferrer"
+                                                className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-sm font-medium"
+                                              >
+                                                View Image
+                                              </a>
                                             </div>
-                                            <div className="text-xs text-muted-foreground mt-1">
-                                              Age group norm:{" "}
-                                              {
-                                                classifyScore(
-                                                  Number(
-                                                    session.testResult
-                                                      .correctStrikes,
-                                                  ),
-                                                  Number(p.age) || 0,
-                                                ).mean
-                                              }{" "}
-                                              correct
+                                          ) : (
+                                            <div className="h-12 bg-muted/50 rounded flex items-center justify-center text-xs text-muted-foreground border border-dashed border-border">
+                                              No image captured
                                             </div>
-                                            <div className="grid grid-cols-2 gap-1 text-xs">
-                                              <span className="text-muted-foreground">
-                                                Total Targets
-                                              </span>
-                                              <span className="font-mono tabular-nums text-right">
-                                                {Number(
-                                                  session.testResult
-                                                    .totalTargets,
-                                                )}
-                                              </span>
-                                              <span className="text-muted-foreground">
-                                                Correct Strikes
-                                              </span>
-                                              <span className="font-mono tabular-nums text-right text-green-700">
-                                                {Number(
-                                                  session.testResult
-                                                    .correctStrikes,
-                                                )}
-                                              </span>
-                                              <span className="text-muted-foreground">
-                                                Omissions
-                                              </span>
-                                              <span className="font-mono tabular-nums text-right text-amber-700">
-                                                {Number(
-                                                  session.testResult.omissions,
-                                                )}
-                                              </span>
-                                              <span className="text-muted-foreground">
-                                                Commissions
-                                              </span>
-                                              <span className="font-mono tabular-nums text-right text-red-700">
-                                                {Number(
-                                                  session.testResult
-                                                    .commissions,
-                                                )}
-                                              </span>
-                                              <span className="text-muted-foreground">
-                                                Time Taken
-                                              </span>
-                                              <span className="font-mono tabular-nums text-right">
-                                                {formatTime(
-                                                  Number(
-                                                    session.testResult
-                                                      .elapsedSeconds,
-                                                  ),
-                                                )}
-                                              </span>
-                                            </div>
-                                            <GridSnapshotView
-                                              snapshotKey={`dlct_snapshot_${p.patientId}_${String(session.startTime)}`}
-                                              gridSnapshot={
-                                                session.gridSnapshot
-                                                  ? {
-                                                      rows: session.gridSnapshot
-                                                        .rows,
-                                                      markedIds:
-                                                        session.gridSnapshot
-                                                          .markedIds,
-                                                    }
-                                                  : undefined
-                                              }
-                                            />
-                                          </div>
-                                        )}
+                                          )}
+
+                                          {session.pdf_report_url ? (
+                                            <a
+                                              href={session.pdf_report_url}
+                                              target="_blank"
+                                              rel="noreferrer"
+                                              className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground py-2 px-4 rounded-md text-sm font-semibold hover:opacity-90 transition-opacity"
+                                            >
+                                              <Download className="w-4 h-4" />
+                                              Download PDF Report
+                                            </a>
+                                          ) : (
+                                            <button disabled className="w-full flex items-center justify-center gap-2 bg-muted text-muted-foreground py-2 px-4 rounded-md text-sm font-semibold cursor-not-allowed">
+                                              PDF processing...
+                                            </button>
+                                          )}
+                                        </div>
                                       </div>
                                     </div>
-                                  ),
-                                )}
+                                  </div>
+                                ))}
                               </div>
                             )}
                           </div>
@@ -846,8 +783,7 @@ function DoctorDashboardStep({
         </div>
 
         <p className="text-xs text-muted-foreground mt-4 text-center">
-          Classification based on Digit Symbol norms by age group. Click a row
-          to expand patient details.
+          Dashboard auto-updates in real-time when new tests are completed.
         </p>
       </main>
 
@@ -2079,44 +2015,257 @@ function TestStep({
   );
 }
 
-// ─── Step 7: Thank You ────────────────────────────────────────────────────────
-function ThankYouStep({ onNewTest }: { onNewTest: () => void }) {
+// ─── Step 7: Result Page (replaces ThankYou) ─────────────────────────────────
+interface ResultStepProps {
+  onNewTest: () => void;
+  patient: PatientDetails;
+  testData: {
+    correctStrikes: number;
+    omissions: number;
+    commissions: number;
+    elapsedSeconds: number;
+    classification: string;
+  };
+  supabaseRowId: string | null;
+}
+
+const STATUS_LABELS: Record<CaptureStatus, string> = {
+  idle: "Preparing report…",
+  capturing: "Capturing screenshot…",
+  "generating-pdf": "Generating PDF…",
+  uploading: "Uploading report…",
+  saving: "Saving to database…",
+  done: "Report saved successfully!",
+  error: "Report generation failed",
+};
+
+function ResultStep({ onNewTest, patient, testData, supabaseRowId }: ResultStepProps) {
+  const { resultRef, captureAndUpload, status, error, pdfUrl, imageUrl } =
+    useReportCapture();
+  const hasStarted = useRef(false);
+
+  const age = Number.parseInt(patient.age, 10);
+  const { label: classification, mean: normMean } = classifyScore(
+    testData.correctStrikes,
+    age,
+  );
+
+  // Auto-trigger capture once on mount
+  useEffect(() => {
+    if (hasStarted.current) return;
+    if (!supabaseRowId) return;
+    hasStarted.current = true;
+
+    // Small delay to let the result card fully render
+    const timer = setTimeout(() => {
+      captureAndUpload(patient.patientId, supabaseRowId);
+    }, 800);
+    return () => clearTimeout(timer);
+  }, [supabaseRowId, captureAndUpload, patient.patientId]);
+
+  const formatTime = (s: number) => {
+    const m = Math.floor(s / 60).toString().padStart(2, "0");
+    const sec = (s % 60).toString().padStart(2, "0");
+    return `${m}:${sec}`;
+  };
+
+  const classIcon =
+    classification === "Above Average" ? (
+      <TrendingUp className="w-5 h-5 text-green-600" />
+    ) : classification === "Average" ? (
+      <Minus className="w-5 h-5 text-amber-600" />
+    ) : (
+      <TrendingDown className="w-5 h-5 text-red-600" />
+    );
+
+  const classBg =
+    classification === "Above Average"
+      ? "bg-green-50 border-green-300 text-green-800"
+      : classification === "Average"
+        ? "bg-amber-50 border-amber-300 text-amber-800"
+        : "bg-red-50 border-red-300 text-red-800";
+
   return (
-    <div
-      className="min-h-screen bg-background flex items-center justify-center px-4"
-      data-ocid="thankyou.page"
-    >
-      <div className="text-center max-w-md">
-        <div className="mb-6">
+    <div className="min-h-screen bg-background flex items-start justify-center py-10 px-4">
+      <div className="w-full max-w-2xl">
+        {/* Success header */}
+        <div className="text-center mb-8">
           <CheckCircle2 className="w-16 h-16 text-primary mx-auto mb-4" />
-          <h1 className="text-3xl font-bold text-foreground mb-3 font-display">
-            Thank you for taking the test.
+          <h1 className="text-3xl font-bold text-foreground mb-2">
+            Test Complete
           </h1>
-          <p className="text-muted-foreground text-base">
-            The session has been completed. You may start a new test whenever
-            you are ready.
+          <p className="text-muted-foreground">
+            Here are the assessment results for this session.
           </p>
         </div>
-        <Button
-          type="button"
-          data-ocid="thankyou.primary_button"
-          onClick={onNewTest}
-          size="lg"
-          className="h-12 px-8 text-base font-semibold"
-        >
-          <RotateCcw className="w-4 h-4 mr-2" />
-          Start New Test
-        </Button>
-        <p className="text-center text-xs text-muted-foreground mt-10">
-          © {new Date().getFullYear()}. Built with love using{" "}
-          <a
-            href={`https://caffeine.ai?utm_source=caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(window.location.hostname)}`}
-            className="underline hover:text-foreground transition-colors"
-            target="_blank"
-            rel="noreferrer"
+
+        {/* ── Result Card (captured as PDF) ── */}
+        <div ref={resultRef} data-report-capture>
+          <Card className="shadow-lg border-border mb-6">
+            <CardHeader className="pb-3 border-b border-border">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <FileText className="w-5 h-5 text-primary" />
+                  <CardTitle className="text-lg font-bold">
+                    Assessment Report
+                  </CardTitle>
+                </div>
+                <span className="text-xs text-muted-foreground">
+                  {new Date().toLocaleDateString("en-IN", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                  })}
+                </span>
+              </div>
+            </CardHeader>
+            <CardContent className="p-6 space-y-6">
+              {/* Patient Info */}
+              <div>
+                <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">
+                  Patient Information
+                </h3>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-3 text-sm">
+                  <div>
+                    <span className="text-muted-foreground text-xs">Full Name</span>
+                    <p className="font-semibold text-foreground">{patient.name}</p>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground text-xs">Patient ID</span>
+                    <p className="font-mono font-semibold text-foreground">
+                      {patient.patientId}
+                    </p>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground text-xs">Age</span>
+                    <p className="font-semibold text-foreground">{patient.age}</p>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground text-xs">Gender</span>
+                    <p className="font-semibold text-foreground">{patient.gender}</p>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground text-xs">Education</span>
+                    <p className="font-semibold text-foreground">
+                      {patient.highestEducation}
+                    </p>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground text-xs">Doctor</span>
+                    <p className="font-semibold text-foreground">
+                      {patient.doctorName}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* Test Scores */}
+              <div>
+                <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">
+                  Test Results
+                </h3>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                  <div className="bg-muted/30 rounded-xl p-4 text-center">
+                    <p className="text-2xl font-bold text-green-700 tabular-nums">
+                      {testData.correctStrikes}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">Correct</p>
+                  </div>
+                  <div className="bg-muted/30 rounded-xl p-4 text-center">
+                    <p className="text-2xl font-bold text-amber-700 tabular-nums">
+                      {testData.omissions}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">Omissions</p>
+                  </div>
+                  <div className="bg-muted/30 rounded-xl p-4 text-center">
+                    <p className="text-2xl font-bold text-red-700 tabular-nums">
+                      {testData.commissions}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">Commissions</p>
+                  </div>
+                  <div className="bg-muted/30 rounded-xl p-4 text-center">
+                    <p className="text-2xl font-bold text-foreground tabular-nums">
+                      {formatTime(testData.elapsedSeconds)}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">Time</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Classification */}
+              <div
+                className={`flex items-center gap-3 rounded-xl border-2 px-5 py-4 ${classBg}`}
+              >
+                {classIcon}
+                <div>
+                  <p className="text-sm font-bold">{classification}</p>
+                  <p className="text-xs opacity-80">
+                    Age group norm: {normMean} correct (age {patient.age})
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* ── PDF Generation Status ── */}
+        <div className="bg-card border border-border rounded-xl px-5 py-4 mb-6">
+          <div className="flex items-center gap-3">
+            {status === "done" ? (
+              <CheckCircle2 className="w-5 h-5 text-green-600 shrink-0" />
+            ) : status === "error" ? (
+              <AlertTriangle className="w-5 h-5 text-red-600 shrink-0" />
+            ) : (
+              <Loader2 className="w-5 h-5 text-primary animate-spin shrink-0" />
+            )}
+            <div className="flex-1">
+              <p
+                className={`text-sm font-semibold ${
+                  status === "done"
+                    ? "text-green-700"
+                    : status === "error"
+                      ? "text-red-700"
+                      : "text-foreground"
+                }`}
+              >
+                {STATUS_LABELS[status]}
+              </p>
+              {error && (
+                <p className="text-xs text-red-600 mt-1">{error}</p>
+              )}
+            </div>
+            {status === "done" && pdfUrl && (
+              <a
+                href={pdfUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity"
+              >
+                <Download className="w-4 h-4" />
+                Download PDF
+              </a>
+            )}
+          </div>
+        </div>
+
+        {/* ── Actions ── */}
+        <div className="flex gap-3">
+          <Button
+            type="button"
+            data-ocid="result.primary_button"
+            onClick={onNewTest}
+            size="lg"
+            className="flex-1 h-12 text-base font-semibold"
           >
-            caffeine.ai
-          </a>
+            <RotateCcw className="w-4 h-4 mr-2" />
+            Start New Test
+          </Button>
+        </div>
+
+        <p className="text-center text-xs text-muted-foreground mt-8">
+          © {new Date().getFullYear()}.
         </p>
       </div>
     </div>
@@ -2137,7 +2286,7 @@ type AppStep =
   | "trial"
   | "ready"
   | "test"
-  | "thankyou";
+  | "result";
 
 export default function App() {
   const [step, setStep] = useState<AppStep>("landing");
@@ -2145,6 +2294,14 @@ export default function App() {
   const [language, setLanguage] = useState<Language>("en");
   const [loggedDoctorName, setLoggedDoctorName] = useState("");
   const [trialResult, setTrialResult] = useState<TrialResult | null>(null);
+  const [supabaseRowId, setSupabaseRowId] = useState<string | null>(null);
+  const [testResultData, setTestResultData] = useState<{
+    correctStrikes: number;
+    omissions: number;
+    commissions: number;
+    elapsedSeconds: number;
+    classification: string;
+  } | null>(null);
   const saveTestSession = useSaveTestSession();
 
   const handleDoctorLoginForDashboard = (name: string) => {
@@ -2223,8 +2380,51 @@ export default function App() {
         },
       };
       saveTestSession.mutate(session);
+
+      // Store test result data for the result page
+      setTestResultData({
+        correctStrikes,
+        omissions,
+        commissions,
+        elapsedSeconds: elapsed,
+        classification,
+      });
+
+      // Save to Supabase (async, non-blocking)
+      const patientData: SupabasePatientData = {
+        patient_id: patient.patientId,
+        doctor_name: patient.doctorName,
+        full_name: patient.name,
+        age: Number.parseInt(patient.age, 10),
+        gender: patient.gender,
+        highest_education: patient.highestEducation,
+        language,
+      };
+
+      savePatientToSupabase(patientData)
+        .then((patientDbId) => {
+          // Once patient is saved/upserted, save the test result
+          const resultData: SupabaseTestResultData = {
+            patient_id: patientDbId,
+            correct_strikes: correctStrikes,
+            omissions: omissions,
+            commissions: commissions,
+            elapsed_seconds: elapsed,
+            classification: classification,
+          };
+          return saveTestResultToSupabase(resultData);
+        })
+        .then((testResultId) => {
+          // Pass the test result row ID to the ResultStep for file URL updates
+          setSupabaseRowId(testResultId);
+        })
+        .catch((err) => {
+          console.error("Supabase save failed:", err);
+          // Still show results even if Supabase fails
+          setSupabaseRowId(null);
+        });
     }
-    setStep("thankyou");
+    setStep("result");
   };
 
   const handleNewTest = () => {
@@ -2233,6 +2433,8 @@ export default function App() {
     setLanguage("en");
     setLoggedDoctorName("");
     setTrialResult(null);
+    setSupabaseRowId(null);
+    setTestResultData(null);
   };
 
   if (step === "landing")
@@ -2278,7 +2480,15 @@ export default function App() {
     return <TrialStep language={language} onNext={handleTrialComplete} />;
   if (step === "ready") return <ReadyStep onStart={() => setStep("test")} />;
   if (step === "test") return <TestStep onStop={handleStop} />;
-  if (step === "thankyou") return <ThankYouStep onNewTest={handleNewTest} />;
+  if (step === "result" && patient && testResultData)
+    return (
+      <ResultStep
+        onNewTest={handleNewTest}
+        patient={patient}
+        testData={testResultData}
+        supabaseRowId={supabaseRowId}
+      />
+    );
 
   return null;
 }

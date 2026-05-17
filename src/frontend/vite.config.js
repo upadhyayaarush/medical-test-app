@@ -42,6 +42,7 @@ export default defineConfig({
     environment("all", { prefix: "DFX_" }),
     environment(["II_URL"]),
     environment(["STORAGE_GATEWAY_URL"]),
+    environment("all", { prefix: "VITE_SUPABASE_" }),
     react(),
   ],
   resolve: {
