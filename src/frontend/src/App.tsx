@@ -2092,15 +2092,23 @@ function ResultStep({ onNewTest, patient, testData, supabaseRowId }: ResultStepP
         <div className="text-center mb-8">
           <CheckCircle2 className="w-16 h-16 text-primary mx-auto mb-4" />
           <h1 className="text-3xl font-bold text-foreground mb-2">
-            Test Complete
+            Assessment Complete
           </h1>
-          <p className="text-muted-foreground">
-            Here are the assessment results for this session.
+          <p className="text-muted-foreground text-lg mt-4">
+            Thank you for completing the test. Your results have been securely transmitted.
+          </p>
+          <p className="text-muted-foreground mt-2">
+            Your assessment has been submitted to Dr. {patient.doctorName}.
           </p>
         </div>
 
-        {/* ── Result Card (captured as PDF) ── */}
-        <div ref={resultRef} data-report-capture>
+        {/* ── Hidden Result Card (captured as PDF) ── */}
+        <div 
+          ref={resultRef} 
+          data-report-capture
+          className="bg-background text-foreground"
+          style={{ position: "absolute", left: "-9999px", top: "-9999px", width: "800px" }}
+        >
           <Card className="shadow-lg border-border mb-6">
             <CardHeader className="pb-3 border-b border-border">
               <div className="flex items-center justify-between">
@@ -2236,17 +2244,7 @@ function ResultStep({ onNewTest, patient, testData, supabaseRowId }: ResultStepP
                 <p className="text-xs text-red-600 mt-1">{error}</p>
               )}
             </div>
-            {status === "done" && pdfUrl && (
-              <a
-                href={pdfUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity"
-              >
-                <Download className="w-4 h-4" />
-                Download PDF
-              </a>
-            )}
+            {/* Download PDF button is removed from patient view */}
           </div>
         </div>
 
