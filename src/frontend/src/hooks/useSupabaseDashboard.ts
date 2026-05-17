@@ -57,7 +57,7 @@ export function useSupabaseDashboard(doctorName: string) {
       const { data: patients, error: patientsError } = await supabase
         .from("patients")
         .select("*")
-        .eq("doctor_name", doctorName)
+        .ilike("doctor_name", `%${doctorName.trim()}%`)
         .order("created_at", { ascending: false });
 
       if (patientsError) throw patientsError;
