@@ -23,6 +23,14 @@ export interface SupabaseTestResultRecord {
   classification: string;
   pdf_report_url: string | null;
   screenshot_url: string | null;
+  
+  trial_total_targets: number | null;
+  trial_correct_strikes: number | null;
+  trial_omissions: number | null;
+  trial_commissions: number | null;
+  total_targets: number;
+  grid_snapshot: any | null;
+  
   created_at: string;
 }
 

@@ -157,35 +157,48 @@ function classifyScore(
 function GridSnapshotView({
   snapshotKey,
   gridSnapshot,
+  isLarge = false,
 }: {
   snapshotKey: string;
-  gridSnapshot?: { rows: string[][]; markedIds: string[] };
+  gridSnapshot?: any;
+  isLarge?: boolean;
 }) {
   // Prefer canister-stored snapshot; fall back to localStorage
   let rows: string[][] | null = null;
   let markedSet: Set<string> = new Set();
 
-  if (
-    gridSnapshot &&
-    Array.isArray(gridSnapshot.rows) &&
-    gridSnapshot.rows.length > 0
-  ) {
-    rows = gridSnapshot.rows;
-    markedSet = new Set(gridSnapshot.markedIds);
-  } else {
-    const raw = localStorage.getItem(snapshotKey);
-    if (raw) {
-      try {
-        const data = JSON.parse(raw) as { rows: string[][]; marked: string[] };
-        rows = data.rows;
-        markedSet = new Set(data.marked);
-      } catch {
-        /* ignore */
-      }
+  let parsedGrid = gridSnapshot;
+  if (typeof parsedGrid === "string") {
+    try {
+      parsedGrid = JSON.parse(parsedGrid);
+    } catch (e) {
+      console.error("Failed to parse gridSnapshot string", e);
     }
   }
 
-  if (!rows) {
+  if (
+    parsedGrid &&
+    Array.isArray(parsedGrid.rows) &&
+    parsedGrid.rows.length > 0
+  ) {
+    rows = parsedGrid.rows;
+    markedSet = new Set(Array.isArray(parsedGrid.markedIds) ? parsedGrid.markedIds : []);
+  } else {
+    try {
+      const raw = localStorage.getItem(snapshotKey);
+      if (raw) {
+        const data = JSON.parse(raw);
+        if (data && Array.isArray(data.rows)) {
+          rows = data.rows;
+          markedSet = new Set(Array.isArray(data.marked) ? data.marked : []);
+        }
+      }
+    } catch (e) {
+      console.error("Failed to parse gridSnapshot from localStorage", e);
+    }
+  }
+
+  if (!rows || !Array.isArray(rows) || rows.length === 0) {
     return (
       <div className="text-xs text-muted-foreground italic py-2">
         No test sheet available for this session.
@@ -194,24 +207,24 @@ function GridSnapshotView({
   }
 
   return (
-    <div className="border border-border rounded-lg bg-muted/20 p-3 mt-3">
-      <div className="text-xs font-semibold text-foreground mb-1 uppercase tracking-wide">
+    <div className={`border border-border rounded-lg bg-muted/20 ${isLarge ? "p-6 mt-6" : "p-3 mt-3"}`}>
+      <div className={`${isLarge ? "text-base" : "text-xs"} font-semibold text-foreground mb-1 uppercase tracking-wide`}>
         Test Sheet Snapshot
       </div>
-      <div className="text-[10px] italic text-muted-foreground mb-2 font-serif">
+      <div className={`${isLarge ? "text-sm" : "text-[10px]"} italic text-muted-foreground mb-4 font-serif`}>
         Strike only C and E
       </div>
-      <div className="space-y-[2px]">
+      <div className={`${isLarge ? "space-y-[4px]" : "space-y-[2px]"}`}>
         {rows.map((row, ri) => (
           // biome-ignore lint/suspicious/noArrayIndexKey: static grid rows, order never changes
-          <div key={ri} className="flex flex-wrap gap-[1px]">
-            {row.map((letter, ci) => {
+          <div key={`row-${ri}`} className={`flex flex-wrap ${isLarge ? "gap-[2px]" : "gap-[1px]"}`}>
+            {Array.isArray(row) ? row.map((letter, ci) => {
               const isMarked = markedSet.has(`${ri}-${ci}`);
               return (
                 <span
                   // biome-ignore lint/suspicious/noArrayIndexKey: static letter positions, order never changes
-                  key={ci}
-                  className={`text-[7px] font-mono leading-none px-[1px] ${
+                  key={`cell-${ri}-${ci}`}
+                  className={`${isLarge ? "text-[11px] px-[1px]" : "text-[7px] px-[1px]"} font-mono leading-none ${
                     isMarked
                       ? "line-through text-red-600 font-bold"
                       : "text-foreground/70"
@@ -220,7 +233,7 @@ function GridSnapshotView({
                   {letter}
                 </span>
               );
-            })}
+            }) : null}
           </div>
         ))}
       </div>
@@ -686,86 +699,123 @@ function DoctorDashboardStep({
                                           {formatDateTime(session.created_at)}
                                         </span>
                                       </div>
-                                      {classificationBadge(session.classification)}
                                     </div>
 
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                      {/* Scores */}
-                                      <div>
-                                        <div className="grid grid-cols-2 gap-y-4 gap-x-2">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                      {/* Practice Trial */}
+                                      {session.trial_total_targets !== null && session.trial_total_targets !== undefined && (
+                                        <div className="rounded-lg bg-muted/30 border border-border p-3 flex flex-col justify-between">
                                           <div>
-                                            <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wider font-semibold">Correct Strikes</p>
-                                            <p className="text-2xl font-bold text-green-700 tabular-nums">
-                                              {session.correct_strikes}
+                                            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-2">
+                                              Practice Trial
                                             </p>
-                                          </div>
-                                          <div>
-                                            <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wider font-semibold">Time Taken</p>
-                                            <p className="text-2xl font-bold text-foreground tabular-nums">
-                                              {formatTime(session.elapsed_seconds)}
-                                            </p>
-                                          </div>
-                                          <div>
-                                            <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wider font-semibold">Omissions</p>
-                                            <p className="text-2xl font-bold text-amber-700 tabular-nums">
-                                              {session.omissions}
-                                            </p>
-                                          </div>
-                                          <div>
-                                            <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wider font-semibold">Commissions</p>
-                                            <p className="text-2xl font-bold text-red-700 tabular-nums">
-                                              {session.commissions}
-                                            </p>
+                                            <div className="grid grid-cols-2 gap-1 text-xs">
+                                              <span className="text-muted-foreground">
+                                                Total Targets
+                                              </span>
+                                              <span className="font-mono tabular-nums text-right">
+                                                {session.trial_total_targets}
+                                              </span>
+                                              <span className="text-muted-foreground">
+                                                Correct Strikes
+                                              </span>
+                                              <span className="font-mono tabular-nums text-right text-green-700">
+                                                {session.trial_correct_strikes}
+                                              </span>
+                                              <span className="text-muted-foreground">
+                                                Omissions
+                                              </span>
+                                              <span className="font-mono tabular-nums text-right text-amber-700">
+                                                {session.trial_omissions}
+                                              </span>
+                                              <span className="text-muted-foreground">
+                                                Commissions
+                                              </span>
+                                              <span className="font-mono tabular-nums text-right text-red-700">
+                                                {session.trial_commissions}
+                                              </span>
+                                            </div>
                                           </div>
                                         </div>
-                                      </div>
+                                      )}
 
-                                      {/* Attachments */}
-                                      <div className="bg-muted/30 rounded-lg p-3 border border-border">
-                                        <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">
-                                          Report Attachments
-                                        </p>
+                                      {/* Real Test */}
+                                      <div className="rounded-lg bg-muted/30 border border-border p-3">
+                                        <div className="flex items-center justify-between mb-2">
+                                          <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                                            Real Test
+                                          </p>
+                                          {classificationBadge(session.classification)}
+                                        </div>
+                                        <div className="text-xs text-muted-foreground mt-1 mb-2">
+                                          Age group norm:{" "}
+                                          {
+                                            classifyScore(
+                                              Number(session.correct_strikes),
+                                              Number(p.age) || 0,
+                                            ).mean
+                                          }{" "}
+                                          correct
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-1 text-xs mb-3">
+                                          <span className="text-muted-foreground">
+                                            Total Targets
+                                          </span>
+                                          <span className="font-mono tabular-nums text-right">
+                                            {session.total_targets || 105}
+                                          </span>
+                                          <span className="text-muted-foreground">
+                                            Correct Strikes
+                                          </span>
+                                          <span className="font-mono tabular-nums text-right text-green-700">
+                                            {session.correct_strikes}
+                                          </span>
+                                          <span className="text-muted-foreground">
+                                            Omissions
+                                          </span>
+                                          <span className="font-mono tabular-nums text-right text-amber-700">
+                                            {session.omissions}
+                                          </span>
+                                          <span className="text-muted-foreground">
+                                            Commissions
+                                          </span>
+                                          <span className="font-mono tabular-nums text-right text-red-700">
+                                            {session.commissions}
+                                          </span>
+                                          <span className="text-muted-foreground">
+                                            Time Taken
+                                          </span>
+                                          <span className="font-mono tabular-nums text-right">
+                                            {formatTime(session.elapsed_seconds)}
+                                          </span>
+                                        </div>
                                         
-                                        <div className="space-y-3">
-                                          {session.screenshot_url ? (
-                                            <div className="rounded overflow-hidden border border-border shadow-sm group relative">
-                                              <img 
-                                                src={session.screenshot_url} 
-                                                alt="Result screenshot" 
-                                                className="w-full h-auto object-cover max-h-32"
-                                              />
-                                              <a 
-                                                href={session.screenshot_url} 
-                                                target="_blank" 
-                                                rel="noreferrer"
-                                                className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-sm font-medium"
-                                              >
-                                                View Image
-                                              </a>
-                                            </div>
-                                          ) : (
-                                            <div className="h-12 bg-muted/50 rounded flex items-center justify-center text-xs text-muted-foreground border border-dashed border-border">
-                                              No image captured
-                                            </div>
-                                          )}
-
-                                          {session.pdf_report_url ? (
-                                            <a
-                                              href={session.pdf_report_url}
-                                              target="_blank"
-                                              rel="noreferrer"
-                                              className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground py-2 px-4 rounded-md text-sm font-semibold hover:opacity-90 transition-opacity"
-                                            >
-                                              <Download className="w-4 h-4" />
-                                              Download PDF Report
-                                            </a>
-                                          ) : (
-                                            <button disabled className="w-full flex items-center justify-center gap-2 bg-muted text-muted-foreground py-2 px-4 rounded-md text-sm font-semibold cursor-not-allowed">
-                                              PDF processing...
-                                            </button>
-                                          )}
-                                        </div>
+                                        {session.grid_snapshot && (
+                                          <GridSnapshotView
+                                            snapshotKey={`dlct_snapshot_${p.patient_id}_${String(session.created_at)}`}
+                                            gridSnapshot={session.grid_snapshot}
+                                          />
+                                        )}
                                       </div>
+                                    </div>
+                                    
+                                    {/* PDF Download Button below the two columns */}
+                                    <div className="mt-4 pt-4 border-t border-border flex justify-end">
+                                      {session.pdf_report_url ? (
+                                        <a
+                                          href={session.pdf_report_url}
+                                          target="_blank"
+                                          rel="noreferrer"
+                                          className="inline-flex items-center gap-2 bg-primary text-primary-foreground py-2 px-6 rounded-md text-sm font-semibold hover:opacity-90 transition-opacity"
+                                        >
+                                          <Download className="w-4 h-4" />
+                                          Download PDF Report
+                                        </a>
+                                      ) : (
+                                        <button disabled className="inline-flex items-center gap-2 bg-muted text-muted-foreground py-2 px-6 rounded-md text-sm font-semibold cursor-not-allowed">
+                                          PDF processing...
+                                        </button>
+                                      )}
                                     </div>
                                   </div>
                                 ))}
@@ -2025,6 +2075,8 @@ interface ResultStepProps {
     commissions: number;
     elapsedSeconds: number;
     classification: string;
+    trialResult?: TrialResult;
+    gridSnapshot?: { rows: string[][]; markedIds: string[] };
   };
   supabaseRowId: string | null;
 }
@@ -2103,12 +2155,13 @@ function ResultStep({ onNewTest, patient, testData, supabaseRowId }: ResultStepP
         </div>
 
         {/* ── Hidden Result Card (captured as PDF) ── */}
-        <div 
-          ref={resultRef} 
-          data-report-capture
-          className="bg-background text-foreground"
-          style={{ position: "absolute", left: "-9999px", top: "-9999px", width: "800px" }}
-        >
+        <div style={{ position: "absolute", left: "-9999px", top: "-9999px" }}>
+          <div 
+            ref={resultRef} 
+            data-report-capture
+            className="bg-background text-foreground"
+            style={{ width: "800px", padding: "20px" }}
+          >
           <Card className="shadow-lg border-border mb-6">
             <CardHeader className="pb-3 border-b border-border">
               <div className="flex items-center justify-between">
@@ -2214,8 +2267,57 @@ function ResultStep({ onNewTest, patient, testData, supabaseRowId }: ResultStepP
                   </p>
                 </div>
               </div>
+
+              {/* Practice Trial (for PDF) */}
+              {testData.trialResult && (
+                <>
+                  <Separator />
+                  <div>
+                    <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">
+                      Practice Trial
+                    </h3>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                      <div className="bg-muted/30 rounded-xl p-4 text-center">
+                        <p className="text-xl font-bold tabular-nums">
+                          {Number(testData.trialResult.totalTargets)}
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-1">Targets</p>
+                      </div>
+                      <div className="bg-muted/30 rounded-xl p-4 text-center">
+                        <p className="text-xl font-bold text-green-700 tabular-nums">
+                          {Number(testData.trialResult.correctStrikes)}
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-1">Correct</p>
+                      </div>
+                      <div className="bg-muted/30 rounded-xl p-4 text-center">
+                        <p className="text-xl font-bold text-amber-700 tabular-nums">
+                          {Number(testData.trialResult.omissions)}
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-1">Omissions</p>
+                      </div>
+                      <div className="bg-muted/30 rounded-xl p-4 text-center">
+                        <p className="text-xl font-bold text-red-700 tabular-nums">
+                          {Number(testData.trialResult.commissions)}
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-1">Commissions</p>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {/* Grid Snapshot (for PDF) */}
+              {testData.gridSnapshot && (
+                <>
+                  <Separator />
+                  <div className="bg-muted/10 rounded-xl p-4 border border-border">
+                    <GridSnapshotView snapshotKey="" gridSnapshot={testData.gridSnapshot} isLarge />
+                  </div>
+                </>
+              )}
             </CardContent>
           </Card>
+        </div>
         </div>
 
         {/* ── PDF Generation Status ── */}
@@ -2299,6 +2401,8 @@ export default function App() {
     commissions: number;
     elapsedSeconds: number;
     classification: string;
+    trialResult?: TrialResult;
+    gridSnapshot?: { rows: string[][]; markedIds: string[] };
   } | null>(null);
   const saveTestSession = useSaveTestSession();
 
@@ -2386,6 +2490,8 @@ export default function App() {
         commissions,
         elapsedSeconds: elapsed,
         classification,
+        trialResult: trialResult ?? undefined,
+        gridSnapshot: { rows: gridRows, markedIds },
       });
 
       // Save to Supabase (async, non-blocking)
@@ -2409,6 +2515,12 @@ export default function App() {
             commissions: commissions,
             elapsed_seconds: elapsed,
             classification: classification,
+            trial_total_targets: trialResult ? Number(trialResult.totalTargets) : null,
+            trial_correct_strikes: trialResult ? Number(trialResult.correctStrikes) : null,
+            trial_omissions: trialResult ? Number(trialResult.omissions) : null,
+            trial_commissions: trialResult ? Number(trialResult.commissions) : null,
+            total_targets: 105,
+            grid_snapshot: { rows: gridRows, markedIds: markedIds },
           };
           return saveTestResultToSupabase(resultData);
         })
