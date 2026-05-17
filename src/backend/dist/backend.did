@@ -1,22 +1,61 @@
+type TrialResult = 
+ record {
+   attemptedAt: int;
+   commissions: nat;
+   correctStrikes: nat;
+   omissions: nat;
+   totalTargets: nat;
+ };
 type TestSession = 
  record {
+   doctorName: text;
    endTime: nat;
+   gridSnapshot: opt GridSnapshot;
    languageSelected: text;
    patientId: text;
+   patientName: text;
    startTime: nat;
+   testResult: opt TestResult;
+   trialResult: opt TrialResult;
+ };
+type TestResult = 
+ record {
+   classification: text;
+   commissions: nat;
+   completedAt: int;
+   correctStrikes: nat;
+   elapsedSeconds: nat;
+   omissions: nat;
+   totalTargets: nat;
  };
 type Patient = 
  record {
    age: nat;
+   doctorName: text;
    gender: text;
+   highestEducation: text;
+   language: text;
    name: text;
    patientId: text;
+ };
+type GridSnapshot = 
+ record {
+   markedIds: vec text;
+   rows: vec vec text;
  };
 service : {
   getAllPatients: () -> (vec Patient) query;
   getAllTestSessions: () -> (vec TestSession) query;
+  getDoctors: () -> (vec text) query;
   getPatient: (patientId: text) -> (opt Patient) query;
+  getPatientFullRecord: (patientId: text) ->
+   (opt record {
+          patient: Patient;
+          sessions: vec TestSession;
+        }) query;
+  getSessionsByDoctor: (doctorName: text) -> (vec TestSession) query;
   getSessionsByPatientId: (patientId: text) -> (vec TestSession) query;
+  saveDoctor: (name: text) -> ();
   savePatient: (patient: Patient) -> ();
   saveTestSession: (session: TestSession) -> ();
 }

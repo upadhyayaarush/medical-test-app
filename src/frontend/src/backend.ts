@@ -89,27 +89,62 @@ export class ExternalBlob {
         return this;
     }
 }
+export interface TestSession {
+    startTime: bigint;
+    gridSnapshot?: GridSnapshot;
+    testResult?: TestResult;
+    endTime: bigint;
+    languageSelected: string;
+    patientId: string;
+    patientName: string;
+    doctorName: string;
+    trialResult?: TrialResult;
+}
+export interface TrialResult {
+    totalTargets: bigint;
+    correctStrikes: bigint;
+    omissions: bigint;
+    attemptedAt: bigint;
+    commissions: bigint;
+}
+export interface GridSnapshot {
+    markedIds: Array<string>;
+    rows: Array<Array<string>>;
+}
 export interface Patient {
     age: bigint;
     patientId: string;
     name: string;
+    language: string;
+    highestEducation: string;
     gender: string;
+    doctorName: string;
 }
-export interface TestSession {
-    startTime: bigint;
-    endTime: bigint;
-    languageSelected: string;
-    patientId: string;
+export interface TestResult {
+    completedAt: bigint;
+    totalTargets: bigint;
+    correctStrikes: bigint;
+    omissions: bigint;
+    elapsedSeconds: bigint;
+    commissions: bigint;
+    classification: string;
 }
 export interface backendInterface {
     getAllPatients(): Promise<Array<Patient>>;
     getAllTestSessions(): Promise<Array<TestSession>>;
+    getDoctors(): Promise<Array<string>>;
     getPatient(patientId: string): Promise<Patient | null>;
+    getPatientFullRecord(patientId: string): Promise<{
+        patient: Patient;
+        sessions: Array<TestSession>;
+    } | null>;
+    getSessionsByDoctor(doctorName: string): Promise<Array<TestSession>>;
     getSessionsByPatientId(patientId: string): Promise<Array<TestSession>>;
+    saveDoctor(name: string): Promise<void>;
     savePatient(patient: Patient): Promise<void>;
     saveTestSession(session: TestSession): Promise<void>;
 }
-import type { Patient as _Patient } from "./declarations/backend.did.d.ts";
+import type { GridSnapshot as _GridSnapshot, Patient as _Patient, TestResult as _TestResult, TestSession as _TestSession, TrialResult as _TrialResult } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
     async getAllPatients(): Promise<Array<Patient>> {
@@ -130,13 +165,27 @@ export class Backend implements backendInterface {
         if (this.processError) {
             try {
                 const result = await this.actor.getAllTestSessions();
-                return result;
+                return from_candid_vec_n1(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getAllTestSessions();
+            return from_candid_vec_n1(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getDoctors(): Promise<Array<string>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getDoctors();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getDoctors();
             return result;
         }
     }
@@ -144,27 +193,72 @@ export class Backend implements backendInterface {
         if (this.processError) {
             try {
                 const result = await this.actor.getPatient(arg0);
-                return from_candid_opt_n1(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n7(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getPatient(arg0);
-            return from_candid_opt_n1(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n7(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getPatientFullRecord(arg0: string): Promise<{
+        patient: Patient;
+        sessions: Array<TestSession>;
+    } | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getPatientFullRecord(arg0);
+                return from_candid_opt_n8(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getPatientFullRecord(arg0);
+            return from_candid_opt_n8(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getSessionsByDoctor(arg0: string): Promise<Array<TestSession>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getSessionsByDoctor(arg0);
+                return from_candid_vec_n1(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getSessionsByDoctor(arg0);
+            return from_candid_vec_n1(this._uploadFile, this._downloadFile, result);
         }
     }
     async getSessionsByPatientId(arg0: string): Promise<Array<TestSession>> {
         if (this.processError) {
             try {
                 const result = await this.actor.getSessionsByPatientId(arg0);
-                return result;
+                return from_candid_vec_n1(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getSessionsByPatientId(arg0);
+            return from_candid_vec_n1(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async saveDoctor(arg0: string): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.saveDoctor(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.saveDoctor(arg0);
             return result;
         }
     }
@@ -185,20 +279,125 @@ export class Backend implements backendInterface {
     async saveTestSession(arg0: TestSession): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.saveTestSession(arg0);
+                const result = await this.actor.saveTestSession(to_candid_TestSession_n10(this._uploadFile, this._downloadFile, arg0));
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.saveTestSession(arg0);
+            const result = await this.actor.saveTestSession(to_candid_TestSession_n10(this._uploadFile, this._downloadFile, arg0));
             return result;
         }
     }
 }
-function from_candid_opt_n1(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_Patient]): Patient | null {
+function from_candid_TestSession_n2(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _TestSession): TestSession {
+    return from_candid_record_n3(_uploadFile, _downloadFile, value);
+}
+function from_candid_opt_n4(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_GridSnapshot]): GridSnapshot | null {
     return value.length === 0 ? null : value[0];
+}
+function from_candid_opt_n5(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_TestResult]): TestResult | null {
+    return value.length === 0 ? null : value[0];
+}
+function from_candid_opt_n6(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_TrialResult]): TrialResult | null {
+    return value.length === 0 ? null : value[0];
+}
+function from_candid_opt_n7(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_Patient]): Patient | null {
+    return value.length === 0 ? null : value[0];
+}
+function from_candid_opt_n8(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [{
+        patient: _Patient;
+        sessions: Array<_TestSession>;
+    }]): {
+    patient: Patient;
+    sessions: Array<TestSession>;
+} | null {
+    return value.length === 0 ? null : from_candid_record_n9(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_record_n3(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    startTime: bigint;
+    gridSnapshot: [] | [_GridSnapshot];
+    testResult: [] | [_TestResult];
+    endTime: bigint;
+    languageSelected: string;
+    patientId: string;
+    patientName: string;
+    doctorName: string;
+    trialResult: [] | [_TrialResult];
+}): {
+    startTime: bigint;
+    gridSnapshot?: GridSnapshot;
+    testResult?: TestResult;
+    endTime: bigint;
+    languageSelected: string;
+    patientId: string;
+    patientName: string;
+    doctorName: string;
+    trialResult?: TrialResult;
+} {
+    return {
+        startTime: value.startTime,
+        gridSnapshot: record_opt_to_undefined(from_candid_opt_n4(_uploadFile, _downloadFile, value.gridSnapshot)),
+        testResult: record_opt_to_undefined(from_candid_opt_n5(_uploadFile, _downloadFile, value.testResult)),
+        endTime: value.endTime,
+        languageSelected: value.languageSelected,
+        patientId: value.patientId,
+        patientName: value.patientName,
+        doctorName: value.doctorName,
+        trialResult: record_opt_to_undefined(from_candid_opt_n6(_uploadFile, _downloadFile, value.trialResult))
+    };
+}
+function from_candid_record_n9(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    patient: _Patient;
+    sessions: Array<_TestSession>;
+}): {
+    patient: Patient;
+    sessions: Array<TestSession>;
+} {
+    return {
+        patient: value.patient,
+        sessions: from_candid_vec_n1(_uploadFile, _downloadFile, value.sessions)
+    };
+}
+function from_candid_vec_n1(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_TestSession>): Array<TestSession> {
+    return value.map((x)=>from_candid_TestSession_n2(_uploadFile, _downloadFile, x));
+}
+function to_candid_TestSession_n10(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: TestSession): _TestSession {
+    return to_candid_record_n11(_uploadFile, _downloadFile, value);
+}
+function to_candid_record_n11(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    startTime: bigint;
+    gridSnapshot?: GridSnapshot;
+    testResult?: TestResult;
+    endTime: bigint;
+    languageSelected: string;
+    patientId: string;
+    patientName: string;
+    doctorName: string;
+    trialResult?: TrialResult;
+}): {
+    startTime: bigint;
+    gridSnapshot: [] | [_GridSnapshot];
+    testResult: [] | [_TestResult];
+    endTime: bigint;
+    languageSelected: string;
+    patientId: string;
+    patientName: string;
+    doctorName: string;
+    trialResult: [] | [_TrialResult];
+} {
+    return {
+        startTime: value.startTime,
+        gridSnapshot: value.gridSnapshot ? candid_some(value.gridSnapshot) : candid_none(),
+        testResult: value.testResult ? candid_some(value.testResult) : candid_none(),
+        endTime: value.endTime,
+        languageSelected: value.languageSelected,
+        patientId: value.patientId,
+        patientName: value.patientName,
+        doctorName: value.doctorName,
+        trialResult: value.trialResult ? candid_some(value.trialResult) : candid_none()
+    };
 }
 export interface CreateActorOptions {
     agent?: Agent;

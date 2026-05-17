@@ -10,23 +10,58 @@ import type { ActorMethod } from '@icp-sdk/core/agent';
 import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
+export interface GridSnapshot {
+  'markedIds' : Array<string>,
+  'rows' : Array<Array<string>>,
+}
 export interface Patient {
   'age' : bigint,
   'patientId' : string,
   'name' : string,
+  'language' : string,
+  'highestEducation' : string,
   'gender' : string,
+  'doctorName' : string,
+}
+export interface TestResult {
+  'completedAt' : bigint,
+  'totalTargets' : bigint,
+  'correctStrikes' : bigint,
+  'omissions' : bigint,
+  'elapsedSeconds' : bigint,
+  'commissions' : bigint,
+  'classification' : string,
 }
 export interface TestSession {
   'startTime' : bigint,
+  'gridSnapshot' : [] | [GridSnapshot],
+  'testResult' : [] | [TestResult],
   'endTime' : bigint,
   'languageSelected' : string,
   'patientId' : string,
+  'patientName' : string,
+  'doctorName' : string,
+  'trialResult' : [] | [TrialResult],
+}
+export interface TrialResult {
+  'totalTargets' : bigint,
+  'correctStrikes' : bigint,
+  'omissions' : bigint,
+  'attemptedAt' : bigint,
+  'commissions' : bigint,
 }
 export interface _SERVICE {
   'getAllPatients' : ActorMethod<[], Array<Patient>>,
   'getAllTestSessions' : ActorMethod<[], Array<TestSession>>,
+  'getDoctors' : ActorMethod<[], Array<string>>,
   'getPatient' : ActorMethod<[string], [] | [Patient]>,
+  'getPatientFullRecord' : ActorMethod<
+    [string],
+    [] | [{ 'patient' : Patient, 'sessions' : Array<TestSession> }]
+  >,
+  'getSessionsByDoctor' : ActorMethod<[string], Array<TestSession>>,
   'getSessionsByPatientId' : ActorMethod<[string], Array<TestSession>>,
+  'saveDoctor' : ActorMethod<[string], undefined>,
   'savePatient' : ActorMethod<[Patient], undefined>,
   'saveTestSession' : ActorMethod<[TestSession], undefined>,
 }

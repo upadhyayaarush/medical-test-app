@@ -1,18 +1,111 @@
-// Version: 1.0.0
+// Version: 3.0.0
 type Data__791452850<K, V> =
   {var count : Nat__490723111; kvs : [var ?(K, V)]};
+type GridSnapshot__133584429 = {markedIds : [Text]; rows : [[Text]]};
 type Internal__8484328<K, V> =
   {children : [var ?Node__46230540<K, V>]; data : Data__791452850<K, V>};
 type Leaf__809889148<K, V> = {data : Data__791452850<K, V>};
+type List__415060402<T> = List__790383201<T>;
+type List__790383201<T> =
+  {
+    var blockIndex : Nat__490723111;
+    var blocks : [var [var ?T]];
+    var elementIndex : Nat__490723111
+  };
+type Map__158565046<K, V> = Map__297112838<K, V>;
+type Map__297112838<K, V> =
+  {var root : Node__46230540<K, V>; var size : Nat__490723111};
+type Map__605269027<K, V> = Map__158565046<K, V>;
 type Nat__490723111 = Nat__920180692;
 type Nat__920180692 = Nat;
 type Node__46230540<K, V> =
   {#internal : Internal__8484328<K, V>; #leaf : Leaf__809889148<K, V>};
+type OldPatient__901591016 =
+  {
+    age : Nat;
+    doctorName : Text;
+    gender : Text;
+    highestEducation : Text;
+    language : Text;
+    name : Text;
+    patientId : Text
+  };
+type OldTestResult__370782272 =
+  {
+    classification : Text;
+    commissions : Nat;
+    completedAt : Int;
+    correctStrikes : Nat;
+    elapsedSeconds : Nat;
+    omissions : Nat;
+    totalTargets : Nat
+  };
+type OldTestSession__817560385 =
+  {
+    doctorName : Text;
+    endTime : Nat;
+    languageSelected : Text;
+    patientId : Text;
+    patientName : Text;
+    startTime : Nat;
+    testResult : ?OldTestResult__370782272;
+    trialResult : ?OldTrialResult__671130968
+  };
+type OldTrialResult__671130968 =
+  {
+    attemptedAt : Int;
+    commissions : Nat;
+    correctStrikes : Nat;
+    omissions : Nat;
+    totalTargets : Nat
+  };
 type Patient__823362798 =
-  {age : Nat; gender : Text; name : Text; patientId : Text};
+  {
+    age : Nat;
+    doctorName : Text;
+    gender : Text;
+    highestEducation : Text;
+    language : Text;
+    name : Text;
+    patientId : Text
+  };
+type TestResult__681331049 =
+  {
+    classification : Text;
+    commissions : Nat;
+    completedAt : Int;
+    correctStrikes : Nat;
+    elapsedSeconds : Nat;
+    omissions : Nat;
+    totalTargets : Nat
+  };
 type TestSession__865627821 =
-  {endTime : Nat; languageSelected : Text; patientId : Text; startTime : Nat};
-actor {
+  {
+    doctorName : Text;
+    endTime : Nat;
+    gridSnapshot : ?GridSnapshot__133584429;
+    languageSelected : Text;
+    patientId : Text;
+    patientName : Text;
+    startTime : Nat;
+    testResult : ?TestResult__681331049;
+    trialResult : ?TrialResult__382491261
+  };
+type TrialResult__382491261 =
+  {
+    attemptedAt : Int;
+    commissions : Nat;
+    correctStrikes : Nat;
+    omissions : Nat;
+    totalTargets : Nat
+  };
+actor ({
+  in doctors : Map__605269027<Text, Text>;
+  in patients : Map__605269027<Text, OldPatient__901591016>;
+  in testSessions : List__415060402<OldTestSession__817560385>
+}, {
+  stable doctors :
+    {var root : Node__46230540<Text, Text>; var size : Nat__490723111};
   stable patients :
     {
       var root : Node__46230540<Text, Patient__823362798>;
@@ -24,4 +117,4 @@ actor {
       var blocks : [var [var ?TestSession__865627821]];
       var elementIndex : Nat__490723111
     }
-};
+}) ;

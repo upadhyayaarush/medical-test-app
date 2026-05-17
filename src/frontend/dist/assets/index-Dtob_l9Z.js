@@ -17,18 +17,18 @@ var __privateWrapper = (obj, member, setter, getter) => ({
     return __privateGet(obj, member, getter);
   }
 });
-var _focused, _cleanup, _setup, _a, _provider, _providerCalled, _b, _online, _cleanup2, _setup2, _c, _gcTimeout, _d, _initialState, _revertState, _cache, _client, _retryer, _defaultOptions, _abortSignalConsumed, _Query_instances, isInitialPausedFetch_fn, dispatch_fn, _e, _client2, _observers, _mutationCache, _retryer2, _Mutation_instances, dispatch_fn2, _f, _mutations, _scopes, _mutationId, _g, _queries, _h, _queryCache, _mutationCache2, _defaultOptions2, _queryDefaults, _mutationDefaults, _mountCount, _unsubscribeFocus, _unsubscribeOnline, _i, _rawKey, _derKey, _publicKey, _privateKey, _inner, _delegation, _options;
-function _mergeNamespaces(n, m) {
-  for (var i = 0; i < m.length; i++) {
-    const e = m[i];
+var _disableTimeVerification, _agent, _inner, _expirationTime, _rawKey, _derKey, _a2, _currentInterval, _randomizationFactor, _multiplier, _maxInterval, _startTime, _maxElapsedTime, _maxIterations, _date, _count, _rootKeyPromise, _shouldFetchRootKey, _timeDiffMsecs, _hasSyncedTime, _syncTimePromise, _shouldSyncTime, _identity, _fetch, _fetchOptions, _callOptions, _credentials, _retryTimes, _backoffStrategy, _maxIngressExpiryInMinutes, _HttpAgent_instances, maxIngressExpiryInMs_get, _queryPipeline, _updatePipeline, _subnetKeys, _verifyQuerySignatures, requestAndRetryQuery_fn, requestAndRetry_fn, _verifyQueryResponse, asyncGuard_fn, rootKeyGuard_fn, syncTimeGuard_fn, _focused, _cleanup, _setup, _b2, _provider, _providerCalled, _c, _online, _cleanup2, _setup2, _d, _gcTimeout, _e, _initialState, _revertState, _cache, _client, _retryer, _defaultOptions, _abortSignalConsumed, _Query_instances, isInitialPausedFetch_fn, dispatch_fn, _f, _client2, _currentQuery, _currentQueryInitialState, _currentResult, _currentResultState, _currentResultOptions, _currentThenable, _selectError, _selectFn, _selectResult, _lastQueryWithDefinedData, _staleTimeoutId, _refetchIntervalId, _currentRefetchInterval, _trackedProps, _QueryObserver_instances, executeFetch_fn, updateStaleTimeout_fn, computeRefetchInterval_fn, updateRefetchInterval_fn, updateTimers_fn, clearStaleTimeout_fn, clearRefetchInterval_fn, updateQuery_fn, notify_fn, _g, _client3, _observers, _mutationCache, _retryer2, _Mutation_instances, dispatch_fn2, _h, _mutations, _scopes, _mutationId, _i, _client4, _currentResult2, _currentMutation, _mutateOptions, _MutationObserver_instances, updateResult_fn, notify_fn2, _j, _queries, _k, _queryCache, _mutationCache2, _defaultOptions2, _queryDefaults, _mutationDefaults, _mountCount, _unsubscribeFocus, _unsubscribeOnline, _l, _rawKey2, _derKey2, _publicKey, _privateKey, _inner2, _delegation, _options;
+function _mergeNamespaces(n, m2) {
+  for (var i = 0; i < m2.length; i++) {
+    const e = m2[i];
     if (typeof e !== "string" && !Array.isArray(e)) {
-      for (const k in e) {
-        if (k !== "default" && !(k in n)) {
-          const d = Object.getOwnPropertyDescriptor(e, k);
-          if (d) {
-            Object.defineProperty(n, k, d.get ? d : {
+      for (const k2 in e) {
+        if (k2 !== "default" && !(k2 in n)) {
+          const d2 = Object.getOwnPropertyDescriptor(e, k2);
+          if (d2) {
+            Object.defineProperty(n, k2, d2.get ? d2 : {
               enumerable: true,
-              get: () => e[k]
+              get: () => e[k2]
             });
           }
         }
@@ -74,8 +74,8 @@ function _mergeNamespaces(n, m) {
     fetch(link.href, fetchOpts);
   }
 })();
-function getDefaultExportFromCjs(x) {
-  return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, "default") ? x["default"] : x;
+function getDefaultExportFromCjs(x2) {
+  return x2 && x2.__esModule && Object.prototype.hasOwnProperty.call(x2, "default") ? x2["default"] : x2;
 }
 var jsxRuntime = { exports: {} };
 var reactJsxRuntime_production = {};
@@ -114,6 +114,61 @@ reactJsxRuntime_production.jsxs = jsxProd;
   jsxRuntime.exports = reactJsxRuntime_production;
 }
 var jsxRuntimeExports = jsxRuntime.exports;
+class ExternalBlob {
+  constructor(directURL, blob) {
+    __publicField(this, "_blob");
+    __publicField(this, "directURL");
+    __publicField(this, "onProgress");
+    if (blob) {
+      this._blob = blob;
+    }
+    this.directURL = directURL;
+  }
+  static fromURL(url) {
+    return new ExternalBlob(url, null);
+  }
+  static fromBytes(blob) {
+    const url = URL.createObjectURL(new Blob([new Uint8Array(blob)], {
+      type: "application/octet-stream"
+    }));
+    return new ExternalBlob(url, blob);
+  }
+  async getBytes() {
+    if (this._blob) {
+      return this._blob;
+    }
+    const response = await fetch(this.directURL);
+    const blob = await response.blob();
+    this._blob = new Uint8Array(await blob.arrayBuffer());
+    return this._blob;
+  }
+  getDirectURL() {
+    return this.directURL;
+  }
+  withUploadProgress(onProgress) {
+    this.onProgress = onProgress;
+    return this;
+  }
+}
+var ReplicaRejectCode;
+(function(ReplicaRejectCode2) {
+  ReplicaRejectCode2[ReplicaRejectCode2["SysFatal"] = 1] = "SysFatal";
+  ReplicaRejectCode2[ReplicaRejectCode2["SysTransient"] = 2] = "SysTransient";
+  ReplicaRejectCode2[ReplicaRejectCode2["DestinationInvalid"] = 3] = "DestinationInvalid";
+  ReplicaRejectCode2[ReplicaRejectCode2["CanisterReject"] = 4] = "CanisterReject";
+  ReplicaRejectCode2[ReplicaRejectCode2["CanisterError"] = 5] = "CanisterError";
+})(ReplicaRejectCode || (ReplicaRejectCode = {}));
+var QueryResponseStatus;
+(function(QueryResponseStatus2) {
+  QueryResponseStatus2["Replied"] = "replied";
+  QueryResponseStatus2["Rejected"] = "rejected";
+})(QueryResponseStatus || (QueryResponseStatus = {}));
+function isV2ResponseBody(body) {
+  return body !== null && body !== void 0 && "reject_code" in body;
+}
+function isV3ResponseBody(body) {
+  return body !== null && body !== void 0 && "certificate" in body;
+}
 const alphabet = "abcdefghijklmnopqrstuvwxyz234567";
 const lookupTable = /* @__PURE__ */ Object.create(null);
 for (let i = 0; i < alphabet.length; i++) {
@@ -150,7 +205,7 @@ function base32Decode(input) {
   let skip = 0;
   let byte = 0;
   const output = new Uint8Array(input.length * 4 / 3 | 0);
-  let o = 0;
+  let o2 = 0;
   function decodeChar(char) {
     let val = lookupTable[char.toLowerCase()];
     if (val === void 0) {
@@ -160,7 +215,7 @@ function base32Decode(input) {
     byte |= val >>> skip;
     skip += 5;
     if (skip >= 8) {
-      output[o++] = byte;
+      output[o2++] = byte;
       skip -= 8;
       if (skip > 0) {
         byte = val << 5 - skip & 255;
@@ -169,10 +224,10 @@ function base32Decode(input) {
       }
     }
   }
-  for (const c of input) {
-    decodeChar(c);
+  for (const c2 of input) {
+    decodeChar(c2);
   }
-  return output.slice(0, o);
+  return output.slice(0, o2);
 }
 const lookUpTable = new Uint32Array([
   0,
@@ -443,18 +498,18 @@ function getCrc32(buf) {
 }
 const crypto$1 = typeof globalThis === "object" && "crypto" in globalThis ? globalThis.crypto : void 0;
 /*! noble-hashes - MIT License (c) 2022 Paul Miller (paulmillr.com) */
-function isBytes(a) {
-  return a instanceof Uint8Array || ArrayBuffer.isView(a) && a.constructor.name === "Uint8Array";
+function isBytes(a2) {
+  return a2 instanceof Uint8Array || ArrayBuffer.isView(a2) && a2.constructor.name === "Uint8Array";
 }
 function anumber(n) {
   if (!Number.isSafeInteger(n) || n < 0)
     throw new Error("positive integer expected, got " + n);
 }
-function abytes(b, ...lengths) {
-  if (!isBytes(b))
+function abytes(b2, ...lengths) {
+  if (!isBytes(b2))
     throw new Error("Uint8Array expected");
-  if (lengths.length > 0 && !lengths.includes(b.length))
-    throw new Error("Uint8Array expected of length " + lengths + ", got length=" + b.length);
+  if (lengths.length > 0 && !lengths.includes(b2.length))
+    throw new Error("Uint8Array expected of length " + lengths + ", got length=" + b2.length);
 }
 function aexists(instance, checkFinished = true) {
   if (instance.destroyed)
@@ -484,7 +539,7 @@ const hasHexBuiltin = /* @__PURE__ */ (() => (
   // @ts-ignore
   typeof Uint8Array.from([]).toHex === "function" && typeof Uint8Array.fromHex === "function"
 ))();
-const hexes = /* @__PURE__ */ Array.from({ length: 256 }, (_, i) => i.toString(16).padStart(2, "0"));
+const hexes = /* @__PURE__ */ Array.from({ length: 256 }, (_2, i) => i.toString(16).padStart(2, "0"));
 function bytesToHex(bytes) {
   abytes(bytes);
   if (hasHexBuiltin)
@@ -540,21 +595,21 @@ function toBytes(data) {
 function concatBytes(...arrays) {
   let sum = 0;
   for (let i = 0; i < arrays.length; i++) {
-    const a = arrays[i];
-    abytes(a);
-    sum += a.length;
+    const a2 = arrays[i];
+    abytes(a2);
+    sum += a2.length;
   }
   const res = new Uint8Array(sum);
   for (let i = 0, pad = 0; i < arrays.length; i++) {
-    const a = arrays[i];
-    res.set(a, pad);
-    pad += a.length;
+    const a2 = arrays[i];
+    res.set(a2, pad);
+    pad += a2.length;
   }
   return res;
 }
 class Hash {
 }
-function createHasher(hashCons) {
+function createHasher$1(hashCons) {
   const hashC = (msg) => hashCons().update(toBytes(msg)).digest();
   const tmp = hashCons();
   hashC.outputLen = tmp.outputLen;
@@ -578,16 +633,16 @@ function setBigUint64(view, byteOffset, value, isLE) {
   const _u32_max = BigInt(4294967295);
   const wh = Number(value >> _32n2 & _u32_max);
   const wl = Number(value & _u32_max);
-  const h = isLE ? 4 : 0;
+  const h2 = isLE ? 4 : 0;
   const l = isLE ? 0 : 4;
-  view.setUint32(byteOffset + h, wh, isLE);
+  view.setUint32(byteOffset + h2, wh, isLE);
   view.setUint32(byteOffset + l, wl, isLE);
 }
-function Chi(a, b, c) {
-  return a & b ^ ~a & c;
+function Chi(a2, b2, c2) {
+  return a2 & b2 ^ ~a2 & c2;
 }
-function Maj(a, b, c) {
-  return a & b ^ a & c ^ b & c;
+function Maj(a2, b2, c2) {
+  return a2 & b2 ^ a2 & c2 ^ b2 & c2;
 }
 class HashMD extends Hash {
   constructor(blockLen, outputLen, padOffset, isLE) {
@@ -729,17 +784,17 @@ function split(lst, le = false) {
   let Ah = new Uint32Array(len);
   let Al = new Uint32Array(len);
   for (let i = 0; i < len; i++) {
-    const { h, l } = fromBig(lst[i], le);
-    [Ah[i], Al[i]] = [h, l];
+    const { h: h2, l } = fromBig(lst[i], le);
+    [Ah[i], Al[i]] = [h2, l];
   }
   return [Ah, Al];
 }
-const shrSH = (h, _l, s) => h >>> s;
-const shrSL = (h, l, s) => h << 32 - s | l >>> s;
-const rotrSH = (h, l, s) => h >>> s | l << 32 - s;
-const rotrSL = (h, l, s) => h << 32 - s | l >>> s;
-const rotrBH = (h, l, s) => h << 64 - s | l >>> s - 32;
-const rotrBL = (h, l, s) => h >>> s - 32 | l << 64 - s;
+const shrSH = (h2, _l2, s2) => h2 >>> s2;
+const shrSL = (h2, l, s2) => h2 << 32 - s2 | l >>> s2;
+const rotrSH = (h2, l, s2) => h2 >>> s2 | l << 32 - s2;
+const rotrSL = (h2, l, s2) => h2 << 32 - s2 | l >>> s2;
+const rotrBH = (h2, l, s2) => h2 << 64 - s2 | l >>> s2 - 32;
+const rotrBL = (h2, l, s2) => h2 >>> s2 - 32 | l << 64 - s2;
 function add(Ah, Al, Bh, Bl) {
   const l = (Al >>> 0) + (Bl >>> 0);
   return { h: Ah + Bh + (l / 2 ** 32 | 0) | 0, l: l | 0 };
@@ -830,19 +885,19 @@ class SHA256 extends HashMD {
     this.H = SHA256_IV[7] | 0;
   }
   get() {
-    const { A, B, C, D, E, F, G, H } = this;
-    return [A, B, C, D, E, F, G, H];
+    const { A: A2, B: B2, C: C2, D, E: E2, F: F2, G: G2, H: H2 } = this;
+    return [A2, B2, C2, D, E2, F2, G2, H2];
   }
   // prettier-ignore
-  set(A, B, C, D, E, F, G, H) {
-    this.A = A | 0;
-    this.B = B | 0;
-    this.C = C | 0;
+  set(A2, B2, C2, D, E2, F2, G2, H2) {
+    this.A = A2 | 0;
+    this.B = B2 | 0;
+    this.C = C2 | 0;
     this.D = D | 0;
-    this.E = E | 0;
-    this.F = F | 0;
-    this.G = G | 0;
-    this.H = H | 0;
+    this.E = E2 | 0;
+    this.F = F2 | 0;
+    this.G = G2 | 0;
+    this.H = H2 | 0;
   }
   process(view, offset2) {
     for (let i = 0; i < 16; i++, offset2 += 4)
@@ -854,30 +909,30 @@ class SHA256 extends HashMD {
       const s1 = rotr(W2, 17) ^ rotr(W2, 19) ^ W2 >>> 10;
       SHA256_W[i] = s1 + SHA256_W[i - 7] + s0 + SHA256_W[i - 16] | 0;
     }
-    let { A, B, C, D, E, F, G, H } = this;
+    let { A: A2, B: B2, C: C2, D, E: E2, F: F2, G: G2, H: H2 } = this;
     for (let i = 0; i < 64; i++) {
-      const sigma1 = rotr(E, 6) ^ rotr(E, 11) ^ rotr(E, 25);
-      const T1 = H + sigma1 + Chi(E, F, G) + SHA256_K[i] + SHA256_W[i] | 0;
-      const sigma0 = rotr(A, 2) ^ rotr(A, 13) ^ rotr(A, 22);
-      const T2 = sigma0 + Maj(A, B, C) | 0;
-      H = G;
-      G = F;
-      F = E;
-      E = D + T1 | 0;
-      D = C;
-      C = B;
-      B = A;
-      A = T1 + T2 | 0;
+      const sigma1 = rotr(E2, 6) ^ rotr(E2, 11) ^ rotr(E2, 25);
+      const T1 = H2 + sigma1 + Chi(E2, F2, G2) + SHA256_K[i] + SHA256_W[i] | 0;
+      const sigma0 = rotr(A2, 2) ^ rotr(A2, 13) ^ rotr(A2, 22);
+      const T2 = sigma0 + Maj(A2, B2, C2) | 0;
+      H2 = G2;
+      G2 = F2;
+      F2 = E2;
+      E2 = D + T1 | 0;
+      D = C2;
+      C2 = B2;
+      B2 = A2;
+      A2 = T1 + T2 | 0;
     }
-    A = A + this.A | 0;
-    B = B + this.B | 0;
-    C = C + this.C | 0;
+    A2 = A2 + this.A | 0;
+    B2 = B2 + this.B | 0;
+    C2 = C2 + this.C | 0;
     D = D + this.D | 0;
-    E = E + this.E | 0;
-    F = F + this.F | 0;
-    G = G + this.G | 0;
-    H = H + this.H | 0;
-    this.set(A, B, C, D, E, F, G, H);
+    E2 = E2 + this.E | 0;
+    F2 = F2 + this.F | 0;
+    G2 = G2 + this.G | 0;
+    H2 = H2 + this.H | 0;
+    this.set(A2, B2, C2, D, E2, F2, G2, H2);
   }
   roundClean() {
     clean(SHA256_W);
@@ -1097,14 +1152,14 @@ class SHA512 extends HashMD {
     this.set(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
   }
 }
-const sha256 = /* @__PURE__ */ createHasher(() => new SHA256());
-const sha224 = /* @__PURE__ */ createHasher(() => new SHA224());
-const sha512 = /* @__PURE__ */ createHasher(() => new SHA512());
+const sha256 = /* @__PURE__ */ createHasher$1(() => new SHA256());
+const sha224 = /* @__PURE__ */ createHasher$1(() => new SHA224());
+const sha512 = /* @__PURE__ */ createHasher$1(() => new SHA512());
 const JSON_KEY_PRINCIPAL = "__principal__";
 const SELF_AUTHENTICATING_SUFFIX = 2;
 const ANONYMOUS_SUFFIX = 4;
 const MANAGEMENT_CANISTER_PRINCIPAL_TEXT_STR = "aaaaa-aa";
-class Principal {
+let Principal$1 = class Principal {
   static anonymous() {
     return new this(new Uint8Array([ANONYMOUS_SUFFIX]));
   }
@@ -1227,7 +1282,7 @@ class Principal {
     const cmp = this.compareTo(other);
     return cmp == "gt" || cmp == "eq";
   }
-}
+};
 var ErrorKindEnum;
 (function(ErrorKindEnum2) {
   ErrorKindEnum2["Trust"] = "Trust";
@@ -1301,11 +1356,164 @@ class ErrorKind extends AgentError {
     return new this(code);
   }
 }
+class TrustError extends ErrorKind {
+  constructor(code) {
+    super(code, ErrorKindEnum.Trust);
+    this.name = "TrustError";
+    Object.setPrototypeOf(this, TrustError.prototype);
+  }
+}
+class ProtocolError extends ErrorKind {
+  constructor(code) {
+    super(code, ErrorKindEnum.Protocol);
+    this.name = "ProtocolError";
+    Object.setPrototypeOf(this, ProtocolError.prototype);
+  }
+}
+class RejectError extends ErrorKind {
+  constructor(code) {
+    super(code, ErrorKindEnum.Reject);
+    this.name = "RejectError";
+    Object.setPrototypeOf(this, RejectError.prototype);
+  }
+}
+class TransportError extends ErrorKind {
+  constructor(code) {
+    super(code, ErrorKindEnum.Transport);
+    this.name = "TransportError";
+    Object.setPrototypeOf(this, TransportError.prototype);
+  }
+}
+class ExternalError extends ErrorKind {
+  constructor(code) {
+    super(code, ErrorKindEnum.External);
+    this.name = "ExternalError";
+    Object.setPrototypeOf(this, ExternalError.prototype);
+  }
+}
 class InputError extends ErrorKind {
   constructor(code) {
     super(code, ErrorKindEnum.Input);
     this.name = "InputError";
     Object.setPrototypeOf(this, InputError.prototype);
+  }
+}
+class UnknownError extends ErrorKind {
+  constructor(code) {
+    super(code, ErrorKindEnum.Unknown);
+    this.name = "UnknownError";
+    Object.setPrototypeOf(this, UnknownError.prototype);
+  }
+}
+class CertificateVerificationErrorCode extends ErrorCode {
+  constructor(reason, error) {
+    super();
+    this.reason = reason;
+    this.error = error;
+    this.name = "CertificateVerificationErrorCode";
+    Object.setPrototypeOf(this, CertificateVerificationErrorCode.prototype);
+  }
+  toErrorMessage() {
+    let errorMessage = this.reason;
+    if (this.error) {
+      errorMessage += `: ${formatUnknownError(this.error)}`;
+    }
+    return `Certificate verification error: "${errorMessage}"`;
+  }
+}
+class CertificateTimeErrorCode extends ErrorCode {
+  constructor(maxAgeInMinutes, certificateTime, currentTime, timeDiffMsecs, ageType) {
+    super();
+    this.maxAgeInMinutes = maxAgeInMinutes;
+    this.certificateTime = certificateTime;
+    this.currentTime = currentTime;
+    this.timeDiffMsecs = timeDiffMsecs;
+    this.ageType = ageType;
+    this.name = "CertificateTimeErrorCode";
+    Object.setPrototypeOf(this, CertificateTimeErrorCode.prototype);
+  }
+  toErrorMessage() {
+    return `Certificate is signed more than ${this.maxAgeInMinutes} minutes in the ${this.ageType}. Certificate time: ${this.certificateTime.toISOString()} Current time: ${this.currentTime.toISOString()} Clock drift: ${this.timeDiffMsecs}ms`;
+  }
+}
+class CertificateHasTooManyDelegationsErrorCode extends ErrorCode {
+  constructor() {
+    super();
+    this.name = "CertificateHasTooManyDelegationsErrorCode";
+    Object.setPrototypeOf(this, CertificateHasTooManyDelegationsErrorCode.prototype);
+  }
+  toErrorMessage() {
+    return "Certificate has too many delegations";
+  }
+}
+class CertificateNotAuthorizedErrorCode extends ErrorCode {
+  constructor(canisterId, subnetId) {
+    super();
+    this.canisterId = canisterId;
+    this.subnetId = subnetId;
+    this.name = "CertificateNotAuthorizedErrorCode";
+    Object.setPrototypeOf(this, CertificateNotAuthorizedErrorCode.prototype);
+  }
+  toErrorMessage() {
+    return `The certificate contains a delegation that does not include the canister ${this.canisterId.toText()} in the canister_ranges field. Subnet ID: ${this.subnetId.toText()}`;
+  }
+}
+class LookupErrorCode extends ErrorCode {
+  constructor(message, lookupStatus) {
+    super();
+    this.message = message;
+    this.lookupStatus = lookupStatus;
+    this.name = "LookupErrorCode";
+    Object.setPrototypeOf(this, LookupErrorCode.prototype);
+  }
+  toErrorMessage() {
+    return `${this.message}. Lookup status: ${this.lookupStatus}`;
+  }
+}
+class MalformedLookupFoundValueErrorCode extends ErrorCode {
+  constructor(message) {
+    super();
+    this.message = message;
+    this.name = "MalformedLookupFoundValueErrorCode";
+    Object.setPrototypeOf(this, MalformedLookupFoundValueErrorCode.prototype);
+  }
+  toErrorMessage() {
+    return this.message;
+  }
+}
+class MissingLookupValueErrorCode extends ErrorCode {
+  constructor(message) {
+    super();
+    this.message = message;
+    this.name = "MissingLookupValueErrorCode";
+    Object.setPrototypeOf(this, MissingLookupValueErrorCode.prototype);
+  }
+  toErrorMessage() {
+    return this.message;
+  }
+}
+class DerKeyLengthMismatchErrorCode extends ErrorCode {
+  constructor(expectedLength, actualLength) {
+    super();
+    this.expectedLength = expectedLength;
+    this.actualLength = actualLength;
+    this.name = "DerKeyLengthMismatchErrorCode";
+    Object.setPrototypeOf(this, DerKeyLengthMismatchErrorCode.prototype);
+  }
+  toErrorMessage() {
+    return `BLS DER-encoded public key must be ${this.expectedLength} bytes long, but is ${this.actualLength} bytes long`;
+  }
+}
+class DerPrefixMismatchErrorCode extends ErrorCode {
+  constructor(expectedPrefix, actualPrefix) {
+    super();
+    this.expectedPrefix = expectedPrefix;
+    this.actualPrefix = actualPrefix;
+    this.name = "DerPrefixMismatchErrorCode";
+    Object.setPrototypeOf(this, DerPrefixMismatchErrorCode.prototype);
+  }
+  toErrorMessage() {
+    return `BLS DER-encoded public key is invalid. Expected the following prefix: ${bytesToHex(this.expectedPrefix)}, but got ${bytesToHex(this.actualPrefix)}`;
   }
 }
 class DerDecodeLengthMismatchErrorCode extends ErrorCode {
@@ -1342,6 +1550,157 @@ class DerEncodeErrorCode extends ErrorCode {
     return `Failed to encode DER: ${this.error}`;
   }
 }
+class CborDecodeErrorCode extends ErrorCode {
+  constructor(error, input) {
+    super();
+    this.error = error;
+    this.input = input;
+    this.name = "CborDecodeErrorCode";
+    Object.setPrototypeOf(this, CborDecodeErrorCode.prototype);
+  }
+  toErrorMessage() {
+    return `Failed to decode CBOR: ${formatUnknownError(this.error)}, input: ${bytesToHex(this.input)}`;
+  }
+}
+class CborEncodeErrorCode extends ErrorCode {
+  constructor(error, value) {
+    super();
+    this.error = error;
+    this.value = value;
+    this.name = "CborEncodeErrorCode";
+    Object.setPrototypeOf(this, CborEncodeErrorCode.prototype);
+  }
+  toErrorMessage() {
+    return `Failed to encode CBOR: ${formatUnknownError(this.error)}, input: ${this.value}`;
+  }
+}
+class TimeoutWaitingForResponseErrorCode extends ErrorCode {
+  constructor(message, requestId, status) {
+    super();
+    this.message = message;
+    this.requestId = requestId;
+    this.status = status;
+    this.name = "TimeoutWaitingForResponseErrorCode";
+    Object.setPrototypeOf(this, TimeoutWaitingForResponseErrorCode.prototype);
+  }
+  toErrorMessage() {
+    let errorMessage = `${this.message}
+`;
+    if (this.requestId) {
+      errorMessage += `  Request ID: ${bytesToHex(this.requestId)}
+`;
+    }
+    if (this.status) {
+      errorMessage += `  Request status: ${this.status}
+`;
+    }
+    return errorMessage;
+  }
+}
+class CertificateOutdatedErrorCode extends ErrorCode {
+  constructor(maxIngressExpiryInMinutes, requestId, retryTimes) {
+    super();
+    this.maxIngressExpiryInMinutes = maxIngressExpiryInMinutes;
+    this.requestId = requestId;
+    this.retryTimes = retryTimes;
+    this.name = "CertificateOutdatedErrorCode";
+    Object.setPrototypeOf(this, CertificateOutdatedErrorCode.prototype);
+  }
+  toErrorMessage() {
+    let errorMessage = `Certificate is stale (over ${this.maxIngressExpiryInMinutes} minutes). Is the computer's clock synchronized?
+  Request ID: ${bytesToHex(this.requestId)}
+`;
+    if (this.retryTimes !== void 0) {
+      errorMessage += `  Retried ${this.retryTimes} times.`;
+    }
+    return errorMessage;
+  }
+}
+class CertifiedRejectErrorCode extends ErrorCode {
+  constructor(requestId, rejectCode, rejectMessage, rejectErrorCode) {
+    super(true);
+    this.requestId = requestId;
+    this.rejectCode = rejectCode;
+    this.rejectMessage = rejectMessage;
+    this.rejectErrorCode = rejectErrorCode;
+    this.name = "CertifiedRejectErrorCode";
+    Object.setPrototypeOf(this, CertifiedRejectErrorCode.prototype);
+  }
+  toErrorMessage() {
+    return `The replica returned a rejection error:
+  Request ID: ${bytesToHex(this.requestId)}
+  Reject code: ${this.rejectCode}
+  Reject text: ${this.rejectMessage}
+  Error code: ${this.rejectErrorCode}
+`;
+  }
+}
+class UncertifiedRejectErrorCode extends ErrorCode {
+  constructor(requestId, rejectCode, rejectMessage, rejectErrorCode, signatures) {
+    super();
+    this.requestId = requestId;
+    this.rejectCode = rejectCode;
+    this.rejectMessage = rejectMessage;
+    this.rejectErrorCode = rejectErrorCode;
+    this.signatures = signatures;
+    this.name = "UncertifiedRejectErrorCode";
+    Object.setPrototypeOf(this, UncertifiedRejectErrorCode.prototype);
+  }
+  toErrorMessage() {
+    return `The replica returned a rejection error:
+  Request ID: ${bytesToHex(this.requestId)}
+  Reject code: ${this.rejectCode}
+  Reject text: ${this.rejectMessage}
+  Error code: ${this.rejectErrorCode}
+`;
+  }
+}
+class UncertifiedRejectUpdateErrorCode extends ErrorCode {
+  constructor(requestId, rejectCode, rejectMessage, rejectErrorCode) {
+    super();
+    this.requestId = requestId;
+    this.rejectCode = rejectCode;
+    this.rejectMessage = rejectMessage;
+    this.rejectErrorCode = rejectErrorCode;
+    this.name = "UncertifiedRejectUpdateErrorCode";
+    Object.setPrototypeOf(this, UncertifiedRejectUpdateErrorCode.prototype);
+  }
+  toErrorMessage() {
+    return `The replica returned a rejection error:
+  Request ID: ${bytesToHex(this.requestId)}
+  Reject code: ${this.rejectCode}
+  Reject text: ${this.rejectMessage}
+  Error code: ${this.rejectErrorCode}
+`;
+  }
+}
+class RequestStatusDoneNoReplyErrorCode extends ErrorCode {
+  constructor(requestId) {
+    super();
+    this.requestId = requestId;
+    this.name = "RequestStatusDoneNoReplyErrorCode";
+    Object.setPrototypeOf(this, RequestStatusDoneNoReplyErrorCode.prototype);
+  }
+  toErrorMessage() {
+    return `Call was marked as done but we never saw the reply:
+  Request ID: ${bytesToHex(this.requestId)}
+`;
+  }
+}
+class MissingRootKeyErrorCode extends ErrorCode {
+  constructor(shouldFetchRootKey) {
+    super();
+    this.shouldFetchRootKey = shouldFetchRootKey;
+    this.name = "MissingRootKeyErrorCode";
+    Object.setPrototypeOf(this, MissingRootKeyErrorCode.prototype);
+  }
+  toErrorMessage() {
+    if (this.shouldFetchRootKey === void 0) {
+      return "Agent is missing root key";
+    }
+    return `Agent is missing root key and the shouldFetchRootKey value is set to ${this.shouldFetchRootKey}. The root key should only be unknown if you are in local development. Otherwise you should avoid fetching and use the default IC Root Key or the known root key of your environment.`;
+  }
+}
 class HashValueErrorCode extends ErrorCode {
   constructor(value) {
     super();
@@ -1352,6 +1711,209 @@ class HashValueErrorCode extends ErrorCode {
   toErrorMessage() {
     return `Attempt to hash a value of unsupported type: ${this.value}`;
   }
+}
+class HttpDefaultFetchErrorCode extends ErrorCode {
+  constructor(error) {
+    super();
+    this.error = error;
+    this.name = "HttpDefaultFetchErrorCode";
+    Object.setPrototypeOf(this, HttpDefaultFetchErrorCode.prototype);
+  }
+  toErrorMessage() {
+    return this.error;
+  }
+}
+class IdentityInvalidErrorCode extends ErrorCode {
+  constructor() {
+    super();
+    this.name = "IdentityInvalidErrorCode";
+    Object.setPrototypeOf(this, IdentityInvalidErrorCode.prototype);
+  }
+  toErrorMessage() {
+    return "This identity has expired due this application's security policy. Please refresh your authentication.";
+  }
+}
+class IngressExpiryInvalidErrorCode extends ErrorCode {
+  constructor(message, providedIngressExpiryInMinutes) {
+    super();
+    this.message = message;
+    this.providedIngressExpiryInMinutes = providedIngressExpiryInMinutes;
+    this.name = "IngressExpiryInvalidErrorCode";
+    Object.setPrototypeOf(this, IngressExpiryInvalidErrorCode.prototype);
+  }
+  toErrorMessage() {
+    return `${this.message}. Provided ingress expiry time is ${this.providedIngressExpiryInMinutes} minutes.`;
+  }
+}
+class CreateHttpAgentErrorCode extends ErrorCode {
+  constructor() {
+    super();
+    this.name = "CreateHttpAgentErrorCode";
+    Object.setPrototypeOf(this, CreateHttpAgentErrorCode.prototype);
+  }
+  toErrorMessage() {
+    return "Failed to create agent from provided agent";
+  }
+}
+class MalformedSignatureErrorCode extends ErrorCode {
+  constructor(error) {
+    super();
+    this.error = error;
+    this.name = "MalformedSignatureErrorCode";
+    Object.setPrototypeOf(this, MalformedSignatureErrorCode.prototype);
+  }
+  toErrorMessage() {
+    return `Query response contained a malformed signature: ${this.error}`;
+  }
+}
+class MissingSignatureErrorCode extends ErrorCode {
+  constructor() {
+    super();
+    this.name = "MissingSignatureErrorCode";
+    Object.setPrototypeOf(this, MissingSignatureErrorCode.prototype);
+  }
+  toErrorMessage() {
+    return "Query response did not contain any node signatures";
+  }
+}
+class MalformedPublicKeyErrorCode extends ErrorCode {
+  constructor() {
+    super();
+    this.name = "MalformedPublicKeyErrorCode";
+    Object.setPrototypeOf(this, MalformedPublicKeyErrorCode.prototype);
+  }
+  toErrorMessage() {
+    return "Read state response contained a malformed public key";
+  }
+}
+class QuerySignatureVerificationFailedErrorCode extends ErrorCode {
+  constructor(nodeId) {
+    super();
+    this.nodeId = nodeId;
+    this.name = "QuerySignatureVerificationFailedErrorCode";
+    Object.setPrototypeOf(this, QuerySignatureVerificationFailedErrorCode.prototype);
+  }
+  toErrorMessage() {
+    return `Query signature verification failed. Node ID: ${this.nodeId}`;
+  }
+}
+class UnexpectedErrorCode extends ErrorCode {
+  constructor(error) {
+    super();
+    this.error = error;
+    this.name = "UnexpectedErrorCode";
+    Object.setPrototypeOf(this, UnexpectedErrorCode.prototype);
+  }
+  toErrorMessage() {
+    return `Unexpected error: ${formatUnknownError(this.error)}`;
+  }
+}
+class HashTreeDecodeErrorCode extends ErrorCode {
+  constructor(error) {
+    super();
+    this.error = error;
+    this.name = "HashTreeDecodeErrorCode";
+    Object.setPrototypeOf(this, HashTreeDecodeErrorCode.prototype);
+  }
+  toErrorMessage() {
+    return `Failed to decode certificate: ${this.error}`;
+  }
+}
+class HttpErrorCode extends ErrorCode {
+  constructor(status, statusText, headers, bodyText) {
+    super();
+    this.status = status;
+    this.statusText = statusText;
+    this.headers = headers;
+    this.bodyText = bodyText;
+    this.name = "HttpErrorCode";
+    Object.setPrototypeOf(this, HttpErrorCode.prototype);
+  }
+  toErrorMessage() {
+    let errorMessage = `HTTP request failed:
+  Status: ${this.status} (${this.statusText})
+  Headers: ${JSON.stringify(this.headers)}
+`;
+    if (this.bodyText) {
+      errorMessage += `  Body: ${this.bodyText}
+`;
+    }
+    return errorMessage;
+  }
+}
+class HttpV3ApiNotSupportedErrorCode extends ErrorCode {
+  constructor() {
+    super();
+    this.name = "HttpV3ApiNotSupportedErrorCode";
+    Object.setPrototypeOf(this, HttpV3ApiNotSupportedErrorCode.prototype);
+  }
+  toErrorMessage() {
+    return "HTTP request failed: v3 API is not supported";
+  }
+}
+class HttpFetchErrorCode extends ErrorCode {
+  constructor(error) {
+    super();
+    this.error = error;
+    this.name = "HttpFetchErrorCode";
+    Object.setPrototypeOf(this, HttpFetchErrorCode.prototype);
+  }
+  toErrorMessage() {
+    return `Failed to fetch HTTP request: ${formatUnknownError(this.error)}`;
+  }
+}
+class MissingCanisterIdErrorCode extends ErrorCode {
+  constructor(receivedCanisterId) {
+    super();
+    this.receivedCanisterId = receivedCanisterId;
+    this.name = "MissingCanisterIdErrorCode";
+    Object.setPrototypeOf(this, MissingCanisterIdErrorCode.prototype);
+  }
+  toErrorMessage() {
+    return `Canister ID is required, but received ${typeof this.receivedCanisterId} instead. If you are using automatically generated declarations, this may be because your application is not setting the canister ID in process.env correctly.`;
+  }
+}
+class InvalidReadStateRequestErrorCode extends ErrorCode {
+  constructor(request2) {
+    super();
+    this.request = request2;
+    this.name = "InvalidReadStateRequestErrorCode";
+    Object.setPrototypeOf(this, InvalidReadStateRequestErrorCode.prototype);
+  }
+  toErrorMessage() {
+    return `Invalid read state request: ${this.request}`;
+  }
+}
+class ExpiryJsonDeserializeErrorCode extends ErrorCode {
+  constructor(error) {
+    super();
+    this.error = error;
+    this.name = "ExpiryJsonDeserializeErrorCode";
+    Object.setPrototypeOf(this, ExpiryJsonDeserializeErrorCode.prototype);
+  }
+  toErrorMessage() {
+    return `Failed to deserialize expiry: ${this.error}`;
+  }
+}
+function formatUnknownError(error) {
+  if (error instanceof Error) {
+    return error.stack ?? error.message;
+  }
+  try {
+    return JSON.stringify(error);
+  } catch {
+    return String(error);
+  }
+}
+const UNREACHABLE_ERROR = new Error("unreachable");
+function concat(...uint8Arrays) {
+  const result = new Uint8Array(uint8Arrays.reduce((acc, curr) => acc + curr.byteLength, 0));
+  let index2 = 0;
+  for (const b2 of uint8Arrays) {
+    result.set(b2, index2);
+    index2 += b2.byteLength;
+  }
+  return result;
 }
 class PipeArrayBuffer {
   /**
@@ -1445,11 +2007,11 @@ class PipeArrayBuffer {
     if (amount <= 0 || !Number.isInteger(amount)) {
       throw new Error("Amount must be a positive integer");
     }
-    const b = new Uint8Array((this._buffer.byteLength + amount) * 1.2 | 0);
-    const v = new Uint8Array(b.buffer, 0, this._view.byteLength + amount);
-    v.set(this._view);
-    this._buffer = b;
-    this._view = v;
+    const b2 = new Uint8Array((this._buffer.byteLength + amount) * 1.2 | 0);
+    const v2 = new Uint8Array(b2.buffer, 0, this._view.byteLength + amount);
+    v2.set(this._view);
+    this._buffer = b2;
+    this._view = v2;
   }
 }
 function uint8FromBufLike$1(bufLike) {
@@ -1484,12 +2046,59 @@ function compare(u1, u2) {
 function uint8Equals$1(u1, u2) {
   return compare(u1, u2) === 0;
 }
+function uint8ToDataView(uint8) {
+  if (!(uint8 instanceof Uint8Array)) {
+    throw new Error("Input must be a Uint8Array");
+  }
+  return new DataView(uint8.buffer, uint8.byteOffset, uint8.byteLength);
+}
+function idlHash(s2) {
+  const utf8encoder = new TextEncoder();
+  const array = utf8encoder.encode(s2);
+  let h2 = 0;
+  for (const c2 of array) {
+    h2 = (h2 * 223 + c2) % 2 ** 32;
+  }
+  return h2;
+}
+function idlLabelToId(label) {
+  if (/^_\d+_$/.test(label) || /^_0x[0-9a-fA-F]+_$/.test(label)) {
+    const num = +label.slice(1, -1);
+    if (Number.isSafeInteger(num) && num >= 0 && num < 2 ** 32) {
+      return num;
+    }
+  }
+  return idlHash(label);
+}
 function ilog2(n) {
   const nBig = BigInt(n);
   if (n <= 0) {
     throw new RangeError("Input must be positive");
   }
   return nBig.toString(2).length - 1;
+}
+function iexp2(n) {
+  const nBig = BigInt(n);
+  if (n < 0) {
+    throw new RangeError("Input must be non-negative");
+  }
+  return BigInt(1) << nBig;
+}
+function eob() {
+  throw new Error("unexpected end of buffer");
+}
+function safeRead(pipe, num) {
+  if (pipe.byteLength < num) {
+    eob();
+  }
+  return pipe.read(num);
+}
+function safeReadUint8(pipe) {
+  const byte = pipe.readUint8();
+  if (byte === void 0) {
+    eob();
+  }
+  return byte;
 }
 function lebEncode(value) {
   if (typeof value === "number") {
@@ -1512,6 +2121,2087 @@ function lebEncode(value) {
   }
   return pipe.buffer;
 }
+function lebDecode(pipe) {
+  let weight = BigInt(1);
+  let value = BigInt(0);
+  let byte;
+  do {
+    byte = safeReadUint8(pipe);
+    value += BigInt(byte & 127).valueOf() * weight;
+    weight *= BigInt(128);
+  } while (byte >= 128);
+  return value;
+}
+function slebEncode(value) {
+  if (typeof value === "number") {
+    value = BigInt(value);
+  }
+  const isNeg = value < BigInt(0);
+  if (isNeg) {
+    value = -value - BigInt(1);
+  }
+  const byteLength = (value === BigInt(0) ? 0 : ilog2(value)) + 1;
+  const pipe = new PipeArrayBuffer(new Uint8Array(byteLength), 0);
+  while (true) {
+    const i = getLowerBytes(value);
+    value /= BigInt(128);
+    if (isNeg && value === BigInt(0) && (i & 64) !== 0 || !isNeg && value === BigInt(0) && (i & 64) === 0) {
+      pipe.write(new Uint8Array([i]));
+      break;
+    } else {
+      pipe.write(new Uint8Array([i | 128]));
+    }
+  }
+  function getLowerBytes(num) {
+    const bytes = num % BigInt(128);
+    if (isNeg) {
+      return Number(BigInt(128) - bytes - BigInt(1));
+    } else {
+      return Number(bytes);
+    }
+  }
+  return pipe.buffer;
+}
+function slebDecode(pipe) {
+  const pipeView = new Uint8Array(pipe.buffer);
+  let len = 0;
+  for (; len < pipeView.byteLength; len++) {
+    if (pipeView[len] < 128) {
+      if ((pipeView[len] & 64) === 0) {
+        return lebDecode(pipe);
+      }
+      break;
+    }
+  }
+  const bytes = new Uint8Array(safeRead(pipe, len + 1));
+  let value = BigInt(0);
+  for (let i = bytes.byteLength - 1; i >= 0; i--) {
+    value = value * BigInt(128) + BigInt(128 - (bytes[i] & 127) - 1);
+  }
+  return -value - BigInt(1);
+}
+function writeUIntLE(value, byteLength) {
+  if (BigInt(value) < BigInt(0)) {
+    throw new Error("Cannot write negative values.");
+  }
+  return writeIntLE(value, byteLength);
+}
+function writeIntLE(value, byteLength) {
+  value = BigInt(value);
+  const pipe = new PipeArrayBuffer(new Uint8Array(Math.min(1, byteLength)), 0);
+  let i = 0;
+  let mul = BigInt(256);
+  let sub = BigInt(0);
+  let byte = Number(value % mul);
+  pipe.write(new Uint8Array([byte]));
+  while (++i < byteLength) {
+    if (value < 0 && sub === BigInt(0) && byte !== 0) {
+      sub = BigInt(1);
+    }
+    byte = Number((value / mul - sub) % BigInt(256));
+    pipe.write(new Uint8Array([byte]));
+    mul *= BigInt(256);
+  }
+  return pipe.buffer;
+}
+function readUIntLE(pipe, byteLength) {
+  if (byteLength <= 0 || !Number.isInteger(byteLength)) {
+    throw new Error("Byte length must be a positive integer");
+  }
+  let val = BigInt(safeReadUint8(pipe));
+  let mul = BigInt(1);
+  let i = 0;
+  while (++i < byteLength) {
+    mul *= BigInt(256);
+    const byte = BigInt(safeReadUint8(pipe));
+    val = val + mul * byte;
+  }
+  return val;
+}
+function readIntLE(pipe, byteLength) {
+  if (byteLength <= 0 || !Number.isInteger(byteLength)) {
+    throw new Error("Byte length must be a positive integer");
+  }
+  let val = readUIntLE(pipe, byteLength);
+  const mul = BigInt(2) ** (BigInt(8) * BigInt(byteLength - 1) + BigInt(7));
+  if (val >= mul) {
+    val -= mul * BigInt(2);
+  }
+  return val;
+}
+var IDLTypeIds;
+(function(IDLTypeIds2) {
+  IDLTypeIds2[IDLTypeIds2["Null"] = -1] = "Null";
+  IDLTypeIds2[IDLTypeIds2["Bool"] = -2] = "Bool";
+  IDLTypeIds2[IDLTypeIds2["Nat"] = -3] = "Nat";
+  IDLTypeIds2[IDLTypeIds2["Int"] = -4] = "Int";
+  IDLTypeIds2[IDLTypeIds2["Float32"] = -13] = "Float32";
+  IDLTypeIds2[IDLTypeIds2["Float64"] = -14] = "Float64";
+  IDLTypeIds2[IDLTypeIds2["Text"] = -15] = "Text";
+  IDLTypeIds2[IDLTypeIds2["Reserved"] = -16] = "Reserved";
+  IDLTypeIds2[IDLTypeIds2["Empty"] = -17] = "Empty";
+  IDLTypeIds2[IDLTypeIds2["Opt"] = -18] = "Opt";
+  IDLTypeIds2[IDLTypeIds2["Vector"] = -19] = "Vector";
+  IDLTypeIds2[IDLTypeIds2["Record"] = -20] = "Record";
+  IDLTypeIds2[IDLTypeIds2["Variant"] = -21] = "Variant";
+  IDLTypeIds2[IDLTypeIds2["Func"] = -22] = "Func";
+  IDLTypeIds2[IDLTypeIds2["Service"] = -23] = "Service";
+  IDLTypeIds2[IDLTypeIds2["Principal"] = -24] = "Principal";
+})(IDLTypeIds || (IDLTypeIds = {}));
+const magicNumber = "DIDL";
+const toReadableString_max = 400;
+function zipWith(xs, ys, f) {
+  return xs.map((x2, i) => f(x2, ys[i]));
+}
+class TypeTable {
+  constructor() {
+    this._typs = [];
+    this._idx = /* @__PURE__ */ new Map();
+    this._idxRefCount = /* @__PURE__ */ new Map();
+  }
+  has(obj) {
+    return this._idx.has(obj.name);
+  }
+  add(type, buf) {
+    const idx = this._typs.length;
+    this._idx.set(type.name, idx);
+    this._idxRefCount.set(idx, 1);
+    this._typs.push(buf);
+  }
+  merge(obj, knot) {
+    const idx = this._idx.get(obj.name);
+    const knotIdx = this._idx.get(knot);
+    if (idx === void 0) {
+      throw new Error("Missing type index for " + obj);
+    }
+    if (knotIdx === void 0) {
+      throw new Error("Missing type index for " + knot);
+    }
+    this._typs[idx] = this._typs[knotIdx];
+    const idxRefCount = this._getIdxRefCount(idx);
+    const knotRefCount = this._getIdxRefCount(knotIdx);
+    this._idxRefCount.set(idx, idxRefCount + knotRefCount);
+    this._idx.set(knot, idx);
+    this._idxRefCount.set(knotIdx, 0);
+    this._compactFromEnd();
+  }
+  _getIdxRefCount(idx) {
+    return this._idxRefCount.get(idx) || 0;
+  }
+  _compactFromEnd() {
+    while (this._typs.length > 0) {
+      const lastIndex = this._typs.length - 1;
+      if (this._getIdxRefCount(lastIndex) > 0) {
+        break;
+      }
+      this._typs.pop();
+      this._idxRefCount.delete(lastIndex);
+    }
+  }
+  encode() {
+    const len = lebEncode(this._typs.length);
+    const buf = concat(...this._typs);
+    return concat(len, buf);
+  }
+  indexOf(typeName) {
+    if (!this._idx.has(typeName)) {
+      throw new Error("Missing type index for " + typeName);
+    }
+    return slebEncode(this._idx.get(typeName) || 0);
+  }
+}
+class Visitor {
+  visitType(_t, _data) {
+    throw new Error("Not implemented");
+  }
+  visitPrimitive(t, data) {
+    return this.visitType(t, data);
+  }
+  visitEmpty(t, data) {
+    return this.visitPrimitive(t, data);
+  }
+  visitBool(t, data) {
+    return this.visitPrimitive(t, data);
+  }
+  visitNull(t, data) {
+    return this.visitPrimitive(t, data);
+  }
+  visitReserved(t, data) {
+    return this.visitPrimitive(t, data);
+  }
+  visitText(t, data) {
+    return this.visitPrimitive(t, data);
+  }
+  visitNumber(t, data) {
+    return this.visitPrimitive(t, data);
+  }
+  visitInt(t, data) {
+    return this.visitNumber(t, data);
+  }
+  visitNat(t, data) {
+    return this.visitNumber(t, data);
+  }
+  visitFloat(t, data) {
+    return this.visitPrimitive(t, data);
+  }
+  visitFixedInt(t, data) {
+    return this.visitNumber(t, data);
+  }
+  visitFixedNat(t, data) {
+    return this.visitNumber(t, data);
+  }
+  visitPrincipal(t, data) {
+    return this.visitPrimitive(t, data);
+  }
+  visitConstruct(t, data) {
+    return this.visitType(t, data);
+  }
+  visitVec(t, _ty, data) {
+    return this.visitConstruct(t, data);
+  }
+  visitOpt(t, _ty, data) {
+    return this.visitConstruct(t, data);
+  }
+  visitRecord(t, _fields, data) {
+    return this.visitConstruct(t, data);
+  }
+  visitTuple(t, components, data) {
+    const fields = components.map((ty, i) => [`_${i}_`, ty]);
+    return this.visitRecord(t, fields, data);
+  }
+  visitVariant(t, _fields, data) {
+    return this.visitConstruct(t, data);
+  }
+  visitRec(_t, ty, data) {
+    return this.visitConstruct(ty, data);
+  }
+  visitFunc(t, data) {
+    return this.visitConstruct(t, data);
+  }
+  visitService(t, data) {
+    return this.visitConstruct(t, data);
+  }
+}
+var IdlTypeName;
+(function(IdlTypeName2) {
+  IdlTypeName2["EmptyClass"] = "__IDL_EmptyClass__";
+  IdlTypeName2["UnknownClass"] = "__IDL_UnknownClass__";
+  IdlTypeName2["BoolClass"] = "__IDL_BoolClass__";
+  IdlTypeName2["NullClass"] = "__IDL_NullClass__";
+  IdlTypeName2["ReservedClass"] = "__IDL_ReservedClass__";
+  IdlTypeName2["TextClass"] = "__IDL_TextClass__";
+  IdlTypeName2["IntClass"] = "__IDL_IntClass__";
+  IdlTypeName2["NatClass"] = "__IDL_NatClass__";
+  IdlTypeName2["FloatClass"] = "__IDL_FloatClass__";
+  IdlTypeName2["FixedIntClass"] = "__IDL_FixedIntClass__";
+  IdlTypeName2["FixedNatClass"] = "__IDL_FixedNatClass__";
+  IdlTypeName2["VecClass"] = "__IDL_VecClass__";
+  IdlTypeName2["OptClass"] = "__IDL_OptClass__";
+  IdlTypeName2["RecordClass"] = "__IDL_RecordClass__";
+  IdlTypeName2["TupleClass"] = "__IDL_TupleClass__";
+  IdlTypeName2["VariantClass"] = "__IDL_VariantClass__";
+  IdlTypeName2["RecClass"] = "__IDL_RecClass__";
+  IdlTypeName2["PrincipalClass"] = "__IDL_PrincipalClass__";
+  IdlTypeName2["FuncClass"] = "__IDL_FuncClass__";
+  IdlTypeName2["ServiceClass"] = "__IDL_ServiceClass__";
+})(IdlTypeName || (IdlTypeName = {}));
+class Type {
+  /* Display type name */
+  display() {
+    return this.name;
+  }
+  valueToString(x2) {
+    return toReadableString(x2);
+  }
+  /* Implement `T` in the IDL spec, only needed for non-primitive types */
+  buildTypeTable(typeTable) {
+    if (!typeTable.has(this)) {
+      this._buildTypeTableImpl(typeTable);
+    }
+  }
+}
+class PrimitiveType extends Type {
+  checkType(t) {
+    if (this.name !== t.name) {
+      throw new Error(`type mismatch: type on the wire ${t.name}, expect type ${this.name}`);
+    }
+    return t;
+  }
+  _buildTypeTableImpl(_typeTable) {
+    return;
+  }
+}
+class ConstructType extends Type {
+  checkType(t) {
+    if (t instanceof RecClass) {
+      const ty = t.getType();
+      if (typeof ty === "undefined") {
+        throw new Error("type mismatch with uninitialized type");
+      }
+      return ty;
+    }
+    throw new Error(`type mismatch: type on the wire ${t.name}, expect type ${this.name}`);
+  }
+  encodeType(typeTable) {
+    return typeTable.indexOf(this.name);
+  }
+}
+class EmptyClass extends PrimitiveType {
+  get typeName() {
+    return IdlTypeName.EmptyClass;
+  }
+  static [Symbol.hasInstance](instance) {
+    return instance.typeName === IdlTypeName.EmptyClass;
+  }
+  accept(v2, d2) {
+    return v2.visitEmpty(this, d2);
+  }
+  covariant(x2) {
+    throw new Error(`Invalid ${this.display()} argument: ${toReadableString(x2)}`);
+  }
+  encodeValue() {
+    throw new Error("Empty cannot appear as a function argument");
+  }
+  valueToString() {
+    throw new Error("Empty cannot appear as a value");
+  }
+  encodeType() {
+    return slebEncode(IDLTypeIds.Empty);
+  }
+  decodeValue() {
+    throw new Error("Empty cannot appear as an output");
+  }
+  get name() {
+    return "empty";
+  }
+}
+class UnknownClass extends Type {
+  get typeName() {
+    return IdlTypeName.UnknownClass;
+  }
+  static [Symbol.hasInstance](instance) {
+    return instance.typeName === IdlTypeName.UnknownClass;
+  }
+  checkType(_t) {
+    throw new Error("Method not implemented for unknown.");
+  }
+  accept(v2, d2) {
+    throw v2.visitType(this, d2);
+  }
+  covariant(x2) {
+    throw new Error(`Invalid ${this.display()} argument: ${toReadableString(x2)}`);
+  }
+  encodeValue() {
+    throw new Error("Unknown cannot appear as a function argument");
+  }
+  valueToString() {
+    throw new Error("Unknown cannot appear as a value");
+  }
+  encodeType() {
+    throw new Error("Unknown cannot be serialized");
+  }
+  decodeValue(b2, t) {
+    let decodedValue = t.decodeValue(b2, t);
+    if (Object(decodedValue) !== decodedValue) {
+      decodedValue = Object(decodedValue);
+    }
+    let typeFunc;
+    if (t instanceof RecClass) {
+      typeFunc = () => t.getType();
+    } else {
+      typeFunc = () => t;
+    }
+    Object.defineProperty(decodedValue, "type", {
+      value: typeFunc,
+      writable: true,
+      enumerable: false,
+      configurable: true
+    });
+    return decodedValue;
+  }
+  _buildTypeTableImpl() {
+    throw new Error("Unknown cannot be serialized");
+  }
+  get name() {
+    return "Unknown";
+  }
+}
+class BoolClass extends PrimitiveType {
+  get typeName() {
+    return IdlTypeName.BoolClass;
+  }
+  static [Symbol.hasInstance](instance) {
+    return instance.typeName === IdlTypeName.BoolClass;
+  }
+  accept(v2, d2) {
+    return v2.visitBool(this, d2);
+  }
+  covariant(x2) {
+    if (typeof x2 === "boolean")
+      return true;
+    throw new Error(`Invalid ${this.display()} argument: ${toReadableString(x2)}`);
+  }
+  encodeValue(x2) {
+    return new Uint8Array([x2 ? 1 : 0]);
+  }
+  encodeType() {
+    return slebEncode(IDLTypeIds.Bool);
+  }
+  decodeValue(b2, t) {
+    this.checkType(t);
+    switch (safeReadUint8(b2)) {
+      case 0:
+        return false;
+      case 1:
+        return true;
+      default:
+        throw new Error("Boolean value out of range");
+    }
+  }
+  get name() {
+    return "bool";
+  }
+}
+class NullClass extends PrimitiveType {
+  get typeName() {
+    return IdlTypeName.NullClass;
+  }
+  static [Symbol.hasInstance](instance) {
+    return instance.typeName === IdlTypeName.NullClass;
+  }
+  accept(v2, d2) {
+    return v2.visitNull(this, d2);
+  }
+  covariant(x2) {
+    if (x2 === null)
+      return true;
+    throw new Error(`Invalid ${this.display()} argument: ${toReadableString(x2)}`);
+  }
+  encodeValue() {
+    return new Uint8Array(0);
+  }
+  encodeType() {
+    return slebEncode(IDLTypeIds.Null);
+  }
+  decodeValue(_b3, t) {
+    this.checkType(t);
+    return null;
+  }
+  get name() {
+    return "null";
+  }
+}
+class ReservedClass extends PrimitiveType {
+  get typeName() {
+    return IdlTypeName.ReservedClass;
+  }
+  static [Symbol.hasInstance](instance) {
+    return instance.typeName === IdlTypeName.ReservedClass;
+  }
+  accept(v2, d2) {
+    return v2.visitReserved(this, d2);
+  }
+  covariant(_x) {
+    return true;
+  }
+  encodeValue() {
+    return new Uint8Array(0);
+  }
+  encodeType() {
+    return slebEncode(IDLTypeIds.Reserved);
+  }
+  decodeValue(b2, t) {
+    if (t.name !== this.name) {
+      t.decodeValue(b2, t);
+    }
+    return null;
+  }
+  get name() {
+    return "reserved";
+  }
+}
+class TextClass extends PrimitiveType {
+  get typeName() {
+    return IdlTypeName.TextClass;
+  }
+  static [Symbol.hasInstance](instance) {
+    return instance.typeName === IdlTypeName.TextClass;
+  }
+  accept(v2, d2) {
+    return v2.visitText(this, d2);
+  }
+  covariant(x2) {
+    if (typeof x2 === "string")
+      return true;
+    throw new Error(`Invalid ${this.display()} argument: ${toReadableString(x2)}`);
+  }
+  encodeValue(x2) {
+    const buf = new TextEncoder().encode(x2);
+    const len = lebEncode(buf.byteLength);
+    return concat(len, buf);
+  }
+  encodeType() {
+    return slebEncode(IDLTypeIds.Text);
+  }
+  decodeValue(b2, t) {
+    this.checkType(t);
+    const len = lebDecode(b2);
+    const buf = safeRead(b2, Number(len));
+    const decoder = new TextDecoder("utf8", { fatal: true });
+    return decoder.decode(buf);
+  }
+  get name() {
+    return "text";
+  }
+  valueToString(x2) {
+    return '"' + x2 + '"';
+  }
+}
+class IntClass extends PrimitiveType {
+  get typeName() {
+    return IdlTypeName.IntClass;
+  }
+  static [Symbol.hasInstance](instance) {
+    return instance.typeName === IdlTypeName.IntClass;
+  }
+  accept(v2, d2) {
+    return v2.visitInt(this, d2);
+  }
+  covariant(x2) {
+    if (typeof x2 === "bigint" || Number.isInteger(x2))
+      return true;
+    throw new Error(`Invalid ${this.display()} argument: ${toReadableString(x2)}`);
+  }
+  encodeValue(x2) {
+    return slebEncode(x2);
+  }
+  encodeType() {
+    return slebEncode(IDLTypeIds.Int);
+  }
+  decodeValue(b2, t) {
+    this.checkType(t);
+    return slebDecode(b2);
+  }
+  get name() {
+    return "int";
+  }
+  valueToString(x2) {
+    return x2.toString();
+  }
+}
+class NatClass extends PrimitiveType {
+  get typeName() {
+    return IdlTypeName.NatClass;
+  }
+  static [Symbol.hasInstance](instance) {
+    return instance.typeName === IdlTypeName.NatClass;
+  }
+  accept(v2, d2) {
+    return v2.visitNat(this, d2);
+  }
+  covariant(x2) {
+    if (typeof x2 === "bigint" && x2 >= BigInt(0) || Number.isInteger(x2) && x2 >= 0)
+      return true;
+    throw new Error(`Invalid ${this.display()} argument: ${toReadableString(x2)}`);
+  }
+  encodeValue(x2) {
+    return lebEncode(x2);
+  }
+  encodeType() {
+    return slebEncode(IDLTypeIds.Nat);
+  }
+  decodeValue(b2, t) {
+    this.checkType(t);
+    return lebDecode(b2);
+  }
+  get name() {
+    return "nat";
+  }
+  valueToString(x2) {
+    return x2.toString();
+  }
+}
+class FloatClass extends PrimitiveType {
+  get typeName() {
+    return IdlTypeName.FloatClass;
+  }
+  static [Symbol.hasInstance](instance) {
+    return instance.typeName === IdlTypeName.FloatClass;
+  }
+  constructor(_bits) {
+    super();
+    this._bits = _bits;
+    if (_bits !== 32 && _bits !== 64) {
+      throw new Error("not a valid float type");
+    }
+  }
+  accept(v2, d2) {
+    return v2.visitFloat(this, d2);
+  }
+  covariant(x2) {
+    if (typeof x2 === "number" || x2 instanceof Number)
+      return true;
+    throw new Error(`Invalid ${this.display()} argument: ${toReadableString(x2)}`);
+  }
+  encodeValue(x2) {
+    const buf = new ArrayBuffer(this._bits / 8);
+    const view = new DataView(buf);
+    if (this._bits === 32) {
+      view.setFloat32(0, x2, true);
+    } else {
+      view.setFloat64(0, x2, true);
+    }
+    return new Uint8Array(buf);
+  }
+  encodeType() {
+    const opcode = this._bits === 32 ? IDLTypeIds.Float32 : IDLTypeIds.Float64;
+    return slebEncode(opcode);
+  }
+  decodeValue(b2, t) {
+    this.checkType(t);
+    const bytes = safeRead(b2, this._bits / 8);
+    const view = uint8ToDataView(bytes);
+    if (this._bits === 32) {
+      return view.getFloat32(0, true);
+    } else {
+      return view.getFloat64(0, true);
+    }
+  }
+  get name() {
+    return "float" + this._bits;
+  }
+  valueToString(x2) {
+    return x2.toString();
+  }
+}
+class FixedIntClass extends PrimitiveType {
+  get typeName() {
+    return IdlTypeName.FixedIntClass;
+  }
+  static [Symbol.hasInstance](instance) {
+    return instance.typeName === IdlTypeName.FixedIntClass;
+  }
+  constructor(_bits) {
+    super();
+    this._bits = _bits;
+  }
+  accept(v2, d2) {
+    return v2.visitFixedInt(this, d2);
+  }
+  covariant(x2) {
+    const min2 = iexp2(this._bits - 1) * BigInt(-1);
+    const max2 = iexp2(this._bits - 1) - BigInt(1);
+    let ok = false;
+    if (typeof x2 === "bigint") {
+      ok = x2 >= min2 && x2 <= max2;
+    } else if (Number.isInteger(x2)) {
+      const v2 = BigInt(x2);
+      ok = v2 >= min2 && v2 <= max2;
+    } else {
+      ok = false;
+    }
+    if (ok)
+      return true;
+    throw new Error(`Invalid ${this.display()} argument: ${toReadableString(x2)}`);
+  }
+  encodeValue(x2) {
+    return writeIntLE(x2, this._bits / 8);
+  }
+  encodeType() {
+    const offset2 = Math.log2(this._bits) - 3;
+    return slebEncode(-9 - offset2);
+  }
+  decodeValue(b2, t) {
+    this.checkType(t);
+    const num = readIntLE(b2, this._bits / 8);
+    if (this._bits <= 32) {
+      return Number(num);
+    } else {
+      return num;
+    }
+  }
+  get name() {
+    return `int${this._bits}`;
+  }
+  valueToString(x2) {
+    return x2.toString();
+  }
+}
+class FixedNatClass extends PrimitiveType {
+  get typeName() {
+    return IdlTypeName.FixedNatClass;
+  }
+  static [Symbol.hasInstance](instance) {
+    return instance.typeName === IdlTypeName.FixedNatClass;
+  }
+  constructor(_bits) {
+    super();
+    this._bits = _bits;
+  }
+  accept(v2, d2) {
+    return v2.visitFixedNat(this, d2);
+  }
+  covariant(x2) {
+    const max2 = iexp2(this._bits);
+    let ok = false;
+    if (typeof x2 === "bigint" && x2 >= BigInt(0)) {
+      ok = x2 < max2;
+    } else if (Number.isInteger(x2) && x2 >= 0) {
+      const v2 = BigInt(x2);
+      ok = v2 < max2;
+    } else {
+      ok = false;
+    }
+    if (ok)
+      return true;
+    throw new Error(`Invalid ${this.display()} argument: ${toReadableString(x2)}`);
+  }
+  encodeValue(x2) {
+    return writeUIntLE(x2, this._bits / 8);
+  }
+  encodeType() {
+    const offset2 = Math.log2(this._bits) - 3;
+    return slebEncode(-5 - offset2);
+  }
+  decodeValue(b2, t) {
+    this.checkType(t);
+    const num = readUIntLE(b2, this._bits / 8);
+    if (this._bits <= 32) {
+      return Number(num);
+    } else {
+      return num;
+    }
+  }
+  get name() {
+    return `nat${this._bits}`;
+  }
+  valueToString(x2) {
+    return x2.toString();
+  }
+}
+class VecClass extends ConstructType {
+  get typeName() {
+    return IdlTypeName.VecClass;
+  }
+  static [Symbol.hasInstance](instance) {
+    return instance.typeName === IdlTypeName.VecClass;
+  }
+  constructor(_type) {
+    super();
+    this._type = _type;
+    this._blobOptimization = false;
+    if (_type instanceof FixedNatClass && _type._bits === 8) {
+      this._blobOptimization = true;
+    }
+  }
+  accept(v2, d2) {
+    return v2.visitVec(this, this._type, d2);
+  }
+  covariant(x2) {
+    const bits = this._type instanceof FixedNatClass ? this._type._bits : this._type instanceof FixedIntClass ? this._type._bits : 0;
+    if (ArrayBuffer.isView(x2) && bits == x2.BYTES_PER_ELEMENT * 8 || Array.isArray(x2) && x2.every((v2, idx) => {
+      try {
+        return this._type.covariant(v2);
+      } catch (e) {
+        throw new Error(`Invalid ${this.display()} argument: 
+
+index ${idx} -> ${e.message}`);
+      }
+    }))
+      return true;
+    throw new Error(`Invalid ${this.display()} argument: ${toReadableString(x2)}`);
+  }
+  encodeValue(x2) {
+    const len = lebEncode(x2.length);
+    if (this._blobOptimization) {
+      return concat(len, new Uint8Array(x2));
+    }
+    if (ArrayBuffer.isView(x2)) {
+      if (x2 instanceof Int16Array || x2 instanceof Uint16Array) {
+        const buffer = new DataView(new ArrayBuffer(x2.length * 2));
+        for (let i = 0; i < x2.length; i++) {
+          if (x2 instanceof Int16Array) {
+            buffer.setInt16(i * 2, x2[i], true);
+          } else {
+            buffer.setUint16(i * 2, x2[i], true);
+          }
+        }
+        return concat(len, new Uint8Array(buffer.buffer));
+      } else if (x2 instanceof Int32Array || x2 instanceof Uint32Array) {
+        const buffer = new DataView(new ArrayBuffer(x2.length * 4));
+        for (let i = 0; i < x2.length; i++) {
+          if (x2 instanceof Int32Array) {
+            buffer.setInt32(i * 4, x2[i], true);
+          } else {
+            buffer.setUint32(i * 4, x2[i], true);
+          }
+        }
+        return concat(len, new Uint8Array(buffer.buffer));
+      } else if (x2 instanceof BigInt64Array || x2 instanceof BigUint64Array) {
+        const buffer = new DataView(new ArrayBuffer(x2.length * 8));
+        for (let i = 0; i < x2.length; i++) {
+          if (x2 instanceof BigInt64Array) {
+            buffer.setBigInt64(i * 8, x2[i], true);
+          } else {
+            buffer.setBigUint64(i * 8, x2[i], true);
+          }
+        }
+        return concat(len, new Uint8Array(buffer.buffer));
+      } else {
+        return concat(len, new Uint8Array(x2.buffer, x2.byteOffset, x2.byteLength));
+      }
+    }
+    const buf = new PipeArrayBuffer(new Uint8Array(len.byteLength + x2.length), 0);
+    buf.write(len);
+    for (const d2 of x2) {
+      const encoded = this._type.encodeValue(d2);
+      buf.write(new Uint8Array(encoded));
+    }
+    return buf.buffer;
+  }
+  _buildTypeTableImpl(typeTable) {
+    this._type.buildTypeTable(typeTable);
+    const opCode = slebEncode(IDLTypeIds.Vector);
+    const buffer = this._type.encodeType(typeTable);
+    typeTable.add(this, concat(opCode, buffer));
+  }
+  decodeValue(b2, t) {
+    const vec = this.checkType(t);
+    if (!(vec instanceof VecClass)) {
+      throw new Error("Not a vector type");
+    }
+    const len = Number(lebDecode(b2));
+    if (this._type instanceof FixedNatClass) {
+      if (this._type._bits == 8) {
+        return new Uint8Array(b2.read(len));
+      }
+      if (this._type._bits == 16) {
+        const bytes = b2.read(len * 2);
+        const u16 = new Uint16Array(bytes.buffer, bytes.byteOffset, len);
+        return u16;
+      }
+      if (this._type._bits == 32) {
+        const bytes = b2.read(len * 4);
+        const u32 = new Uint32Array(bytes.buffer, bytes.byteOffset, len);
+        return u32;
+      }
+      if (this._type._bits == 64) {
+        return new BigUint64Array(b2.read(len * 8).buffer);
+      }
+    }
+    if (this._type instanceof FixedIntClass) {
+      if (this._type._bits == 8) {
+        return new Int8Array(b2.read(len));
+      }
+      if (this._type._bits == 16) {
+        const bytes = b2.read(len * 2);
+        const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+        const result = new Int16Array(len);
+        for (let i = 0; i < len; i++) {
+          result[i] = view.getInt16(i * 2, true);
+        }
+        return result;
+      }
+      if (this._type._bits == 32) {
+        const bytes = b2.read(len * 4);
+        const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+        const result = new Int32Array(len);
+        for (let i = 0; i < len; i++) {
+          result[i] = view.getInt32(i * 4, true);
+        }
+        return result;
+      }
+      if (this._type._bits == 64) {
+        const bytes = b2.read(len * 8);
+        const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+        const result = new BigInt64Array(len);
+        for (let i = 0; i < len; i++) {
+          result[i] = view.getBigInt64(i * 8, true);
+        }
+        return result;
+      }
+    }
+    const rets = [];
+    for (let i = 0; i < len; i++) {
+      rets.push(this._type.decodeValue(b2, vec._type));
+    }
+    return rets;
+  }
+  get name() {
+    return `vec ${this._type.name}`;
+  }
+  display() {
+    return `vec ${this._type.display()}`;
+  }
+  valueToString(x2) {
+    const elements = x2.map((e) => this._type.valueToString(e));
+    return "vec {" + elements.join("; ") + "}";
+  }
+}
+class OptClass extends ConstructType {
+  get typeName() {
+    return IdlTypeName.OptClass;
+  }
+  static [Symbol.hasInstance](instance) {
+    return instance.typeName === IdlTypeName.OptClass;
+  }
+  constructor(_type) {
+    super();
+    this._type = _type;
+  }
+  accept(v2, d2) {
+    return v2.visitOpt(this, this._type, d2);
+  }
+  covariant(x2) {
+    try {
+      if (Array.isArray(x2) && (x2.length === 0 || x2.length === 1 && this._type.covariant(x2[0])))
+        return true;
+    } catch (e) {
+      throw new Error(`Invalid ${this.display()} argument: ${toReadableString(x2)} 
+
+-> ${e.message}`);
+    }
+    throw new Error(`Invalid ${this.display()} argument: ${toReadableString(x2)}`);
+  }
+  encodeValue(x2) {
+    if (x2.length === 0) {
+      return new Uint8Array([0]);
+    } else {
+      return concat(new Uint8Array([1]), this._type.encodeValue(x2[0]));
+    }
+  }
+  _buildTypeTableImpl(typeTable) {
+    this._type.buildTypeTable(typeTable);
+    const opCode = slebEncode(IDLTypeIds.Opt);
+    const buffer = this._type.encodeType(typeTable);
+    typeTable.add(this, concat(opCode, buffer));
+  }
+  decodeValue(b2, t) {
+    if (t instanceof NullClass) {
+      return [];
+    }
+    if (t instanceof ReservedClass) {
+      return [];
+    }
+    let wireType = t;
+    if (t instanceof RecClass) {
+      const ty = t.getType();
+      if (typeof ty === "undefined") {
+        throw new Error("type mismatch with uninitialized type");
+      } else
+        wireType = ty;
+    }
+    if (wireType instanceof OptClass) {
+      switch (safeReadUint8(b2)) {
+        case 0:
+          return [];
+        case 1: {
+          const checkpoint = b2.save();
+          try {
+            const v2 = this._type.decodeValue(b2, wireType._type);
+            return [v2];
+          } catch (e) {
+            b2.restore(checkpoint);
+            wireType._type.decodeValue(b2, wireType._type);
+            return [];
+          }
+        }
+        default:
+          throw new Error("Not an option value");
+      }
+    } else if (
+      // this check corresponds to `not (null <: <t>)` in the spec
+      this._type instanceof NullClass || this._type instanceof OptClass || this._type instanceof ReservedClass
+    ) {
+      wireType.decodeValue(b2, wireType);
+      return [];
+    } else {
+      const checkpoint = b2.save();
+      try {
+        const v2 = this._type.decodeValue(b2, t);
+        return [v2];
+      } catch (e) {
+        b2.restore(checkpoint);
+        wireType.decodeValue(b2, t);
+        return [];
+      }
+    }
+  }
+  get name() {
+    return `opt ${this._type.name}`;
+  }
+  display() {
+    return `opt ${this._type.display()}`;
+  }
+  valueToString(x2) {
+    if (x2.length === 0) {
+      return "null";
+    } else {
+      return `opt ${this._type.valueToString(x2[0])}`;
+    }
+  }
+}
+class RecordClass extends ConstructType {
+  get typeName() {
+    return IdlTypeName.RecordClass;
+  }
+  static [Symbol.hasInstance](instance) {
+    return instance.typeName === IdlTypeName.RecordClass || instance.typeName === IdlTypeName.TupleClass;
+  }
+  constructor(fields = {}) {
+    super();
+    this._fields = Object.entries(fields).sort((a2, b2) => idlLabelToId(a2[0]) - idlLabelToId(b2[0]));
+  }
+  accept(v2, d2) {
+    return v2.visitRecord(this, this._fields, d2);
+  }
+  tryAsTuple() {
+    const res = [];
+    for (let i = 0; i < this._fields.length; i++) {
+      const [key, type] = this._fields[i];
+      if (key !== `_${i}_`) {
+        return null;
+      }
+      res.push(type);
+    }
+    return res;
+  }
+  covariant(x2) {
+    if (typeof x2 === "object" && this._fields.every(([k2, t]) => {
+      if (!x2.hasOwnProperty(k2)) {
+        throw new Error(`Record is missing key "${k2}".`);
+      }
+      try {
+        return t.covariant(x2[k2]);
+      } catch (e) {
+        throw new Error(`Invalid ${this.display()} argument: 
+
+field ${k2} -> ${e.message}`);
+      }
+    }))
+      return true;
+    throw new Error(`Invalid ${this.display()} argument: ${toReadableString(x2)}`);
+  }
+  encodeValue(x2) {
+    const values = this._fields.map(([key]) => x2[key]);
+    const bufs = zipWith(this._fields, values, ([, c2], d2) => c2.encodeValue(d2));
+    return concat(...bufs);
+  }
+  _buildTypeTableImpl(T2) {
+    this._fields.forEach(([_2, value]) => value.buildTypeTable(T2));
+    const opCode = slebEncode(IDLTypeIds.Record);
+    const len = lebEncode(this._fields.length);
+    const fields = this._fields.map(([key, value]) => concat(lebEncode(idlLabelToId(key)), value.encodeType(T2)));
+    T2.add(this, concat(opCode, len, concat(...fields)));
+  }
+  decodeValue(b2, t) {
+    const record = this.checkType(t);
+    if (!(record instanceof RecordClass)) {
+      throw new Error("Not a record type");
+    }
+    const x2 = {};
+    let expectedRecordIdx = 0;
+    let actualRecordIdx = 0;
+    while (actualRecordIdx < record._fields.length) {
+      const [hash, type] = record._fields[actualRecordIdx];
+      if (expectedRecordIdx >= this._fields.length) {
+        type.decodeValue(b2, type);
+        actualRecordIdx++;
+        continue;
+      }
+      const [expectKey, expectType] = this._fields[expectedRecordIdx];
+      const expectedId = idlLabelToId(this._fields[expectedRecordIdx][0]);
+      const actualId = idlLabelToId(hash);
+      if (expectedId === actualId) {
+        x2[expectKey] = expectType.decodeValue(b2, type);
+        expectedRecordIdx++;
+        actualRecordIdx++;
+      } else if (actualId > expectedId) {
+        if (expectType instanceof OptClass || expectType instanceof ReservedClass) {
+          x2[expectKey] = [];
+          expectedRecordIdx++;
+        } else {
+          throw new Error("Cannot find required field " + expectKey);
+        }
+      } else {
+        type.decodeValue(b2, type);
+        actualRecordIdx++;
+      }
+    }
+    for (const [expectKey, expectType] of this._fields.slice(expectedRecordIdx)) {
+      if (expectType instanceof OptClass || expectType instanceof ReservedClass) {
+        x2[expectKey] = [];
+      } else {
+        throw new Error("Cannot find required field " + expectKey);
+      }
+    }
+    return x2;
+  }
+  get fieldsAsObject() {
+    const fields = {};
+    for (const [name, ty] of this._fields) {
+      fields[idlLabelToId(name)] = ty;
+    }
+    return fields;
+  }
+  get name() {
+    const fields = this._fields.map(([key, value]) => key + ":" + value.name);
+    return `record {${fields.join("; ")}}`;
+  }
+  display() {
+    const fields = this._fields.map(([key, value]) => key + ":" + value.display());
+    return `record {${fields.join("; ")}}`;
+  }
+  valueToString(x2) {
+    const values = this._fields.map(([key]) => x2[key]);
+    const fields = zipWith(this._fields, values, ([k2, c2], d2) => k2 + "=" + c2.valueToString(d2));
+    return `record {${fields.join("; ")}}`;
+  }
+}
+class TupleClass extends RecordClass {
+  get typeName() {
+    return IdlTypeName.TupleClass;
+  }
+  static [Symbol.hasInstance](instance) {
+    return instance.typeName === IdlTypeName.TupleClass;
+  }
+  constructor(_components) {
+    const x2 = {};
+    _components.forEach((e, i) => x2["_" + i + "_"] = e);
+    super(x2);
+    this._components = _components;
+  }
+  accept(v2, d2) {
+    return v2.visitTuple(this, this._components, d2);
+  }
+  covariant(x2) {
+    if (Array.isArray(x2) && x2.length >= this._fields.length && this._components.every((t, i) => {
+      try {
+        return t.covariant(x2[i]);
+      } catch (e) {
+        throw new Error(`Invalid ${this.display()} argument: 
+
+index ${i} -> ${e.message}`);
+      }
+    }))
+      return true;
+    throw new Error(`Invalid ${this.display()} argument: ${toReadableString(x2)}`);
+  }
+  encodeValue(x2) {
+    const bufs = zipWith(this._components, x2, (c2, d2) => c2.encodeValue(d2));
+    return concat(...bufs);
+  }
+  decodeValue(b2, t) {
+    const tuple = this.checkType(t);
+    if (!(tuple instanceof TupleClass)) {
+      throw new Error("not a tuple type");
+    }
+    if (tuple._components.length < this._components.length) {
+      throw new Error("tuple mismatch");
+    }
+    const res = [];
+    for (const [i, wireType] of tuple._components.entries()) {
+      if (i >= this._components.length) {
+        wireType.decodeValue(b2, wireType);
+      } else {
+        res.push(this._components[i].decodeValue(b2, wireType));
+      }
+    }
+    return res;
+  }
+  display() {
+    const fields = this._components.map((value) => value.display());
+    return `record {${fields.join("; ")}}`;
+  }
+  valueToString(values) {
+    const fields = zipWith(this._components, values, (c2, d2) => c2.valueToString(d2));
+    return `record {${fields.join("; ")}}`;
+  }
+}
+class VariantClass extends ConstructType {
+  get typeName() {
+    return IdlTypeName.VariantClass;
+  }
+  static [Symbol.hasInstance](instance) {
+    return instance.typeName === IdlTypeName.VariantClass;
+  }
+  constructor(fields = {}) {
+    super();
+    this._fields = Object.entries(fields).sort((a2, b2) => idlLabelToId(a2[0]) - idlLabelToId(b2[0]));
+  }
+  accept(v2, d2) {
+    return v2.visitVariant(this, this._fields, d2);
+  }
+  covariant(x2) {
+    if (typeof x2 === "object" && Object.entries(x2).length === 1 && this._fields.every(([k2, v2]) => {
+      try {
+        return !x2.hasOwnProperty(k2) || v2.covariant(x2[k2]);
+      } catch (e) {
+        throw new Error(`Invalid ${this.display()} argument: 
+
+variant ${k2} -> ${e.message}`);
+      }
+    }))
+      return true;
+    throw new Error(`Invalid ${this.display()} argument: ${toReadableString(x2)}`);
+  }
+  encodeValue(x2) {
+    for (let i = 0; i < this._fields.length; i++) {
+      const [name, type] = this._fields[i];
+      if (x2.hasOwnProperty(name)) {
+        const idx = lebEncode(i);
+        const buf = type.encodeValue(x2[name]);
+        return concat(idx, buf);
+      }
+    }
+    throw Error("Variant has no data: " + x2);
+  }
+  _buildTypeTableImpl(typeTable) {
+    this._fields.forEach(([, type]) => {
+      type.buildTypeTable(typeTable);
+    });
+    const opCode = slebEncode(IDLTypeIds.Variant);
+    const len = lebEncode(this._fields.length);
+    const fields = this._fields.map(([key, value]) => concat(lebEncode(idlLabelToId(key)), value.encodeType(typeTable)));
+    typeTable.add(this, concat(opCode, len, ...fields));
+  }
+  decodeValue(b2, t) {
+    const variant = this.checkType(t);
+    if (!(variant instanceof VariantClass)) {
+      throw new Error("Not a variant type");
+    }
+    const idx = Number(lebDecode(b2));
+    if (idx >= variant._fields.length) {
+      throw Error("Invalid variant index: " + idx);
+    }
+    const [wireHash, wireType] = variant._fields[idx];
+    for (const [key, expectType] of this._fields) {
+      if (idlLabelToId(wireHash) === idlLabelToId(key)) {
+        const value = expectType.decodeValue(b2, wireType);
+        return { [key]: value };
+      }
+    }
+    throw new Error("Cannot find field hash " + wireHash);
+  }
+  get name() {
+    const fields = this._fields.map(([key, type]) => key + ":" + type.name);
+    return `variant {${fields.join("; ")}}`;
+  }
+  display() {
+    const fields = this._fields.map(([key, type]) => key + (type.name === "null" ? "" : `:${type.display()}`));
+    return `variant {${fields.join("; ")}}`;
+  }
+  valueToString(x2) {
+    for (const [name, type] of this._fields) {
+      if (x2.hasOwnProperty(name)) {
+        const value = type.valueToString(x2[name]);
+        if (value === "null") {
+          return `variant {${name}}`;
+        } else {
+          return `variant {${name}=${value}}`;
+        }
+      }
+    }
+    throw new Error("Variant has no data: " + x2);
+  }
+  get alternativesAsObject() {
+    const alternatives = {};
+    for (const [name, ty] of this._fields) {
+      alternatives[idlLabelToId(name)] = ty;
+    }
+    return alternatives;
+  }
+}
+const _RecClass = class _RecClass extends ConstructType {
+  constructor() {
+    super(...arguments);
+    this._id = _RecClass._counter++;
+  }
+  get typeName() {
+    return IdlTypeName.RecClass;
+  }
+  static [Symbol.hasInstance](instance) {
+    return instance.typeName === IdlTypeName.RecClass;
+  }
+  accept(v2, d2) {
+    if (!this._type) {
+      throw Error("Recursive type uninitialized.");
+    }
+    return v2.visitRec(this, this._type, d2);
+  }
+  fill(t) {
+    this._type = t;
+  }
+  getType() {
+    return this._type;
+  }
+  covariant(x2) {
+    if (this._type ? this._type.covariant(x2) : false)
+      return true;
+    throw new Error(`Invalid ${this.display()} argument: ${toReadableString(x2)}`);
+  }
+  encodeValue(x2) {
+    if (!this._type) {
+      throw Error("Recursive type uninitialized.");
+    }
+    return this._type.encodeValue(x2);
+  }
+  _buildTypeTableImpl(typeTable) {
+    if (!this._type) {
+      throw Error("Recursive type uninitialized.");
+    }
+    typeTable.add(this, new Uint8Array([]));
+    this._type.buildTypeTable(typeTable);
+    typeTable.merge(this, this._type.name);
+  }
+  decodeValue(b2, t) {
+    if (!this._type) {
+      throw Error("Recursive type uninitialized.");
+    }
+    return this._type.decodeValue(b2, t);
+  }
+  get name() {
+    return `rec_${this._id}`;
+  }
+  display() {
+    if (!this._type) {
+      throw Error("Recursive type uninitialized.");
+    }
+    return `μ${this.name}.${this._type.name}`;
+  }
+  valueToString(x2) {
+    if (!this._type) {
+      throw Error("Recursive type uninitialized.");
+    }
+    return this._type.valueToString(x2);
+  }
+};
+_RecClass._counter = 0;
+let RecClass = _RecClass;
+function decodePrincipalId(b2) {
+  const x2 = safeReadUint8(b2);
+  if (x2 !== 1) {
+    throw new Error("Cannot decode principal");
+  }
+  const len = Number(lebDecode(b2));
+  return Principal$1.fromUint8Array(new Uint8Array(safeRead(b2, len)));
+}
+class PrincipalClass extends PrimitiveType {
+  get typeName() {
+    return IdlTypeName.PrincipalClass;
+  }
+  static [Symbol.hasInstance](instance) {
+    return instance.typeName === IdlTypeName.PrincipalClass;
+  }
+  accept(v2, d2) {
+    return v2.visitPrincipal(this, d2);
+  }
+  covariant(x2) {
+    if (x2 && x2._isPrincipal)
+      return true;
+    throw new Error(`Invalid ${this.display()} argument: ${toReadableString(x2)}`);
+  }
+  encodeValue(x2) {
+    const buf = x2.toUint8Array();
+    const len = lebEncode(buf.byteLength);
+    return concat(new Uint8Array([1]), len, buf);
+  }
+  encodeType() {
+    return slebEncode(IDLTypeIds.Principal);
+  }
+  decodeValue(b2, t) {
+    this.checkType(t);
+    return decodePrincipalId(b2);
+  }
+  get name() {
+    return "principal";
+  }
+  valueToString(x2) {
+    return `${this.name} "${x2.toText()}"`;
+  }
+}
+class FuncClass extends ConstructType {
+  get typeName() {
+    return IdlTypeName.FuncClass;
+  }
+  static [Symbol.hasInstance](instance) {
+    return instance.typeName === IdlTypeName.FuncClass;
+  }
+  static argsToString(types, v2) {
+    if (types.length !== v2.length) {
+      throw new Error("arity mismatch");
+    }
+    return "(" + types.map((t, i) => t.valueToString(v2[i])).join(", ") + ")";
+  }
+  constructor(argTypes, retTypes, annotations = []) {
+    super();
+    this.argTypes = argTypes;
+    this.retTypes = retTypes;
+    this.annotations = annotations;
+  }
+  accept(v2, d2) {
+    return v2.visitFunc(this, d2);
+  }
+  covariant(x2) {
+    if (Array.isArray(x2) && x2.length === 2 && x2[0] && x2[0]._isPrincipal && typeof x2[1] === "string")
+      return true;
+    throw new Error(`Invalid ${this.display()} argument: ${toReadableString(x2)}`);
+  }
+  encodeValue([principal, methodName]) {
+    const buf = principal.toUint8Array();
+    const len = lebEncode(buf.byteLength);
+    const canister = concat(new Uint8Array([1]), len, buf);
+    const method = new TextEncoder().encode(methodName);
+    const methodLen = lebEncode(method.byteLength);
+    return concat(new Uint8Array([1]), canister, methodLen, method);
+  }
+  _buildTypeTableImpl(T2) {
+    this.argTypes.forEach((arg) => arg.buildTypeTable(T2));
+    this.retTypes.forEach((arg) => arg.buildTypeTable(T2));
+    const opCode = slebEncode(IDLTypeIds.Func);
+    const argLen = lebEncode(this.argTypes.length);
+    const args = concat(...this.argTypes.map((arg) => arg.encodeType(T2)));
+    const retLen = lebEncode(this.retTypes.length);
+    const rets = concat(...this.retTypes.map((arg) => arg.encodeType(T2)));
+    const annLen = lebEncode(this.annotations.length);
+    const anns = concat(...this.annotations.map((a2) => this.encodeAnnotation(a2)));
+    T2.add(this, concat(opCode, argLen, args, retLen, rets, annLen, anns));
+  }
+  decodeValue(b2, t) {
+    const tt2 = t instanceof RecClass ? t.getType() ?? t : t;
+    if (!subtype(tt2, this)) {
+      throw new Error(`Cannot decode function reference at type ${this.display()} from wire type ${tt2.display()}`);
+    }
+    const x2 = safeReadUint8(b2);
+    if (x2 !== 1) {
+      throw new Error("Cannot decode function reference");
+    }
+    const canister = decodePrincipalId(b2);
+    const mLen = Number(lebDecode(b2));
+    const buf = safeRead(b2, mLen);
+    const decoder = new TextDecoder("utf8", { fatal: true });
+    const method = decoder.decode(buf);
+    return [canister, method];
+  }
+  get name() {
+    const args = this.argTypes.map((arg) => arg.name).join(", ");
+    const rets = this.retTypes.map((arg) => arg.name).join(", ");
+    const annon = " " + this.annotations.join(" ");
+    return `(${args}) -> (${rets})${annon}`;
+  }
+  valueToString([principal, str]) {
+    return `func "${principal.toText()}".${str}`;
+  }
+  display() {
+    const args = this.argTypes.map((arg) => arg.display()).join(", ");
+    const rets = this.retTypes.map((arg) => arg.display()).join(", ");
+    const annon = " " + this.annotations.join(" ");
+    return `(${args}) → (${rets})${annon}`;
+  }
+  encodeAnnotation(ann) {
+    if (ann === "query") {
+      return new Uint8Array([1]);
+    } else if (ann === "oneway") {
+      return new Uint8Array([2]);
+    } else if (ann === "composite_query") {
+      return new Uint8Array([3]);
+    } else {
+      throw new Error("Illegal function annotation");
+    }
+  }
+}
+class ServiceClass extends ConstructType {
+  get typeName() {
+    return IdlTypeName.ServiceClass;
+  }
+  static [Symbol.hasInstance](instance) {
+    return instance.typeName === IdlTypeName.ServiceClass;
+  }
+  constructor(fields) {
+    super();
+    this._fields = Object.entries(fields).sort((a2, b2) => {
+      if (a2[0] < b2[0]) {
+        return -1;
+      }
+      if (a2[0] > b2[0]) {
+        return 1;
+      }
+      return 0;
+    });
+  }
+  accept(v2, d2) {
+    return v2.visitService(this, d2);
+  }
+  covariant(x2) {
+    if (x2 && x2._isPrincipal)
+      return true;
+    throw new Error(`Invalid ${this.display()} argument: ${toReadableString(x2)}`);
+  }
+  encodeValue(x2) {
+    const buf = x2.toUint8Array();
+    const len = lebEncode(buf.length);
+    return concat(new Uint8Array([1]), len, buf);
+  }
+  _buildTypeTableImpl(T2) {
+    this._fields.forEach(([_2, func]) => func.buildTypeTable(T2));
+    const opCode = slebEncode(IDLTypeIds.Service);
+    const len = lebEncode(this._fields.length);
+    const meths = this._fields.map(([label, func]) => {
+      const labelBuf = new TextEncoder().encode(label);
+      const labelLen = lebEncode(labelBuf.length);
+      return concat(labelLen, labelBuf, func.encodeType(T2));
+    });
+    T2.add(this, concat(opCode, len, ...meths));
+  }
+  decodeValue(b2, t) {
+    const tt2 = t instanceof RecClass ? t.getType() ?? t : t;
+    if (!subtype(tt2, this)) {
+      throw new Error(`Cannot decode service reference at type ${this.display()} from wire type ${tt2.display()}`);
+    }
+    return decodePrincipalId(b2);
+  }
+  get name() {
+    const fields = this._fields.map(([key, value]) => key + ":" + value.name);
+    return `service {${fields.join("; ")}}`;
+  }
+  valueToString(x2) {
+    return `service "${x2.toText()}"`;
+  }
+  fieldsAsObject() {
+    const fields = {};
+    for (const [name, ty] of this._fields) {
+      fields[name] = ty;
+    }
+    return fields;
+  }
+}
+function toReadableString(x2) {
+  const str = JSON.stringify(x2, (_key, value) => typeof value === "bigint" ? `BigInt(${value})` : value);
+  return str && str.length > toReadableString_max ? str.substring(0, toReadableString_max - 3) + "..." : str;
+}
+function encode$1(argTypes, args) {
+  if (args.length < argTypes.length) {
+    throw Error("Wrong number of message arguments");
+  }
+  const typeTable = new TypeTable();
+  argTypes.forEach((t) => t.buildTypeTable(typeTable));
+  const magic = new TextEncoder().encode(magicNumber);
+  const table = typeTable.encode();
+  const len = lebEncode(args.length);
+  const typs = concat(...argTypes.map((t) => t.encodeType(typeTable)));
+  const vals = concat(...zipWith(argTypes, args, (t, x2) => {
+    try {
+      t.covariant(x2);
+    } catch (e) {
+      const err = new Error(e.message + "\n\n");
+      throw err;
+    }
+    return t.encodeValue(x2);
+  }));
+  return concat(magic, table, len, typs, vals);
+}
+function decode$1(retTypes, bytes) {
+  const b2 = new PipeArrayBuffer(bytes);
+  if (bytes.byteLength < magicNumber.length) {
+    throw new Error("Message length smaller than magic number");
+  }
+  const magicBuffer = safeRead(b2, magicNumber.length);
+  const magic = new TextDecoder().decode(magicBuffer);
+  if (magic !== magicNumber) {
+    throw new Error("Wrong magic number: " + JSON.stringify(magic));
+  }
+  function readTypeTable(pipe) {
+    const typeTable = [];
+    const len = Number(lebDecode(pipe));
+    for (let i = 0; i < len; i++) {
+      const ty = Number(slebDecode(pipe));
+      switch (ty) {
+        case IDLTypeIds.Opt:
+        case IDLTypeIds.Vector: {
+          const t = Number(slebDecode(pipe));
+          typeTable.push([ty, t]);
+          break;
+        }
+        case IDLTypeIds.Record:
+        case IDLTypeIds.Variant: {
+          const fields = [];
+          let objectLength = Number(lebDecode(pipe));
+          let prevHash;
+          while (objectLength--) {
+            const hash = Number(lebDecode(pipe));
+            if (hash >= Math.pow(2, 32)) {
+              throw new Error("field id out of 32-bit range");
+            }
+            if (typeof prevHash === "number" && prevHash >= hash) {
+              throw new Error("field id collision or not sorted");
+            }
+            prevHash = hash;
+            const t = Number(slebDecode(pipe));
+            fields.push([hash, t]);
+          }
+          typeTable.push([ty, fields]);
+          break;
+        }
+        case IDLTypeIds.Func: {
+          const args = [];
+          let argLength = Number(lebDecode(pipe));
+          while (argLength--) {
+            args.push(Number(slebDecode(pipe)));
+          }
+          const returnValues = [];
+          let returnValuesLength = Number(lebDecode(pipe));
+          while (returnValuesLength--) {
+            returnValues.push(Number(slebDecode(pipe)));
+          }
+          const annotations = [];
+          let annotationLength = Number(lebDecode(pipe));
+          while (annotationLength--) {
+            const annotation = Number(lebDecode(pipe));
+            switch (annotation) {
+              case 1: {
+                annotations.push("query");
+                break;
+              }
+              case 2: {
+                annotations.push("oneway");
+                break;
+              }
+              case 3: {
+                annotations.push("composite_query");
+                break;
+              }
+              default:
+                throw new Error("unknown annotation");
+            }
+          }
+          typeTable.push([ty, [args, returnValues, annotations]]);
+          break;
+        }
+        case IDLTypeIds.Service: {
+          let servLength = Number(lebDecode(pipe));
+          const methods = [];
+          while (servLength--) {
+            const nameLength = Number(lebDecode(pipe));
+            const funcName = new TextDecoder().decode(safeRead(pipe, nameLength));
+            const funcType = slebDecode(pipe);
+            methods.push([funcName, funcType]);
+          }
+          typeTable.push([ty, methods]);
+          break;
+        }
+        default:
+          throw new Error("Illegal op_code: " + ty);
+      }
+    }
+    const rawList = [];
+    const length = Number(lebDecode(pipe));
+    for (let i = 0; i < length; i++) {
+      rawList.push(Number(slebDecode(pipe)));
+    }
+    return [typeTable, rawList];
+  }
+  const [rawTable, rawTypes] = readTypeTable(b2);
+  if (rawTypes.length < retTypes.length) {
+    throw new Error("Wrong number of return values");
+  }
+  const table = rawTable.map((_2) => Rec());
+  function getType(t) {
+    if (t < -24) {
+      throw new Error("future value not supported");
+    }
+    if (t < 0) {
+      switch (t) {
+        case -1:
+          return Null;
+        case -2:
+          return Bool;
+        case -3:
+          return Nat;
+        case -4:
+          return Int;
+        case -5:
+          return Nat8;
+        case -6:
+          return Nat16;
+        case -7:
+          return Nat32;
+        case -8:
+          return Nat64;
+        case -9:
+          return Int8;
+        case -10:
+          return Int16;
+        case -11:
+          return Int32;
+        case -12:
+          return Int64;
+        case -13:
+          return Float32;
+        case -14:
+          return Float64;
+        case -15:
+          return Text;
+        case -16:
+          return Reserved;
+        case -17:
+          return Empty;
+        case -24:
+          return Principal2;
+        default:
+          throw new Error("Illegal op_code: " + t);
+      }
+    }
+    if (t >= rawTable.length) {
+      throw new Error("type index out of range");
+    }
+    return table[t];
+  }
+  function buildType(entry) {
+    switch (entry[0]) {
+      case IDLTypeIds.Vector: {
+        const ty = getType(entry[1]);
+        return Vec(ty);
+      }
+      case IDLTypeIds.Opt: {
+        const ty = getType(entry[1]);
+        return Opt(ty);
+      }
+      case IDLTypeIds.Record: {
+        const fields = {};
+        for (const [hash, ty] of entry[1]) {
+          const name = `_${hash}_`;
+          fields[name] = getType(ty);
+        }
+        const record = Record(fields);
+        const tuple = record.tryAsTuple();
+        if (Array.isArray(tuple)) {
+          return Tuple(...tuple);
+        } else {
+          return record;
+        }
+      }
+      case IDLTypeIds.Variant: {
+        const fields = {};
+        for (const [hash, ty] of entry[1]) {
+          const name = `_${hash}_`;
+          fields[name] = getType(ty);
+        }
+        return Variant(fields);
+      }
+      case IDLTypeIds.Func: {
+        const [args, returnValues, annotations] = entry[1];
+        return Func(args.map((t) => getType(t)), returnValues.map((t) => getType(t)), annotations);
+      }
+      case IDLTypeIds.Service: {
+        const rec = {};
+        const methods = entry[1];
+        for (const [name, typeRef] of methods) {
+          let type = getType(typeRef);
+          if (type instanceof RecClass) {
+            type = type.getType();
+          }
+          if (!(type instanceof FuncClass)) {
+            throw new Error("Illegal service definition: services can only contain functions");
+          }
+          rec[name] = type;
+        }
+        return Service(rec);
+      }
+      default:
+        throw new Error("Illegal op_code: " + entry[0]);
+    }
+  }
+  rawTable.forEach((entry, i) => {
+    if (entry[0] === IDLTypeIds.Func) {
+      const t = buildType(entry);
+      table[i].fill(t);
+    }
+  });
+  rawTable.forEach((entry, i) => {
+    if (entry[0] !== IDLTypeIds.Func) {
+      const t = buildType(entry);
+      table[i].fill(t);
+    }
+  });
+  resetSubtypeCache();
+  const types = rawTypes.map((t) => getType(t));
+  try {
+    const output = retTypes.map((t, i) => {
+      return t.decodeValue(b2, types[i]);
+    });
+    for (let ind = retTypes.length; ind < types.length; ind++) {
+      types[ind].decodeValue(b2, types[ind]);
+    }
+    if (b2.byteLength > 0) {
+      throw new Error("decode: Left-over bytes");
+    }
+    return output;
+  } finally {
+    resetSubtypeCache();
+  }
+}
+const Empty = new EmptyClass();
+const Reserved = new ReservedClass();
+const Unknown = new UnknownClass();
+const Bool = new BoolClass();
+const Null = new NullClass();
+const Text = new TextClass();
+const Int = new IntClass();
+const Nat = new NatClass();
+const Float32 = new FloatClass(32);
+const Float64 = new FloatClass(64);
+const Int8 = new FixedIntClass(8);
+const Int16 = new FixedIntClass(16);
+const Int32 = new FixedIntClass(32);
+const Int64 = new FixedIntClass(64);
+const Nat8 = new FixedNatClass(8);
+const Nat16 = new FixedNatClass(16);
+const Nat32 = new FixedNatClass(32);
+const Nat64 = new FixedNatClass(64);
+const Principal2 = new PrincipalClass();
+function Tuple(...types) {
+  return new TupleClass(types);
+}
+function Vec(t) {
+  return new VecClass(t);
+}
+function Opt(t) {
+  return new OptClass(t);
+}
+function Record(t) {
+  return new RecordClass(t);
+}
+function Variant(fields) {
+  return new VariantClass(fields);
+}
+function Rec() {
+  return new RecClass();
+}
+function Func(args, ret, annotations = []) {
+  return new FuncClass(args, ret, annotations);
+}
+function Service(t) {
+  return new ServiceClass(t);
+}
+class Relations {
+  constructor(relations = /* @__PURE__ */ new Map()) {
+    this.rels = relations;
+  }
+  copy() {
+    const copy = /* @__PURE__ */ new Map();
+    for (const [key, value] of this.rels.entries()) {
+      const valCopy = new Map(value);
+      copy.set(key, valCopy);
+    }
+    return new Relations(copy);
+  }
+  /// Returns whether we know for sure that a relation holds or doesn't (`true` or `false`), or
+  /// if we don't know yet (`undefined`)
+  known(t1, t2) {
+    var _a3;
+    return (_a3 = this.rels.get(t1.name)) == null ? void 0 : _a3.get(t2.name);
+  }
+  addNegative(t1, t2) {
+    this.addNames(t1.name, t2.name, false);
+  }
+  add(t1, t2) {
+    this.addNames(t1.name, t2.name, true);
+  }
+  display() {
+    let result = "";
+    for (const [t1, v2] of this.rels) {
+      for (const [t2, known] of v2) {
+        const subty = known ? ":<" : "!<:";
+        result += `${t1} ${subty} ${t2}
+`;
+      }
+    }
+    return result;
+  }
+  addNames(t1, t2, isSubtype) {
+    const t1Map = this.rels.get(t1);
+    if (t1Map == void 0) {
+      const newMap = /* @__PURE__ */ new Map();
+      newMap.set(t2, isSubtype);
+      this.rels.set(t1, newMap);
+    } else {
+      t1Map.set(t2, isSubtype);
+    }
+  }
+}
+let subtypeCache = new Relations();
+function resetSubtypeCache() {
+  subtypeCache = new Relations();
+}
+function eqFunctionAnnotations(t1, t2) {
+  const t1Annotations = new Set(t1.annotations);
+  const t2Annotations = new Set(t2.annotations);
+  if (t1Annotations.size !== t2Annotations.size) {
+    return false;
+  }
+  for (const a2 of t1Annotations) {
+    if (!t2Annotations.has(a2))
+      return false;
+  }
+  return true;
+}
+function canBeOmmitted(t) {
+  return t instanceof OptClass || t instanceof NullClass || t instanceof ReservedClass;
+}
+function subtype(t1, t2) {
+  const relations = subtypeCache.copy();
+  const isSubtype = subtype_(relations, t1, t2);
+  if (isSubtype) {
+    subtypeCache.add(t1, t2);
+  } else {
+    subtypeCache.addNegative(t1, t2);
+  }
+  return isSubtype;
+}
+function subtype_(relations, t1, t2) {
+  if (t1.name === t2.name)
+    return true;
+  const known = relations.known(t1, t2);
+  if (known !== void 0)
+    return known;
+  relations.add(t1, t2);
+  if (t2 instanceof ReservedClass)
+    return true;
+  if (t1 instanceof EmptyClass)
+    return true;
+  if (t1 instanceof NatClass && t2 instanceof IntClass)
+    return true;
+  if (t1 instanceof VecClass && t2 instanceof VecClass)
+    return subtype_(relations, t1._type, t2._type);
+  if (t2 instanceof OptClass)
+    return true;
+  if (t1 instanceof RecordClass && t2 instanceof RecordClass) {
+    const t1Object = t1.fieldsAsObject;
+    for (const [label, ty2] of t2._fields) {
+      const ty1 = t1Object[idlLabelToId(label)];
+      if (!ty1) {
+        if (!canBeOmmitted(ty2))
+          return false;
+      } else {
+        if (!subtype_(relations, ty1, ty2))
+          return false;
+      }
+    }
+    return true;
+  }
+  if (t1 instanceof FuncClass && t2 instanceof FuncClass) {
+    if (!eqFunctionAnnotations(t1, t2))
+      return false;
+    for (let i = 0; i < t1.argTypes.length; i++) {
+      const argTy1 = t1.argTypes[i];
+      if (i < t2.argTypes.length) {
+        if (!subtype_(relations, t2.argTypes[i], argTy1))
+          return false;
+      } else {
+        if (!canBeOmmitted(argTy1))
+          return false;
+      }
+    }
+    for (let i = 0; i < t2.retTypes.length; i++) {
+      const retTy2 = t2.retTypes[i];
+      if (i < t1.retTypes.length) {
+        if (!subtype_(relations, t1.retTypes[i], retTy2))
+          return false;
+      } else {
+        if (!canBeOmmitted(retTy2))
+          return false;
+      }
+    }
+    return true;
+  }
+  if (t1 instanceof VariantClass && t2 instanceof VariantClass) {
+    const t2Object = t2.alternativesAsObject;
+    for (const [label, ty1] of t1._fields) {
+      const ty2 = t2Object[idlLabelToId(label)];
+      if (!ty2)
+        return false;
+      if (!subtype_(relations, ty1, ty2))
+        return false;
+    }
+    return true;
+  }
+  if (t1 instanceof ServiceClass && t2 instanceof ServiceClass) {
+    const t1Object = t1.fieldsAsObject();
+    for (const [name, ty2] of t2._fields) {
+      const ty1 = t1Object[name];
+      if (!ty1)
+        return false;
+      if (!subtype_(relations, ty1, ty2))
+        return false;
+    }
+    return true;
+  }
+  if (t1 instanceof RecClass) {
+    return subtype_(relations, t1.getType(), t2);
+  }
+  if (t2 instanceof RecClass) {
+    return subtype_(relations, t1, t2.getType());
+  }
+  return false;
+}
+const IDL = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  __proto__: null,
+  Bool,
+  BoolClass,
+  ConstructType,
+  Empty,
+  EmptyClass,
+  FixedIntClass,
+  FixedNatClass,
+  Float32,
+  Float64,
+  FloatClass,
+  Func,
+  FuncClass,
+  Int,
+  Int16,
+  Int32,
+  Int64,
+  Int8,
+  IntClass,
+  Nat,
+  Nat16,
+  Nat32,
+  Nat64,
+  Nat8,
+  NatClass,
+  Null,
+  NullClass,
+  Opt,
+  OptClass,
+  PrimitiveType,
+  Principal: Principal2,
+  PrincipalClass,
+  Rec,
+  RecClass,
+  Record,
+  RecordClass,
+  Reserved,
+  ReservedClass,
+  Service,
+  ServiceClass,
+  Text,
+  TextClass,
+  Tuple,
+  TupleClass,
+  Type,
+  Unknown,
+  UnknownClass,
+  Variant,
+  VariantClass,
+  Vec,
+  VecClass,
+  Visitor,
+  decode: decode$1,
+  encode: encode$1,
+  resetSubtypeCache,
+  subtype
+}, Symbol.toStringTag, { value: "Module" }));
 function uint8FromBufLike(bufLike) {
   if (!bufLike) {
     throw new Error("Input cannot be null or undefined");
@@ -1530,11 +4220,11 @@ function uint8FromBufLike(bufLike) {
   }
   return new Uint8Array(bufLike);
 }
-function uint8Equals(a, b) {
-  if (a.length !== b.length)
+function uint8Equals(a2, b2) {
+  if (a2.length !== b2.length)
     return false;
-  for (let i = 0; i < a.length; i++) {
-    if (a[i] !== b[i])
+  for (let i = 0; i < a2.length; i++) {
+    if (a2[i] !== b2[i])
       return false;
   }
   return true;
@@ -1564,8 +4254,8 @@ const hashString = (value) => {
   const encoded = new TextEncoder().encode(value);
   return sha256(encoded);
 };
-function requestIdOf(request) {
-  return hashOfMap(request);
+function requestIdOf(request2) {
+  return hashOfMap(request2);
 }
 function hashOfMap(map) {
   const hashed = Object.entries(map).filter(([, value]) => value !== void 0).map(([key, value]) => {
@@ -1577,12 +4267,12 @@ function hashOfMap(map) {
   const sorted = traversed.sort(([k1], [k2]) => {
     return compare(k1, k2);
   });
-  const concatenated = concatBytes(...sorted.map((x) => concatBytes(...x)));
+  const concatenated = concatBytes(...sorted.map((x2) => concatBytes(...x2)));
   const result = sha256(concatenated);
   return result;
 }
 const IC_REQUEST_DOMAIN_SEPARATOR = new TextEncoder().encode("\nic-request");
-new TextEncoder().encode("\vic-response");
+const IC_RESPONSE_DOMAIN_SEPARATOR = new TextEncoder().encode("\vic-response");
 const IC_REQUEST_AUTH_DELEGATION_DOMAIN_SEPARATOR = new TextEncoder().encode("ic-request-auth-delegation");
 class SignIdentity {
   /**
@@ -1591,7 +4281,7 @@ class SignIdentity {
    */
   getPrincipal() {
     if (!this._principal) {
-      this._principal = Principal.selfAuthenticating(new Uint8Array(this.getPublicKey().toDer()));
+      this._principal = Principal$1.selfAuthenticating(new Uint8Array(this.getPublicKey().toDer()));
     }
     return this._principal;
   }
@@ -1601,8 +4291,8 @@ class SignIdentity {
    * anything, but must be serializable to CBOR.
    * @param request - internet computer request to transform
    */
-  async transformRequest(request) {
-    const { body, ...fields } = request;
+  async transformRequest(request2) {
+    const { body, ...fields } = request2;
     const requestId = requestIdOf(body);
     return {
       ...fields,
@@ -1616,18 +4306,462 @@ class SignIdentity {
 }
 class AnonymousIdentity {
   getPrincipal() {
-    return Principal.anonymous();
+    return Principal$1.anonymous();
   }
-  async transformRequest(request) {
+  async transformRequest(request2) {
     return {
-      ...request,
-      body: { content: request.body }
+      ...request2,
+      body: { content: request2.body }
     };
   }
 }
+class w extends Error {
+  constructor(n) {
+    super(n), this.name = "DecodingError";
+  }
+}
+const m = 55799, L = Symbol("CBOR_STOP_CODE");
+var g = /* @__PURE__ */ ((t) => (t[t.False = 20] = "False", t[t.True = 21] = "True", t[t.Null = 22] = "Null", t[t.Undefined = 23] = "Undefined", t[t.Break = 31] = "Break", t))(g || {}), c = /* @__PURE__ */ ((t) => (t[t.UnsignedInteger = 0] = "UnsignedInteger", t[t.NegativeInteger = 1] = "NegativeInteger", t[t.ByteString = 2] = "ByteString", t[t.TextString = 3] = "TextString", t[t.Array = 4] = "Array", t[t.Map = 5] = "Map", t[t.Tag = 6] = "Tag", t[t.Simple = 7] = "Simple", t))(c || {});
+const z = 23, Y = 255, G = 65535, P = 4294967295, H = BigInt("0xffffffffffffffff");
+var d = /* @__PURE__ */ ((t) => (t[t.Value = 23] = "Value", t[t.OneByte = 24] = "OneByte", t[t.TwoBytes = 25] = "TwoBytes", t[t.FourBytes = 26] = "FourBytes", t[t.EightBytes = 27] = "EightBytes", t[t.Indefinite = 31] = "Indefinite", t))(d || {});
+const h = false;
+function W(t) {
+  return t == null;
+}
+function R(t, n) {
+  const e = new Uint8Array(n);
+  return e.set(t), e;
+}
+const K = new TextDecoder();
+function Z(t) {
+  return (t & 224) >> 5;
+}
+function q(t) {
+  return t & 31;
+}
+let A = new Uint8Array(), y, a = 0;
+function ut(t, n) {
+  A = t, a = 0;
+  const e = B();
+  return (n == null ? void 0 : n(e)) ?? e;
+}
+function B(t) {
+  const [n, e] = N();
+  switch (n) {
+    case c.UnsignedInteger:
+      return E(e);
+    case c.NegativeInteger:
+      return j(e);
+    case c.ByteString:
+      return $(e);
+    case c.TextString:
+      return F(e);
+    case c.Array:
+      return J(e);
+    case c.Map:
+      return b(e);
+    case c.Tag:
+      return M(e);
+    case c.Simple:
+      return Q(e);
+  }
+  throw new w(`Unsupported major type: ${n}`);
+}
+function N() {
+  const t = A.at(a);
+  if (W(t))
+    throw new w("Provided CBOR data is empty");
+  const n = Z(t), e = q(t);
+  return a++, [n, e];
+}
+function J(t, n) {
+  const e = E(t);
+  if (e === 1 / 0) {
+    const u = [];
+    let f = B();
+    for (; f !== L; )
+      u.push(f), f = B();
+    return u;
+  }
+  const i = new Array(e);
+  for (let u = 0; u < e; u++) {
+    const f = B();
+    i[u] = f;
+  }
+  return i;
+}
+function Q(t) {
+  switch (t) {
+    case g.False:
+      return false;
+    case g.True:
+      return true;
+    case g.Null:
+      return null;
+    case g.Undefined:
+      return;
+    case g.Break:
+      return L;
+  }
+  throw new w(`Unrecognized simple type: ${t.toString(2)}`);
+}
+function b(t, n) {
+  const e = E(t), i = {};
+  if (e === 1 / 0) {
+    let [u, f] = N();
+    for (; u !== c.Simple && f !== g.Break; ) {
+      const l = F(f), U = B();
+      i[l] = U, [u, f] = N();
+    }
+    return i;
+  }
+  for (let u = 0; u < e; u++) {
+    const [f, l] = N();
+    if (f !== c.TextString)
+      throw new w("Map keys must be text strings");
+    const U = F(l), D = B();
+    i[U] = D;
+  }
+  return i;
+}
+function E(t) {
+  if (t <= d.Value)
+    return t;
+  switch (y = new DataView(A.buffer, A.byteOffset + a), t) {
+    case d.OneByte:
+      return a++, y.getUint8(0);
+    case d.TwoBytes:
+      return a += 2, y.getUint16(0, h);
+    case d.FourBytes:
+      return a += 4, y.getUint32(0, h);
+    case d.EightBytes:
+      return a += 8, y.getBigUint64(0, h);
+    case d.Indefinite:
+      return 1 / 0;
+    default:
+      throw new w(`Unsupported integer info: ${t.toString(2)}`);
+  }
+}
+function j(t) {
+  const n = E(t);
+  return typeof n == "number" ? -1 - n : -1n - n;
+}
+function $(t) {
+  const n = E(t);
+  if (n > Number.MAX_SAFE_INTEGER)
+    throw new w("Byte length is too large");
+  const e = Number(n);
+  return a += e, A.slice(a - e, a);
+}
+function F(t) {
+  const n = $(t);
+  return K.decode(n);
+}
+function M(t, n) {
+  const e = E(t);
+  if (e === m)
+    return B();
+  throw new w(`Unsupported tag: ${e}.`);
+}
+class x extends Error {
+  constructor(n) {
+    super(n), this.name = "SerializationError";
+  }
+}
+const p = 2 * 1024, C = 100, v = new TextEncoder();
+function S(t) {
+  return t << 5;
+}
+let o = new Uint8Array(p), r$1 = new DataView(o.buffer), s = 0, O = [];
+function dt(t, n) {
+  s = 0;
+  const e = (n == null ? void 0 : n(t)) ?? t;
+  return it(m, e, n), o.slice(0, s);
+}
+function _(t, n) {
+  if (s > o.length - C && (o = R(o, o.length * 2), r$1 = new DataView(o.buffer)), t === false || t === true || t === null || t === void 0) {
+    et(t);
+    return;
+  }
+  if (typeof t == "number" || typeof t == "bigint") {
+    ft(t);
+    return;
+  }
+  if (typeof t == "string") {
+    X(t);
+    return;
+  }
+  if (t instanceof Uint8Array) {
+    V(t);
+    return;
+  }
+  if (t instanceof ArrayBuffer) {
+    V(new Uint8Array(t));
+    return;
+  }
+  if (Array.isArray(t)) {
+    tt(t, n);
+    return;
+  }
+  if (typeof t == "object") {
+    nt(t, n);
+    return;
+  }
+  throw new x(`Unsupported type: ${typeof t}`);
+}
+function tt(t, n) {
+  I(c.Array, t.length), t.forEach((e, i) => {
+    _((n == null ? void 0 : n(e, i.toString())) ?? e, n);
+  });
+}
+function nt(t, n) {
+  O = Object.entries(t), I(c.Map, O.length), O.forEach(([e, i]) => {
+    X(e), _((n == null ? void 0 : n(i, e)) ?? i, n);
+  });
+}
+function I(t, n) {
+  if (n <= z) {
+    r$1.setUint8(
+      s++,
+      S(t) | Number(n)
+    );
+    return;
+  }
+  if (n <= Y) {
+    r$1.setUint8(
+      s++,
+      S(t) | d.OneByte
+    ), r$1.setUint8(s, Number(n)), s += 1;
+    return;
+  }
+  if (n <= G) {
+    r$1.setUint8(
+      s++,
+      S(t) | d.TwoBytes
+    ), r$1.setUint16(s, Number(n), h), s += 2;
+    return;
+  }
+  if (n <= P) {
+    r$1.setUint8(
+      s++,
+      S(t) | d.FourBytes
+    ), r$1.setUint32(s, Number(n), h), s += 4;
+    return;
+  }
+  if (n <= H) {
+    r$1.setUint8(
+      s++,
+      S(t) | d.EightBytes
+    ), r$1.setBigUint64(s, BigInt(n), h), s += 8;
+    return;
+  }
+  throw new x(`Value too large to encode: ${n}`);
+}
+function et(t) {
+  I(c.Simple, st(t));
+}
+function st(t) {
+  if (t === false)
+    return g.False;
+  if (t === true)
+    return g.True;
+  if (t === null)
+    return g.Null;
+  if (t === void 0)
+    return g.Undefined;
+  throw new x(`Unrecognized simple value: ${t.toString()}`);
+}
+function k(t, n) {
+  I(t, n.length), s > o.length - n.length && (o = R(o, o.length + n.length), r$1 = new DataView(o.buffer)), o.set(n, s), s += n.length;
+}
+function T(t, n) {
+  I(t, n);
+}
+function ct(t) {
+  T(c.UnsignedInteger, t);
+}
+function ot(t) {
+  T(
+    c.NegativeInteger,
+    typeof t == "bigint" ? -1n - t : -1 - t
+  );
+}
+function ft(t) {
+  t >= 0 ? ct(t) : ot(t);
+}
+function X(t) {
+  k(c.TextString, v.encode(t));
+}
+function V(t) {
+  k(c.ByteString, t);
+}
+function it(t, n, e) {
+  I(c.Tag, t), _(n, e);
+}
+function hasCborValueMethod(value) {
+  return typeof value === "object" && value !== null && "toCborValue" in value;
+}
+function encode(value) {
+  try {
+    return dt(value, (value2) => {
+      if (Principal$1.isPrincipal(value2)) {
+        return value2.toUint8Array();
+      }
+      if (Expiry.isExpiry(value2)) {
+        return value2.toBigInt();
+      }
+      if (hasCborValueMethod(value2)) {
+        return value2.toCborValue();
+      }
+      return value2;
+    });
+  } catch (error) {
+    throw InputError.fromCode(new CborEncodeErrorCode(error, value));
+  }
+}
+function decode(input) {
+  try {
+    return ut(input);
+  } catch (error) {
+    throw InputError.fromCode(new CborDecodeErrorCode(error, input));
+  }
+}
+const randomNumber = () => {
+  if (typeof window !== "undefined" && !!window.crypto && !!window.crypto.getRandomValues) {
+    const array = new Uint32Array(1);
+    window.crypto.getRandomValues(array);
+    return array[0];
+  }
+  if (typeof crypto !== "undefined" && crypto.getRandomValues) {
+    const array = new Uint32Array(1);
+    crypto.getRandomValues(array);
+    return array[0];
+  }
+  if (typeof crypto !== "undefined" && crypto.randomInt) {
+    return crypto.randomInt(0, 4294967295);
+  }
+  return Math.floor(Math.random() * 4294967295);
+};
+var Endpoint;
+(function(Endpoint2) {
+  Endpoint2["Query"] = "read";
+  Endpoint2["ReadState"] = "read_state";
+  Endpoint2["Call"] = "call";
+})(Endpoint || (Endpoint = {}));
+var SubmitRequestType;
+(function(SubmitRequestType2) {
+  SubmitRequestType2["Call"] = "call";
+})(SubmitRequestType || (SubmitRequestType = {}));
+var ReadRequestType;
+(function(ReadRequestType2) {
+  ReadRequestType2["Query"] = "query";
+  ReadRequestType2["ReadState"] = "read_state";
+})(ReadRequestType || (ReadRequestType = {}));
+function makeNonce() {
+  const buffer = new ArrayBuffer(16);
+  const view = new DataView(buffer);
+  const rand1 = randomNumber();
+  const rand2 = randomNumber();
+  const rand3 = randomNumber();
+  const rand4 = randomNumber();
+  view.setUint32(0, rand1);
+  view.setUint32(4, rand2);
+  view.setUint32(8, rand3);
+  view.setUint32(12, rand4);
+  return Object.assign(new Uint8Array(buffer), { __nonce__: void 0 });
+}
+const JSON_KEY_EXPIRY = "__expiry__";
+const SECONDS_TO_MILLISECONDS = BigInt(1e3);
+const MILLISECONDS_TO_NANOSECONDS = BigInt(1e6);
+const MINUTES_TO_SECONDS = BigInt(60);
+const EXPIRY_DELTA_THRESHOLD_MILLISECONDS = BigInt(90) * SECONDS_TO_MILLISECONDS;
+function roundMillisToSeconds(millis) {
+  return millis / SECONDS_TO_MILLISECONDS;
+}
+function roundMillisToMinutes(millis) {
+  return roundMillisToSeconds(millis) / MINUTES_TO_SECONDS;
+}
+class Expiry {
+  constructor(__expiry__) {
+    this.__expiry__ = __expiry__;
+    this._isExpiry = true;
+  }
+  /**
+   * Creates an Expiry object from a delta in milliseconds.
+   * If the delta is less than 90 seconds, the expiry is rounded down to the nearest second.
+   * Otherwise, the expiry is rounded down to the nearest minute.
+   * @param deltaInMs The milliseconds to add to the current time.
+   * @param clockDriftMs The milliseconds to add to the current time, typically the clock drift between IC network clock and the client's clock. Defaults to `0` if not provided.
+   * @returns {Expiry} The constructed Expiry object.
+   */
+  static fromDeltaInMilliseconds(deltaInMs, clockDriftMs = 0) {
+    const deltaMs = BigInt(deltaInMs);
+    const expiryMs = BigInt(Date.now()) + deltaMs + BigInt(clockDriftMs);
+    let roundedExpirySeconds;
+    if (deltaMs < EXPIRY_DELTA_THRESHOLD_MILLISECONDS) {
+      roundedExpirySeconds = roundMillisToSeconds(expiryMs);
+    } else {
+      const roundedExpiryMinutes = roundMillisToMinutes(expiryMs);
+      roundedExpirySeconds = roundedExpiryMinutes * MINUTES_TO_SECONDS;
+    }
+    return new Expiry(roundedExpirySeconds * SECONDS_TO_MILLISECONDS * MILLISECONDS_TO_NANOSECONDS);
+  }
+  toBigInt() {
+    return this.__expiry__;
+  }
+  toHash() {
+    return lebEncode(this.__expiry__);
+  }
+  toString() {
+    return this.__expiry__.toString();
+  }
+  /**
+   * Serializes to JSON
+   * @returns {JsonnableExpiry} a JSON object with a single key, {@link JSON_KEY_EXPIRY}, whose value is the expiry as a string
+   */
+  toJSON() {
+    return { [JSON_KEY_EXPIRY]: this.toString() };
+  }
+  /**
+   * Deserializes a {@link JsonnableExpiry} object from a JSON string.
+   * @param input The JSON string to deserialize.
+   * @returns {Expiry} The deserialized Expiry object.
+   */
+  static fromJSON(input) {
+    const obj = JSON.parse(input);
+    if (obj[JSON_KEY_EXPIRY]) {
+      try {
+        const expiry = BigInt(obj[JSON_KEY_EXPIRY]);
+        return new Expiry(expiry);
+      } catch (error) {
+        throw new InputError(new ExpiryJsonDeserializeErrorCode(`Not a valid BigInt: ${error}`));
+      }
+    }
+    throw new InputError(new ExpiryJsonDeserializeErrorCode(`The input does not contain the key ${JSON_KEY_EXPIRY}`));
+  }
+  static isExpiry(other) {
+    return other instanceof Expiry || typeof other === "object" && other !== null && "_isExpiry" in other && other["_isExpiry"] === true && "__expiry__" in other && typeof other["__expiry__"] === "bigint";
+  }
+}
+function makeNonceTransform(nonceFn = makeNonce) {
+  return async (request2) => {
+    const headers = request2.request.headers;
+    request2.request.headers = headers;
+    if (request2.endpoint === Endpoint.Call) {
+      request2.body.nonce = nonceFn();
+    }
+  };
+}
+function httpHeadersTransform(headers) {
+  const headerFields = [];
+  headers.forEach((value, key) => {
+    headerFields.push([key, value]);
+  });
+  return headerFields;
+}
 /*! noble-curves - MIT License (c) 2022 Paul Miller (paulmillr.com) */
-const _0n$3 = /* @__PURE__ */ BigInt(0);
-const _1n$4 = /* @__PURE__ */ BigInt(1);
+const _0n$7 = /* @__PURE__ */ BigInt(0);
+const _1n$8 = /* @__PURE__ */ BigInt(1);
 function _abool2(value, title = "") {
   if (typeof value !== "boolean") {
     const prefix2 = title && `"${title}"`;
@@ -1650,7 +4784,7 @@ function _abytes2(value, length, title = "") {
 function hexToNumber(hex) {
   if (typeof hex !== "string")
     throw new Error("hex string expected, got " + typeof hex);
-  return hex === "" ? _0n$3 : BigInt("0x" + hex);
+  return hex === "" ? _0n$7 : BigInt("0x" + hex);
 }
 function bytesToNumberBE(bytes) {
   return hexToNumber(bytesToHex(bytes));
@@ -1686,7 +4820,7 @@ function ensureBytes(title, hex, expectedLength) {
 function copyBytes(bytes) {
   return Uint8Array.from(bytes);
 }
-const isPosBig = (n) => typeof n === "bigint" && _0n$3 <= n;
+const isPosBig = (n) => typeof n === "bigint" && _0n$7 <= n;
 function inRange(n, min2, max2) {
   return isPosBig(n) && isPosBig(min2) && isPosBig(max2) && min2 <= n && n < max2;
 }
@@ -1696,11 +4830,17 @@ function aInRange(title, n, min2, max2) {
 }
 function bitLen(n) {
   let len;
-  for (len = 0; n > _0n$3; n >>= _1n$4, len += 1)
+  for (len = 0; n > _0n$7; n >>= _1n$8, len += 1)
     ;
   return len;
 }
-const bitMask = (n) => (_1n$4 << BigInt(n)) - _1n$4;
+function bitGet(n, pos) {
+  return n >> BigInt(pos) & _1n$8;
+}
+const bitMask = (n) => (_1n$8 << BigInt(n)) - _1n$8;
+function isHash(val) {
+  return typeof val === "function" && Number.isSafeInteger(val.outputLen);
+}
 function _validateObject(object, fields, optFields = {}) {
   if (!object || typeof object !== "object")
     throw new Error("expected valid options object");
@@ -1712,9 +4852,12 @@ function _validateObject(object, fields, optFields = {}) {
     if (current !== expectedType || val === null)
       throw new Error(`param "${fieldName}" is invalid: expected ${expectedType}, got ${current}`);
   }
-  Object.entries(fields).forEach(([k, v]) => checkField(k, v, false));
-  Object.entries(optFields).forEach(([k, v]) => checkField(k, v, true));
+  Object.entries(fields).forEach(([k2, v2]) => checkField(k2, v2, false));
+  Object.entries(optFields).forEach(([k2, v2]) => checkField(k2, v2, true));
 }
+const notImplemented = () => {
+  throw new Error("not implemented");
+};
 function memoized(fn) {
   const map = /* @__PURE__ */ new WeakMap();
   return (arg, ...args) => {
@@ -1727,141 +4870,141 @@ function memoized(fn) {
   };
 }
 /*! noble-curves - MIT License (c) 2022 Paul Miller (paulmillr.com) */
-const _0n$2 = BigInt(0), _1n$3 = BigInt(1), _2n$2 = /* @__PURE__ */ BigInt(2), _3n = /* @__PURE__ */ BigInt(3);
-const _4n = /* @__PURE__ */ BigInt(4), _5n$1 = /* @__PURE__ */ BigInt(5), _7n = /* @__PURE__ */ BigInt(7);
+const _0n$6 = BigInt(0), _1n$7 = BigInt(1), _2n$6 = /* @__PURE__ */ BigInt(2), _3n$4 = /* @__PURE__ */ BigInt(3);
+const _4n$2 = /* @__PURE__ */ BigInt(4), _5n$1 = /* @__PURE__ */ BigInt(5), _7n = /* @__PURE__ */ BigInt(7);
 const _8n$2 = /* @__PURE__ */ BigInt(8), _9n = /* @__PURE__ */ BigInt(9), _16n = /* @__PURE__ */ BigInt(16);
-function mod(a, b) {
-  const result = a % b;
-  return result >= _0n$2 ? result : b + result;
+function mod(a2, b2) {
+  const result = a2 % b2;
+  return result >= _0n$6 ? result : b2 + result;
 }
-function pow2(x, power, modulo) {
-  let res = x;
-  while (power-- > _0n$2) {
+function pow2(x2, power, modulo) {
+  let res = x2;
+  while (power-- > _0n$6) {
     res *= res;
     res %= modulo;
   }
   return res;
 }
 function invert(number, modulo) {
-  if (number === _0n$2)
+  if (number === _0n$6)
     throw new Error("invert: expected non-zero number");
-  if (modulo <= _0n$2)
+  if (modulo <= _0n$6)
     throw new Error("invert: expected positive modulus, got " + modulo);
-  let a = mod(number, modulo);
-  let b = modulo;
-  let x = _0n$2, u = _1n$3;
-  while (a !== _0n$2) {
-    const q = b / a;
-    const r2 = b % a;
-    const m = x - u * q;
-    b = a, a = r2, x = u, u = m;
+  let a2 = mod(number, modulo);
+  let b2 = modulo;
+  let x2 = _0n$6, u = _1n$7;
+  while (a2 !== _0n$6) {
+    const q2 = b2 / a2;
+    const r2 = b2 % a2;
+    const m2 = x2 - u * q2;
+    b2 = a2, a2 = r2, x2 = u, u = m2;
   }
-  const gcd = b;
-  if (gcd !== _1n$3)
+  const gcd = b2;
+  if (gcd !== _1n$7)
     throw new Error("invert: does not exist");
-  return mod(x, modulo);
+  return mod(x2, modulo);
 }
-function assertIsSquare(Fp2, root2, n) {
-  if (!Fp2.eql(Fp2.sqr(root2), n))
+function assertIsSquare(Fp3, root2, n) {
+  if (!Fp3.eql(Fp3.sqr(root2), n))
     throw new Error("Cannot find square root");
 }
-function sqrt3mod4(Fp2, n) {
-  const p1div4 = (Fp2.ORDER + _1n$3) / _4n;
-  const root2 = Fp2.pow(n, p1div4);
-  assertIsSquare(Fp2, root2, n);
+function sqrt3mod4(Fp3, n) {
+  const p1div4 = (Fp3.ORDER + _1n$7) / _4n$2;
+  const root2 = Fp3.pow(n, p1div4);
+  assertIsSquare(Fp3, root2, n);
   return root2;
 }
-function sqrt5mod8(Fp2, n) {
-  const p5div8 = (Fp2.ORDER - _5n$1) / _8n$2;
-  const n2 = Fp2.mul(n, _2n$2);
-  const v = Fp2.pow(n2, p5div8);
-  const nv = Fp2.mul(n, v);
-  const i = Fp2.mul(Fp2.mul(nv, _2n$2), v);
-  const root2 = Fp2.mul(nv, Fp2.sub(i, Fp2.ONE));
-  assertIsSquare(Fp2, root2, n);
+function sqrt5mod8(Fp3, n) {
+  const p5div8 = (Fp3.ORDER - _5n$1) / _8n$2;
+  const n2 = Fp3.mul(n, _2n$6);
+  const v2 = Fp3.pow(n2, p5div8);
+  const nv = Fp3.mul(n, v2);
+  const i = Fp3.mul(Fp3.mul(nv, _2n$6), v2);
+  const root2 = Fp3.mul(nv, Fp3.sub(i, Fp3.ONE));
+  assertIsSquare(Fp3, root2, n);
   return root2;
 }
-function sqrt9mod16(P) {
-  const Fp_ = Field(P);
-  const tn = tonelliShanks(P);
+function sqrt9mod16(P2) {
+  const Fp_ = Field(P2);
+  const tn = tonelliShanks(P2);
   const c1 = tn(Fp_, Fp_.neg(Fp_.ONE));
   const c2 = tn(Fp_, c1);
   const c3 = tn(Fp_, Fp_.neg(c1));
-  const c4 = (P + _7n) / _16n;
-  return (Fp2, n) => {
-    let tv1 = Fp2.pow(n, c4);
-    let tv2 = Fp2.mul(tv1, c1);
-    const tv3 = Fp2.mul(tv1, c2);
-    const tv4 = Fp2.mul(tv1, c3);
-    const e1 = Fp2.eql(Fp2.sqr(tv2), n);
-    const e2 = Fp2.eql(Fp2.sqr(tv3), n);
-    tv1 = Fp2.cmov(tv1, tv2, e1);
-    tv2 = Fp2.cmov(tv4, tv3, e2);
-    const e3 = Fp2.eql(Fp2.sqr(tv2), n);
-    const root2 = Fp2.cmov(tv1, tv2, e3);
-    assertIsSquare(Fp2, root2, n);
+  const c4 = (P2 + _7n) / _16n;
+  return (Fp3, n) => {
+    let tv1 = Fp3.pow(n, c4);
+    let tv2 = Fp3.mul(tv1, c1);
+    const tv3 = Fp3.mul(tv1, c2);
+    const tv4 = Fp3.mul(tv1, c3);
+    const e1 = Fp3.eql(Fp3.sqr(tv2), n);
+    const e2 = Fp3.eql(Fp3.sqr(tv3), n);
+    tv1 = Fp3.cmov(tv1, tv2, e1);
+    tv2 = Fp3.cmov(tv4, tv3, e2);
+    const e3 = Fp3.eql(Fp3.sqr(tv2), n);
+    const root2 = Fp3.cmov(tv1, tv2, e3);
+    assertIsSquare(Fp3, root2, n);
     return root2;
   };
 }
-function tonelliShanks(P) {
-  if (P < _3n)
+function tonelliShanks(P2) {
+  if (P2 < _3n$4)
     throw new Error("sqrt is not defined for small field");
-  let Q = P - _1n$3;
-  let S = 0;
-  while (Q % _2n$2 === _0n$2) {
-    Q /= _2n$2;
-    S++;
+  let Q2 = P2 - _1n$7;
+  let S2 = 0;
+  while (Q2 % _2n$6 === _0n$6) {
+    Q2 /= _2n$6;
+    S2++;
   }
-  let Z = _2n$2;
-  const _Fp = Field(P);
-  while (FpLegendre(_Fp, Z) === 1) {
-    if (Z++ > 1e3)
+  let Z2 = _2n$6;
+  const _Fp = Field(P2);
+  while (FpLegendre(_Fp, Z2) === 1) {
+    if (Z2++ > 1e3)
       throw new Error("Cannot find square root: probably non-prime P");
   }
-  if (S === 1)
+  if (S2 === 1)
     return sqrt3mod4;
-  let cc = _Fp.pow(Z, Q);
-  const Q1div2 = (Q + _1n$3) / _2n$2;
-  return function tonelliSlow(Fp2, n) {
-    if (Fp2.is0(n))
+  let cc = _Fp.pow(Z2, Q2);
+  const Q1div2 = (Q2 + _1n$7) / _2n$6;
+  return function tonelliSlow(Fp3, n) {
+    if (Fp3.is0(n))
       return n;
-    if (FpLegendre(Fp2, n) !== 1)
+    if (FpLegendre(Fp3, n) !== 1)
       throw new Error("Cannot find square root");
-    let M = S;
-    let c = Fp2.mul(Fp2.ONE, cc);
-    let t = Fp2.pow(n, Q);
-    let R = Fp2.pow(n, Q1div2);
-    while (!Fp2.eql(t, Fp2.ONE)) {
-      if (Fp2.is0(t))
-        return Fp2.ZERO;
+    let M2 = S2;
+    let c2 = Fp3.mul(Fp3.ONE, cc);
+    let t = Fp3.pow(n, Q2);
+    let R2 = Fp3.pow(n, Q1div2);
+    while (!Fp3.eql(t, Fp3.ONE)) {
+      if (Fp3.is0(t))
+        return Fp3.ZERO;
       let i = 1;
-      let t_tmp = Fp2.sqr(t);
-      while (!Fp2.eql(t_tmp, Fp2.ONE)) {
+      let t_tmp = Fp3.sqr(t);
+      while (!Fp3.eql(t_tmp, Fp3.ONE)) {
         i++;
-        t_tmp = Fp2.sqr(t_tmp);
-        if (i === M)
+        t_tmp = Fp3.sqr(t_tmp);
+        if (i === M2)
           throw new Error("Cannot find square root");
       }
-      const exponent = _1n$3 << BigInt(M - i - 1);
-      const b = Fp2.pow(c, exponent);
-      M = i;
-      c = Fp2.sqr(b);
-      t = Fp2.mul(t, c);
-      R = Fp2.mul(R, b);
+      const exponent = _1n$7 << BigInt(M2 - i - 1);
+      const b2 = Fp3.pow(c2, exponent);
+      M2 = i;
+      c2 = Fp3.sqr(b2);
+      t = Fp3.mul(t, c2);
+      R2 = Fp3.mul(R2, b2);
     }
-    return R;
+    return R2;
   };
 }
-function FpSqrt(P) {
-  if (P % _4n === _3n)
+function FpSqrt(P2) {
+  if (P2 % _4n$2 === _3n$4)
     return sqrt3mod4;
-  if (P % _8n$2 === _5n$1)
+  if (P2 % _8n$2 === _5n$1)
     return sqrt5mod8;
-  if (P % _16n === _9n)
-    return sqrt9mod16(P);
-  return tonelliShanks(P);
+  if (P2 % _16n === _9n)
+    return sqrt9mod16(P2);
+  return tonelliShanks(P2);
 }
-const isNegativeLE = (num, modulo) => (mod(num, modulo) & _1n$3) === _1n$3;
+const isNegativeLE = (num, modulo) => (mod(num, modulo) & _1n$7) === _1n$7;
 const FIELD_FIELDS = [
   "create",
   "isValid",
@@ -1895,46 +5038,46 @@ function validateField(field) {
   _validateObject(field, opts);
   return field;
 }
-function FpPow(Fp2, num, power) {
-  if (power < _0n$2)
+function FpPow(Fp3, num, power) {
+  if (power < _0n$6)
     throw new Error("invalid exponent, negatives unsupported");
-  if (power === _0n$2)
-    return Fp2.ONE;
-  if (power === _1n$3)
+  if (power === _0n$6)
+    return Fp3.ONE;
+  if (power === _1n$7)
     return num;
-  let p = Fp2.ONE;
-  let d = num;
-  while (power > _0n$2) {
-    if (power & _1n$3)
-      p = Fp2.mul(p, d);
-    d = Fp2.sqr(d);
-    power >>= _1n$3;
+  let p2 = Fp3.ONE;
+  let d2 = num;
+  while (power > _0n$6) {
+    if (power & _1n$7)
+      p2 = Fp3.mul(p2, d2);
+    d2 = Fp3.sqr(d2);
+    power >>= _1n$7;
   }
-  return p;
+  return p2;
 }
-function FpInvertBatch(Fp2, nums, passZero = false) {
-  const inverted = new Array(nums.length).fill(passZero ? Fp2.ZERO : void 0);
+function FpInvertBatch(Fp3, nums, passZero = false) {
+  const inverted = new Array(nums.length).fill(passZero ? Fp3.ZERO : void 0);
   const multipliedAcc = nums.reduce((acc, num, i) => {
-    if (Fp2.is0(num))
+    if (Fp3.is0(num))
       return acc;
     inverted[i] = acc;
-    return Fp2.mul(acc, num);
-  }, Fp2.ONE);
-  const invertedAcc = Fp2.inv(multipliedAcc);
+    return Fp3.mul(acc, num);
+  }, Fp3.ONE);
+  const invertedAcc = Fp3.inv(multipliedAcc);
   nums.reduceRight((acc, num, i) => {
-    if (Fp2.is0(num))
+    if (Fp3.is0(num))
       return acc;
-    inverted[i] = Fp2.mul(acc, inverted[i]);
-    return Fp2.mul(acc, num);
+    inverted[i] = Fp3.mul(acc, inverted[i]);
+    return Fp3.mul(acc, num);
   }, invertedAcc);
   return inverted;
 }
-function FpLegendre(Fp2, n) {
-  const p1mod2 = (Fp2.ORDER - _1n$3) / _2n$2;
-  const powered = Fp2.pow(n, p1mod2);
-  const yes = Fp2.eql(powered, Fp2.ONE);
-  const zero = Fp2.eql(powered, Fp2.ZERO);
-  const no = Fp2.eql(powered, Fp2.neg(Fp2.ONE));
+function FpLegendre(Fp3, n) {
+  const p1mod2 = (Fp3.ORDER - _1n$7) / _2n$6;
+  const powered = Fp3.pow(n, p1mod2);
+  const yes = Fp3.eql(powered, Fp3.ONE);
+  const zero = Fp3.eql(powered, Fp3.ZERO);
+  const no = Fp3.eql(powered, Fp3.neg(Fp3.ONE));
   if (!yes && !zero && !no)
     throw new Error("invalid Legendre symbol result");
   return yes ? 1 : zero ? 0 : -1;
@@ -1947,7 +5090,7 @@ function nLength(n, nBitLength) {
   return { nBitLength: _nBitLength, nByteLength };
 }
 function Field(ORDER, bitLenOrOpts, isLE = false, opts = {}) {
-  if (ORDER <= _0n$2)
+  if (ORDER <= _0n$6)
     throw new Error("invalid field: expected ORDER > 0, got " + ORDER);
   let _nbitLength = void 0;
   let _sqrt = void 0;
@@ -1982,19 +5125,19 @@ function Field(ORDER, bitLenOrOpts, isLE = false, opts = {}) {
     BITS,
     BYTES,
     MASK: bitMask(BITS),
-    ZERO: _0n$2,
-    ONE: _1n$3,
+    ZERO: _0n$6,
+    ONE: _1n$7,
     allowedLengths,
     create: (num) => mod(num, ORDER),
     isValid: (num) => {
       if (typeof num !== "bigint")
         throw new Error("invalid field element: expected bigint, got " + typeof num);
-      return _0n$2 <= num && num < ORDER;
+      return _0n$6 <= num && num < ORDER;
     },
-    is0: (num) => num === _0n$2,
+    is0: (num) => num === _0n$6,
     // is valid and invertible
     isValidNot0: (num) => !f.is0(num) && f.isValid(num),
-    isOdd: (num) => (num & _1n$3) === _1n$3,
+    isOdd: (num) => (num & _1n$7) === _1n$7,
     neg: (num) => mod(-num, ORDER),
     eql: (lhs, rhs) => lhs === rhs,
     sqr: (num) => mod(num * num, ORDER),
@@ -2039,32 +5182,52 @@ function Field(ORDER, bitLenOrOpts, isLE = false, opts = {}) {
     invertBatch: (lst) => FpInvertBatch(f, lst),
     // We can't move this out because Fp6, Fp12 implement it
     // and it's unclear what to return in there.
-    cmov: (a, b, c) => c ? b : a
+    cmov: (a2, b2, c2) => c2 ? b2 : a2
   });
   return Object.freeze(f);
 }
+function getFieldBytesLength(fieldOrder) {
+  if (typeof fieldOrder !== "bigint")
+    throw new Error("field order must be bigint");
+  const bitLength = fieldOrder.toString(2).length;
+  return Math.ceil(bitLength / 8);
+}
+function getMinHashLength(fieldOrder) {
+  const length = getFieldBytesLength(fieldOrder);
+  return length + Math.ceil(length / 2);
+}
+function mapHashToField(key, fieldOrder, isLE = false) {
+  const len = key.length;
+  const fieldLen = getFieldBytesLength(fieldOrder);
+  const minLen = getMinHashLength(fieldOrder);
+  if (len < 16 || len < minLen || len > 1024)
+    throw new Error("expected " + minLen + "-1024 bytes of input, got " + len);
+  const num = isLE ? bytesToNumberLE(key) : bytesToNumberBE(key);
+  const reduced = mod(num, fieldOrder - _1n$7) + _1n$7;
+  return isLE ? numberToBytesLE(reduced, fieldLen) : numberToBytesBE(reduced, fieldLen);
+}
 /*! noble-curves - MIT License (c) 2022 Paul Miller (paulmillr.com) */
-const _0n$1 = BigInt(0);
-const _1n$2 = BigInt(1);
+const _0n$5 = BigInt(0);
+const _1n$6 = BigInt(1);
 function negateCt(condition, item) {
   const neg = item.negate();
   return condition ? neg : item;
 }
-function normalizeZ(c, points) {
-  const invertedZs = FpInvertBatch(c.Fp, points.map((p) => p.Z));
-  return points.map((p, i) => c.fromAffine(p.toAffine(invertedZs[i])));
+function normalizeZ(c2, points) {
+  const invertedZs = FpInvertBatch(c2.Fp, points.map((p2) => p2.Z));
+  return points.map((p2, i) => c2.fromAffine(p2.toAffine(invertedZs[i])));
 }
-function validateW(W, bits) {
-  if (!Number.isSafeInteger(W) || W <= 0 || W > bits)
-    throw new Error("invalid window size, expected [1.." + bits + "], got W=" + W);
+function validateW(W2, bits) {
+  if (!Number.isSafeInteger(W2) || W2 <= 0 || W2 > bits)
+    throw new Error("invalid window size, expected [1.." + bits + "], got W=" + W2);
 }
-function calcWOpts(W, scalarBits) {
-  validateW(W, scalarBits);
-  const windows = Math.ceil(scalarBits / W) + 1;
-  const windowSize = 2 ** (W - 1);
-  const maxNumber = 2 ** W;
-  const mask = bitMask(W);
-  const shiftBy = BigInt(W);
+function calcWOpts(W2, scalarBits) {
+  validateW(W2, scalarBits);
+  const windows = Math.ceil(scalarBits / W2) + 1;
+  const windowSize = 2 ** (W2 - 1);
+  const maxNumber = 2 ** W2;
+  const mask = bitMask(W2);
+  const shiftBy = BigInt(W2);
   return { windows, windowSize, mask, maxNumber, shiftBy };
 }
 function calcOffsets(n, window2, wOpts) {
@@ -2073,7 +5236,7 @@ function calcOffsets(n, window2, wOpts) {
   let nextN = n >> shiftBy;
   if (wbits > windowSize) {
     wbits -= maxNumber;
-    nextN += _1n$2;
+    nextN += _1n$6;
   }
   const offsetStart = window2 * windowSize;
   const offset2 = offsetStart + Math.abs(wbits) - 1;
@@ -2083,29 +5246,29 @@ function calcOffsets(n, window2, wOpts) {
   const offsetF = offsetStart;
   return { nextN, offset: offset2, isZero, isNeg, isNegF, offsetF };
 }
-function validateMSMPoints(points, c) {
+function validateMSMPoints(points, c2) {
   if (!Array.isArray(points))
     throw new Error("array expected");
-  points.forEach((p, i) => {
-    if (!(p instanceof c))
+  points.forEach((p2, i) => {
+    if (!(p2 instanceof c2))
       throw new Error("invalid point at index " + i);
   });
 }
 function validateMSMScalars(scalars, field) {
   if (!Array.isArray(scalars))
     throw new Error("array of scalars expected");
-  scalars.forEach((s, i) => {
-    if (!field.isValid(s))
+  scalars.forEach((s2, i) => {
+    if (!field.isValid(s2))
       throw new Error("invalid scalar at index " + i);
   });
 }
 const pointPrecomputes = /* @__PURE__ */ new WeakMap();
 const pointWindowSizes = /* @__PURE__ */ new WeakMap();
-function getW(P) {
-  return pointWindowSizes.get(P) || 1;
+function getW(P2) {
+  return pointWindowSizes.get(P2) || 1;
 }
 function assert0(n) {
-  if (n !== _0n$1)
+  if (n !== _0n$5)
     throw new Error("invalid wNAF");
 }
 class wNAF {
@@ -2117,15 +5280,15 @@ class wNAF {
     this.bits = bits;
   }
   // non-const time multiplication ladder
-  _unsafeLadder(elm, n, p = this.ZERO) {
-    let d = elm;
-    while (n > _0n$1) {
-      if (n & _1n$2)
-        p = p.add(d);
-      d = d.double();
-      n >>= _1n$2;
+  _unsafeLadder(elm, n, p2 = this.ZERO) {
+    let d2 = elm;
+    while (n > _0n$5) {
+      if (n & _1n$6)
+        p2 = p2.add(d2);
+      d2 = d2.double();
+      n >>= _1n$6;
     }
-    return p;
+    return p2;
   }
   /**
    * Creates a wNAF precomputation window. Used for caching.
@@ -2139,19 +5302,19 @@ class wNAF {
    * @param W window size
    * @returns precomputed point tables flattened to a single array
    */
-  precomputeWindow(point, W) {
-    const { windows, windowSize } = calcWOpts(W, this.bits);
+  precomputeWindow(point, W2) {
+    const { windows, windowSize } = calcWOpts(W2, this.bits);
     const points = [];
-    let p = point;
-    let base = p;
+    let p2 = point;
+    let base = p2;
     for (let window2 = 0; window2 < windows; window2++) {
-      base = p;
+      base = p2;
       points.push(base);
       for (let i = 1; i < windowSize; i++) {
-        base = base.add(p);
+        base = base.add(p2);
         points.push(base);
       }
-      p = base.double();
+      p2 = base.double();
     }
     return points;
   }
@@ -2161,33 +5324,33 @@ class wNAF {
    * https://github.com/paulmillr/noble-secp256k1/blob/47cb1669b6e506ad66b35fe7d76132ae97465da2/index.ts#L502-L541
    * @returns real and fake (for const-time) points
    */
-  wNAF(W, precomputes, n) {
+  wNAF(W2, precomputes, n) {
     if (!this.Fn.isValid(n))
       throw new Error("invalid scalar");
-    let p = this.ZERO;
+    let p2 = this.ZERO;
     let f = this.BASE;
-    const wo = calcWOpts(W, this.bits);
+    const wo = calcWOpts(W2, this.bits);
     for (let window2 = 0; window2 < wo.windows; window2++) {
       const { nextN, offset: offset2, isZero, isNeg, isNegF, offsetF } = calcOffsets(n, window2, wo);
       n = nextN;
       if (isZero) {
         f = f.add(negateCt(isNegF, precomputes[offsetF]));
       } else {
-        p = p.add(negateCt(isNeg, precomputes[offset2]));
+        p2 = p2.add(negateCt(isNeg, precomputes[offset2]));
       }
     }
     assert0(n);
-    return { p, f };
+    return { p: p2, f };
   }
   /**
    * Implements ec unsafe (non const-time) multiplication using precomputed tables and w-ary non-adjacent form.
    * @param acc accumulator point to add result of multiplication
    * @returns point
    */
-  wNAFUnsafe(W, precomputes, n, acc = this.ZERO) {
-    const wo = calcWOpts(W, this.bits);
+  wNAFUnsafe(W2, precomputes, n, acc = this.ZERO) {
+    const wo = calcWOpts(W2, this.bits);
     for (let window2 = 0; window2 < wo.windows; window2++) {
-      if (n === _0n$1)
+      if (n === _0n$5)
         break;
       const { nextN, offset: offset2, isZero, isNeg } = calcOffsets(n, window2, wo);
       n = nextN;
@@ -2201,11 +5364,11 @@ class wNAF {
     assert0(n);
     return acc;
   }
-  getPrecomputes(W, point, transform) {
+  getPrecomputes(W2, point, transform) {
     let comp = pointPrecomputes.get(point);
     if (!comp) {
-      comp = this.precomputeWindow(point, W);
-      if (W !== 1) {
+      comp = this.precomputeWindow(point, W2);
+      if (W2 !== 1) {
         if (typeof transform === "function")
           comp = transform(comp);
         pointPrecomputes.set(point, comp);
@@ -2214,35 +5377,50 @@ class wNAF {
     return comp;
   }
   cached(point, scalar, transform) {
-    const W = getW(point);
-    return this.wNAF(W, this.getPrecomputes(W, point, transform), scalar);
+    const W2 = getW(point);
+    return this.wNAF(W2, this.getPrecomputes(W2, point, transform), scalar);
   }
   unsafe(point, scalar, transform, prev) {
-    const W = getW(point);
-    if (W === 1)
+    const W2 = getW(point);
+    if (W2 === 1)
       return this._unsafeLadder(point, scalar, prev);
-    return this.wNAFUnsafe(W, this.getPrecomputes(W, point, transform), scalar, prev);
+    return this.wNAFUnsafe(W2, this.getPrecomputes(W2, point, transform), scalar, prev);
   }
   // We calculate precomputes for elliptic curve point multiplication
   // using windowed method. This specifies window size and
   // stores precomputed values. Usually only base point would be precomputed.
-  createCache(P, W) {
-    validateW(W, this.bits);
-    pointWindowSizes.set(P, W);
-    pointPrecomputes.delete(P);
+  createCache(P2, W2) {
+    validateW(W2, this.bits);
+    pointWindowSizes.set(P2, W2);
+    pointPrecomputes.delete(P2);
   }
   hasCache(elm) {
     return getW(elm) !== 1;
   }
 }
-function pippenger(c, fieldN, points, scalars) {
-  validateMSMPoints(points, c);
+function mulEndoUnsafe(Point, point, k1, k2) {
+  let acc = point;
+  let p1 = Point.ZERO;
+  let p2 = Point.ZERO;
+  while (k1 > _0n$5 || k2 > _0n$5) {
+    if (k1 & _1n$6)
+      p1 = p1.add(acc);
+    if (k2 & _1n$6)
+      p2 = p2.add(acc);
+    acc = acc.double();
+    k1 >>= _1n$6;
+    k2 >>= _1n$6;
+  }
+  return { p1, p2 };
+}
+function pippenger(c2, fieldN, points, scalars) {
+  validateMSMPoints(points, c2);
   validateMSMScalars(scalars, fieldN);
   const plength = points.length;
   const slength = scalars.length;
   if (plength !== slength)
     throw new Error("arrays of points and scalars must have equal length");
-  const zero = c.ZERO;
+  const zero = c2.ZERO;
   const wbits = bitLen(BigInt(plength));
   let windowSize = 1;
   if (wbits > 12)
@@ -2257,19 +5435,19 @@ function pippenger(c, fieldN, points, scalars) {
   let sum = zero;
   for (let i = lastBits; i >= 0; i -= windowSize) {
     buckets.fill(zero);
-    for (let j = 0; j < slength; j++) {
-      const scalar = scalars[j];
+    for (let j2 = 0; j2 < slength; j2++) {
+      const scalar = scalars[j2];
       const wbits2 = Number(scalar >> BigInt(i) & MASK);
-      buckets[wbits2] = buckets[wbits2].add(points[j]);
+      buckets[wbits2] = buckets[wbits2].add(points[j2]);
     }
     let resI = zero;
-    for (let j = buckets.length - 1, sumI = zero; j > 0; j--) {
-      sumI = sumI.add(buckets[j]);
+    for (let j2 = buckets.length - 1, sumI = zero; j2 > 0; j2--) {
+      sumI = sumI.add(buckets[j2]);
       resI = resI.add(sumI);
     }
     sum = sum.add(resI);
     if (i !== 0)
-      for (let j = 0; j < windowSize; j++)
+      for (let j2 = 0; j2 < windowSize; j2++)
         sum = sum.double();
   }
   return sum;
@@ -2289,47 +5467,3032 @@ function _createCurveFields(type, CURVE, curveOpts = {}, FpFnLE) {
     FpFnLE = type === "edwards";
   if (!CURVE || typeof CURVE !== "object")
     throw new Error(`expected valid ${type} CURVE object`);
-  for (const p of ["p", "n", "h"]) {
-    const val = CURVE[p];
-    if (!(typeof val === "bigint" && val > _0n$1))
-      throw new Error(`CURVE.${p} must be positive bigint`);
+  for (const p2 of ["p", "n", "h"]) {
+    const val = CURVE[p2];
+    if (!(typeof val === "bigint" && val > _0n$5))
+      throw new Error(`CURVE.${p2} must be positive bigint`);
   }
-  const Fp2 = createField(CURVE.p, curveOpts.Fp, FpFnLE);
+  const Fp3 = createField(CURVE.p, curveOpts.Fp, FpFnLE);
   const Fn = createField(CURVE.n, curveOpts.Fn, FpFnLE);
-  const _b2 = "d";
-  const params = ["Gx", "Gy", "a", _b2];
-  for (const p of params) {
-    if (!Fp2.isValid(CURVE[p]))
-      throw new Error(`CURVE.${p} must be valid field element of CURVE.Fp`);
+  const _b3 = type === "weierstrass" ? "b" : "d";
+  const params = ["Gx", "Gy", "a", _b3];
+  for (const p2 of params) {
+    if (!Fp3.isValid(CURVE[p2]))
+      throw new Error(`CURVE.${p2} must be valid field element of CURVE.Fp`);
   }
   CURVE = Object.freeze(Object.assign({}, CURVE));
-  return { CURVE, Fp: Fp2, Fn };
+  return { CURVE, Fp: Fp3, Fn };
+}
+const os2ip = bytesToNumberBE;
+function i2osp(value, length) {
+  anum(value);
+  anum(length);
+  if (value < 0 || value >= 1 << 8 * length)
+    throw new Error("invalid I2OSP input: " + value);
+  const res = Array.from({ length }).fill(0);
+  for (let i = length - 1; i >= 0; i--) {
+    res[i] = value & 255;
+    value >>>= 8;
+  }
+  return new Uint8Array(res);
+}
+function strxor(a2, b2) {
+  const arr = new Uint8Array(a2.length);
+  for (let i = 0; i < a2.length; i++) {
+    arr[i] = a2[i] ^ b2[i];
+  }
+  return arr;
+}
+function anum(item) {
+  if (!Number.isSafeInteger(item))
+    throw new Error("number expected");
+}
+function normDST(DST) {
+  if (!isBytes(DST) && typeof DST !== "string")
+    throw new Error("DST must be Uint8Array or string");
+  return typeof DST === "string" ? utf8ToBytes(DST) : DST;
+}
+function expand_message_xmd(msg, DST, lenInBytes, H2) {
+  abytes(msg);
+  anum(lenInBytes);
+  DST = normDST(DST);
+  if (DST.length > 255)
+    DST = H2(concatBytes(utf8ToBytes("H2C-OVERSIZE-DST-"), DST));
+  const { outputLen: b_in_bytes, blockLen: r_in_bytes } = H2;
+  const ell = Math.ceil(lenInBytes / b_in_bytes);
+  if (lenInBytes > 65535 || ell > 255)
+    throw new Error("expand_message_xmd: invalid lenInBytes");
+  const DST_prime = concatBytes(DST, i2osp(DST.length, 1));
+  const Z_pad = i2osp(0, r_in_bytes);
+  const l_i_b_str = i2osp(lenInBytes, 2);
+  const b2 = new Array(ell);
+  const b_0 = H2(concatBytes(Z_pad, msg, l_i_b_str, i2osp(0, 1), DST_prime));
+  b2[0] = H2(concatBytes(b_0, i2osp(1, 1), DST_prime));
+  for (let i = 1; i <= ell; i++) {
+    const args = [strxor(b_0, b2[i - 1]), i2osp(i + 1, 1), DST_prime];
+    b2[i] = H2(concatBytes(...args));
+  }
+  const pseudo_random_bytes = concatBytes(...b2);
+  return pseudo_random_bytes.slice(0, lenInBytes);
+}
+function expand_message_xof(msg, DST, lenInBytes, k2, H2) {
+  abytes(msg);
+  anum(lenInBytes);
+  DST = normDST(DST);
+  if (DST.length > 255) {
+    const dkLen = Math.ceil(2 * k2 / 8);
+    DST = H2.create({ dkLen }).update(utf8ToBytes("H2C-OVERSIZE-DST-")).update(DST).digest();
+  }
+  if (lenInBytes > 65535 || DST.length > 255)
+    throw new Error("expand_message_xof: invalid lenInBytes");
+  return H2.create({ dkLen: lenInBytes }).update(msg).update(i2osp(lenInBytes, 2)).update(DST).update(i2osp(DST.length, 1)).digest();
+}
+function hash_to_field(msg, count2, options) {
+  _validateObject(options, {
+    p: "bigint",
+    m: "number",
+    k: "number",
+    hash: "function"
+  });
+  const { p: p2, k: k2, m: m2, hash, expand, DST } = options;
+  if (!isHash(options.hash))
+    throw new Error("expected valid hash");
+  abytes(msg);
+  anum(count2);
+  const log2p = p2.toString(2).length;
+  const L2 = Math.ceil((log2p + k2) / 8);
+  const len_in_bytes = count2 * m2 * L2;
+  let prb;
+  if (expand === "xmd") {
+    prb = expand_message_xmd(msg, DST, len_in_bytes, hash);
+  } else if (expand === "xof") {
+    prb = expand_message_xof(msg, DST, len_in_bytes, k2, hash);
+  } else if (expand === "_internal_pass") {
+    prb = msg;
+  } else {
+    throw new Error('expand must be "xmd" or "xof"');
+  }
+  const u = new Array(count2);
+  for (let i = 0; i < count2; i++) {
+    const e = new Array(m2);
+    for (let j2 = 0; j2 < m2; j2++) {
+      const elm_offset = L2 * (j2 + i * m2);
+      const tv = prb.subarray(elm_offset, elm_offset + L2);
+      e[j2] = mod(os2ip(tv), p2);
+    }
+    u[i] = e;
+  }
+  return u;
+}
+function isogenyMap(field, map) {
+  const coeff = map.map((i) => Array.from(i).reverse());
+  return (x2, y2) => {
+    const [xn, xd, yn, yd] = coeff.map((val) => val.reduce((acc, i) => field.add(field.mul(acc, x2), i)));
+    const [xd_inv, yd_inv] = FpInvertBatch(field, [xd, yd], true);
+    x2 = field.mul(xn, xd_inv);
+    y2 = field.mul(y2, field.mul(yn, yd_inv));
+    return { x: x2, y: y2 };
+  };
+}
+const _DST_scalar = utf8ToBytes("HashToScalar-");
+function createHasher(Point, mapToCurve, defaults) {
+  if (typeof mapToCurve !== "function")
+    throw new Error("mapToCurve() must be defined");
+  function map(num) {
+    return Point.fromAffine(mapToCurve(num));
+  }
+  function clear(initial) {
+    const P2 = initial.clearCofactor();
+    if (P2.equals(Point.ZERO))
+      return Point.ZERO;
+    P2.assertValidity();
+    return P2;
+  }
+  return {
+    defaults,
+    hashToCurve(msg, options) {
+      const opts = Object.assign({}, defaults, options);
+      const u = hash_to_field(msg, 2, opts);
+      const u0 = map(u[0]);
+      const u1 = map(u[1]);
+      return clear(u0.add(u1));
+    },
+    encodeToCurve(msg, options) {
+      const optsDst = defaults.encodeDST ? { DST: defaults.encodeDST } : {};
+      const opts = Object.assign({}, defaults, optsDst, options);
+      const u = hash_to_field(msg, 1, opts);
+      const u0 = map(u[0]);
+      return clear(u0);
+    },
+    /** See {@link H2CHasher} */
+    mapToCurve(scalars) {
+      if (!Array.isArray(scalars))
+        throw new Error("expected array of bigints");
+      for (const i of scalars)
+        if (typeof i !== "bigint")
+          throw new Error("expected array of bigints");
+      return clear(map(scalars));
+    },
+    // hash_to_scalar can produce 0: https://www.rfc-editor.org/errata/eid8393
+    // RFC 9380, draft-irtf-cfrg-bbs-signatures-08
+    hashToScalar(msg, options) {
+      const N2 = Point.Fn.ORDER;
+      const opts = Object.assign({}, defaults, { p: N2, m: 1, DST: _DST_scalar }, options);
+      return hash_to_field(msg, 1, opts)[0][0];
+    }
+  };
 }
 /*! noble-curves - MIT License (c) 2022 Paul Miller (paulmillr.com) */
+const divNearest = (num, den) => (num + (num >= 0 ? den : -den) / _2n$5) / den;
+function _splitEndoScalar(k2, basis, n) {
+  const [[a1, b1], [a2, b2]] = basis;
+  const c1 = divNearest(b2 * k2, n);
+  const c2 = divNearest(-b1 * k2, n);
+  let k1 = k2 - c1 * a1 - c2 * a2;
+  let k22 = -c1 * b1 - c2 * b2;
+  const k1neg = k1 < _0n$4;
+  const k2neg = k22 < _0n$4;
+  if (k1neg)
+    k1 = -k1;
+  if (k2neg)
+    k22 = -k22;
+  const MAX_NUM = bitMask(Math.ceil(bitLen(n) / 2)) + _1n$5;
+  if (k1 < _0n$4 || k1 >= MAX_NUM || k22 < _0n$4 || k22 >= MAX_NUM) {
+    throw new Error("splitScalar (endomorphism): failed, k=" + k2);
+  }
+  return { k1neg, k1, k2neg, k2: k22 };
+}
+const _0n$4 = BigInt(0), _1n$5 = BigInt(1), _2n$5 = BigInt(2), _3n$3 = BigInt(3), _4n$1 = BigInt(4);
+function _normFnElement(Fn, key) {
+  const { BYTES: expected } = Fn;
+  let num;
+  if (typeof key === "bigint") {
+    num = key;
+  } else {
+    let bytes = ensureBytes("private key", key);
+    try {
+      num = Fn.fromBytes(bytes);
+    } catch (error) {
+      throw new Error(`invalid private key: expected ui8a of size ${expected}, got ${typeof key}`);
+    }
+  }
+  if (!Fn.isValidNot0(num))
+    throw new Error("invalid private key: out of range [1..N-1]");
+  return num;
+}
+function weierstrassN(params, extraOpts = {}) {
+  const validated = _createCurveFields("weierstrass", params, extraOpts);
+  const { Fp: Fp3, Fn } = validated;
+  let CURVE = validated.CURVE;
+  const { h: cofactor, n: CURVE_ORDER } = CURVE;
+  _validateObject(extraOpts, {}, {
+    allowInfinityPoint: "boolean",
+    clearCofactor: "function",
+    isTorsionFree: "function",
+    fromBytes: "function",
+    toBytes: "function",
+    endo: "object",
+    wrapPrivateKey: "boolean"
+  });
+  const { endo } = extraOpts;
+  if (endo) {
+    if (!Fp3.is0(CURVE.a) || typeof endo.beta !== "bigint" || !Array.isArray(endo.basises)) {
+      throw new Error('invalid endo: expected "beta": bigint and "basises": array');
+    }
+  }
+  const lengths = getWLengths(Fp3, Fn);
+  function assertCompressionIsSupported() {
+    if (!Fp3.isOdd)
+      throw new Error("compression is not supported: Field does not have .isOdd()");
+  }
+  function pointToBytes(_c2, point, isCompressed) {
+    const { x: x2, y: y2 } = point.toAffine();
+    const bx = Fp3.toBytes(x2);
+    _abool2(isCompressed, "isCompressed");
+    if (isCompressed) {
+      assertCompressionIsSupported();
+      const hasEvenY = !Fp3.isOdd(y2);
+      return concatBytes(pprefix(hasEvenY), bx);
+    } else {
+      return concatBytes(Uint8Array.of(4), bx, Fp3.toBytes(y2));
+    }
+  }
+  function pointFromBytes(bytes) {
+    _abytes2(bytes, void 0, "Point");
+    const { publicKey: comp, publicKeyUncompressed: uncomp } = lengths;
+    const length = bytes.length;
+    const head = bytes[0];
+    const tail = bytes.subarray(1);
+    if (length === comp && (head === 2 || head === 3)) {
+      const x2 = Fp3.fromBytes(tail);
+      if (!Fp3.isValid(x2))
+        throw new Error("bad point: is not on curve, wrong x");
+      const y2 = weierstrassEquation(x2);
+      let y3;
+      try {
+        y3 = Fp3.sqrt(y2);
+      } catch (sqrtError) {
+        const err = sqrtError instanceof Error ? ": " + sqrtError.message : "";
+        throw new Error("bad point: is not on curve, sqrt error" + err);
+      }
+      assertCompressionIsSupported();
+      const isYOdd = Fp3.isOdd(y3);
+      const isHeadOdd = (head & 1) === 1;
+      if (isHeadOdd !== isYOdd)
+        y3 = Fp3.neg(y3);
+      return { x: x2, y: y3 };
+    } else if (length === uncomp && head === 4) {
+      const L2 = Fp3.BYTES;
+      const x2 = Fp3.fromBytes(tail.subarray(0, L2));
+      const y2 = Fp3.fromBytes(tail.subarray(L2, L2 * 2));
+      if (!isValidXY(x2, y2))
+        throw new Error("bad point: is not on curve");
+      return { x: x2, y: y2 };
+    } else {
+      throw new Error(`bad point: got length ${length}, expected compressed=${comp} or uncompressed=${uncomp}`);
+    }
+  }
+  const encodePoint = extraOpts.toBytes || pointToBytes;
+  const decodePoint = extraOpts.fromBytes || pointFromBytes;
+  function weierstrassEquation(x2) {
+    const x22 = Fp3.sqr(x2);
+    const x3 = Fp3.mul(x22, x2);
+    return Fp3.add(Fp3.add(x3, Fp3.mul(x2, CURVE.a)), CURVE.b);
+  }
+  function isValidXY(x2, y2) {
+    const left = Fp3.sqr(y2);
+    const right = weierstrassEquation(x2);
+    return Fp3.eql(left, right);
+  }
+  if (!isValidXY(CURVE.Gx, CURVE.Gy))
+    throw new Error("bad curve params: generator point");
+  const _4a3 = Fp3.mul(Fp3.pow(CURVE.a, _3n$3), _4n$1);
+  const _27b2 = Fp3.mul(Fp3.sqr(CURVE.b), BigInt(27));
+  if (Fp3.is0(Fp3.add(_4a3, _27b2)))
+    throw new Error("bad curve params: a or b");
+  function acoord(title, n, banZero = false) {
+    if (!Fp3.isValid(n) || banZero && Fp3.is0(n))
+      throw new Error(`bad point coordinate ${title}`);
+    return n;
+  }
+  function aprjpoint(other) {
+    if (!(other instanceof Point))
+      throw new Error("ProjectivePoint expected");
+  }
+  function splitEndoScalarN(k2) {
+    if (!endo || !endo.basises)
+      throw new Error("no endo");
+    return _splitEndoScalar(k2, endo.basises, Fn.ORDER);
+  }
+  const toAffineMemo = memoized((p2, iz) => {
+    const { X: X2, Y: Y2, Z: Z2 } = p2;
+    if (Fp3.eql(Z2, Fp3.ONE))
+      return { x: X2, y: Y2 };
+    const is0 = p2.is0();
+    if (iz == null)
+      iz = is0 ? Fp3.ONE : Fp3.inv(Z2);
+    const x2 = Fp3.mul(X2, iz);
+    const y2 = Fp3.mul(Y2, iz);
+    const zz = Fp3.mul(Z2, iz);
+    if (is0)
+      return { x: Fp3.ZERO, y: Fp3.ZERO };
+    if (!Fp3.eql(zz, Fp3.ONE))
+      throw new Error("invZ was invalid");
+    return { x: x2, y: y2 };
+  });
+  const assertValidMemo = memoized((p2) => {
+    if (p2.is0()) {
+      if (extraOpts.allowInfinityPoint && !Fp3.is0(p2.Y))
+        return;
+      throw new Error("bad point: ZERO");
+    }
+    const { x: x2, y: y2 } = p2.toAffine();
+    if (!Fp3.isValid(x2) || !Fp3.isValid(y2))
+      throw new Error("bad point: x or y not field elements");
+    if (!isValidXY(x2, y2))
+      throw new Error("bad point: equation left != right");
+    if (!p2.isTorsionFree())
+      throw new Error("bad point: not in prime-order subgroup");
+    return true;
+  });
+  function finishEndo(endoBeta, k1p, k2p, k1neg, k2neg) {
+    k2p = new Point(Fp3.mul(k2p.X, endoBeta), k2p.Y, k2p.Z);
+    k1p = negateCt(k1neg, k1p);
+    k2p = negateCt(k2neg, k2p);
+    return k1p.add(k2p);
+  }
+  class Point {
+    /** Does NOT validate if the point is valid. Use `.assertValidity()`. */
+    constructor(X2, Y2, Z2) {
+      this.X = acoord("x", X2);
+      this.Y = acoord("y", Y2, true);
+      this.Z = acoord("z", Z2);
+      Object.freeze(this);
+    }
+    static CURVE() {
+      return CURVE;
+    }
+    /** Does NOT validate if the point is valid. Use `.assertValidity()`. */
+    static fromAffine(p2) {
+      const { x: x2, y: y2 } = p2 || {};
+      if (!p2 || !Fp3.isValid(x2) || !Fp3.isValid(y2))
+        throw new Error("invalid affine point");
+      if (p2 instanceof Point)
+        throw new Error("projective point not allowed");
+      if (Fp3.is0(x2) && Fp3.is0(y2))
+        return Point.ZERO;
+      return new Point(x2, y2, Fp3.ONE);
+    }
+    static fromBytes(bytes) {
+      const P2 = Point.fromAffine(decodePoint(_abytes2(bytes, void 0, "point")));
+      P2.assertValidity();
+      return P2;
+    }
+    static fromHex(hex) {
+      return Point.fromBytes(ensureBytes("pointHex", hex));
+    }
+    get x() {
+      return this.toAffine().x;
+    }
+    get y() {
+      return this.toAffine().y;
+    }
+    /**
+     *
+     * @param windowSize
+     * @param isLazy true will defer table computation until the first multiplication
+     * @returns
+     */
+    precompute(windowSize = 8, isLazy = true) {
+      wnaf.createCache(this, windowSize);
+      if (!isLazy)
+        this.multiply(_3n$3);
+      return this;
+    }
+    // TODO: return `this`
+    /** A point on curve is valid if it conforms to equation. */
+    assertValidity() {
+      assertValidMemo(this);
+    }
+    hasEvenY() {
+      const { y: y2 } = this.toAffine();
+      if (!Fp3.isOdd)
+        throw new Error("Field doesn't support isOdd");
+      return !Fp3.isOdd(y2);
+    }
+    /** Compare one point to another. */
+    equals(other) {
+      aprjpoint(other);
+      const { X: X1, Y: Y1, Z: Z1 } = this;
+      const { X: X2, Y: Y2, Z: Z2 } = other;
+      const U1 = Fp3.eql(Fp3.mul(X1, Z2), Fp3.mul(X2, Z1));
+      const U2 = Fp3.eql(Fp3.mul(Y1, Z2), Fp3.mul(Y2, Z1));
+      return U1 && U2;
+    }
+    /** Flips point to one corresponding to (x, -y) in Affine coordinates. */
+    negate() {
+      return new Point(this.X, Fp3.neg(this.Y), this.Z);
+    }
+    // Renes-Costello-Batina exception-free doubling formula.
+    // There is 30% faster Jacobian formula, but it is not complete.
+    // https://eprint.iacr.org/2015/1060, algorithm 3
+    // Cost: 8M + 3S + 3*a + 2*b3 + 15add.
+    double() {
+      const { a: a2, b: b2 } = CURVE;
+      const b3 = Fp3.mul(b2, _3n$3);
+      const { X: X1, Y: Y1, Z: Z1 } = this;
+      let X3 = Fp3.ZERO, Y3 = Fp3.ZERO, Z3 = Fp3.ZERO;
+      let t0 = Fp3.mul(X1, X1);
+      let t1 = Fp3.mul(Y1, Y1);
+      let t2 = Fp3.mul(Z1, Z1);
+      let t3 = Fp3.mul(X1, Y1);
+      t3 = Fp3.add(t3, t3);
+      Z3 = Fp3.mul(X1, Z1);
+      Z3 = Fp3.add(Z3, Z3);
+      X3 = Fp3.mul(a2, Z3);
+      Y3 = Fp3.mul(b3, t2);
+      Y3 = Fp3.add(X3, Y3);
+      X3 = Fp3.sub(t1, Y3);
+      Y3 = Fp3.add(t1, Y3);
+      Y3 = Fp3.mul(X3, Y3);
+      X3 = Fp3.mul(t3, X3);
+      Z3 = Fp3.mul(b3, Z3);
+      t2 = Fp3.mul(a2, t2);
+      t3 = Fp3.sub(t0, t2);
+      t3 = Fp3.mul(a2, t3);
+      t3 = Fp3.add(t3, Z3);
+      Z3 = Fp3.add(t0, t0);
+      t0 = Fp3.add(Z3, t0);
+      t0 = Fp3.add(t0, t2);
+      t0 = Fp3.mul(t0, t3);
+      Y3 = Fp3.add(Y3, t0);
+      t2 = Fp3.mul(Y1, Z1);
+      t2 = Fp3.add(t2, t2);
+      t0 = Fp3.mul(t2, t3);
+      X3 = Fp3.sub(X3, t0);
+      Z3 = Fp3.mul(t2, t1);
+      Z3 = Fp3.add(Z3, Z3);
+      Z3 = Fp3.add(Z3, Z3);
+      return new Point(X3, Y3, Z3);
+    }
+    // Renes-Costello-Batina exception-free addition formula.
+    // There is 30% faster Jacobian formula, but it is not complete.
+    // https://eprint.iacr.org/2015/1060, algorithm 1
+    // Cost: 12M + 0S + 3*a + 3*b3 + 23add.
+    add(other) {
+      aprjpoint(other);
+      const { X: X1, Y: Y1, Z: Z1 } = this;
+      const { X: X2, Y: Y2, Z: Z2 } = other;
+      let X3 = Fp3.ZERO, Y3 = Fp3.ZERO, Z3 = Fp3.ZERO;
+      const a2 = CURVE.a;
+      const b3 = Fp3.mul(CURVE.b, _3n$3);
+      let t0 = Fp3.mul(X1, X2);
+      let t1 = Fp3.mul(Y1, Y2);
+      let t2 = Fp3.mul(Z1, Z2);
+      let t3 = Fp3.add(X1, Y1);
+      let t4 = Fp3.add(X2, Y2);
+      t3 = Fp3.mul(t3, t4);
+      t4 = Fp3.add(t0, t1);
+      t3 = Fp3.sub(t3, t4);
+      t4 = Fp3.add(X1, Z1);
+      let t5 = Fp3.add(X2, Z2);
+      t4 = Fp3.mul(t4, t5);
+      t5 = Fp3.add(t0, t2);
+      t4 = Fp3.sub(t4, t5);
+      t5 = Fp3.add(Y1, Z1);
+      X3 = Fp3.add(Y2, Z2);
+      t5 = Fp3.mul(t5, X3);
+      X3 = Fp3.add(t1, t2);
+      t5 = Fp3.sub(t5, X3);
+      Z3 = Fp3.mul(a2, t4);
+      X3 = Fp3.mul(b3, t2);
+      Z3 = Fp3.add(X3, Z3);
+      X3 = Fp3.sub(t1, Z3);
+      Z3 = Fp3.add(t1, Z3);
+      Y3 = Fp3.mul(X3, Z3);
+      t1 = Fp3.add(t0, t0);
+      t1 = Fp3.add(t1, t0);
+      t2 = Fp3.mul(a2, t2);
+      t4 = Fp3.mul(b3, t4);
+      t1 = Fp3.add(t1, t2);
+      t2 = Fp3.sub(t0, t2);
+      t2 = Fp3.mul(a2, t2);
+      t4 = Fp3.add(t4, t2);
+      t0 = Fp3.mul(t1, t4);
+      Y3 = Fp3.add(Y3, t0);
+      t0 = Fp3.mul(t5, t4);
+      X3 = Fp3.mul(t3, X3);
+      X3 = Fp3.sub(X3, t0);
+      t0 = Fp3.mul(t3, t1);
+      Z3 = Fp3.mul(t5, Z3);
+      Z3 = Fp3.add(Z3, t0);
+      return new Point(X3, Y3, Z3);
+    }
+    subtract(other) {
+      return this.add(other.negate());
+    }
+    is0() {
+      return this.equals(Point.ZERO);
+    }
+    /**
+     * Constant time multiplication.
+     * Uses wNAF method. Windowed method may be 10% faster,
+     * but takes 2x longer to generate and consumes 2x memory.
+     * Uses precomputes when available.
+     * Uses endomorphism for Koblitz curves.
+     * @param scalar by which the point would be multiplied
+     * @returns New point
+     */
+    multiply(scalar) {
+      const { endo: endo2 } = extraOpts;
+      if (!Fn.isValidNot0(scalar))
+        throw new Error("invalid scalar: out of range");
+      let point, fake;
+      const mul = (n) => wnaf.cached(this, n, (p2) => normalizeZ(Point, p2));
+      if (endo2) {
+        const { k1neg, k1, k2neg, k2 } = splitEndoScalarN(scalar);
+        const { p: k1p, f: k1f } = mul(k1);
+        const { p: k2p, f: k2f } = mul(k2);
+        fake = k1f.add(k2f);
+        point = finishEndo(endo2.beta, k1p, k2p, k1neg, k2neg);
+      } else {
+        const { p: p2, f } = mul(scalar);
+        point = p2;
+        fake = f;
+      }
+      return normalizeZ(Point, [point, fake])[0];
+    }
+    /**
+     * Non-constant-time multiplication. Uses double-and-add algorithm.
+     * It's faster, but should only be used when you don't care about
+     * an exposed secret key e.g. sig verification, which works over *public* keys.
+     */
+    multiplyUnsafe(sc) {
+      const { endo: endo2 } = extraOpts;
+      const p2 = this;
+      if (!Fn.isValid(sc))
+        throw new Error("invalid scalar: out of range");
+      if (sc === _0n$4 || p2.is0())
+        return Point.ZERO;
+      if (sc === _1n$5)
+        return p2;
+      if (wnaf.hasCache(this))
+        return this.multiply(sc);
+      if (endo2) {
+        const { k1neg, k1, k2neg, k2 } = splitEndoScalarN(sc);
+        const { p1, p2: p22 } = mulEndoUnsafe(Point, p2, k1, k2);
+        return finishEndo(endo2.beta, p1, p22, k1neg, k2neg);
+      } else {
+        return wnaf.unsafe(p2, sc);
+      }
+    }
+    multiplyAndAddUnsafe(Q2, a2, b2) {
+      const sum = this.multiplyUnsafe(a2).add(Q2.multiplyUnsafe(b2));
+      return sum.is0() ? void 0 : sum;
+    }
+    /**
+     * Converts Projective point to affine (x, y) coordinates.
+     * @param invertedZ Z^-1 (inverted zero) - optional, precomputation is useful for invertBatch
+     */
+    toAffine(invertedZ) {
+      return toAffineMemo(this, invertedZ);
+    }
+    /**
+     * Checks whether Point is free of torsion elements (is in prime subgroup).
+     * Always torsion-free for cofactor=1 curves.
+     */
+    isTorsionFree() {
+      const { isTorsionFree } = extraOpts;
+      if (cofactor === _1n$5)
+        return true;
+      if (isTorsionFree)
+        return isTorsionFree(Point, this);
+      return wnaf.unsafe(this, CURVE_ORDER).is0();
+    }
+    clearCofactor() {
+      const { clearCofactor } = extraOpts;
+      if (cofactor === _1n$5)
+        return this;
+      if (clearCofactor)
+        return clearCofactor(Point, this);
+      return this.multiplyUnsafe(cofactor);
+    }
+    isSmallOrder() {
+      return this.multiplyUnsafe(cofactor).is0();
+    }
+    toBytes(isCompressed = true) {
+      _abool2(isCompressed, "isCompressed");
+      this.assertValidity();
+      return encodePoint(Point, this, isCompressed);
+    }
+    toHex(isCompressed = true) {
+      return bytesToHex(this.toBytes(isCompressed));
+    }
+    toString() {
+      return `<Point ${this.is0() ? "ZERO" : this.toHex()}>`;
+    }
+    // TODO: remove
+    get px() {
+      return this.X;
+    }
+    get py() {
+      return this.X;
+    }
+    get pz() {
+      return this.Z;
+    }
+    toRawBytes(isCompressed = true) {
+      return this.toBytes(isCompressed);
+    }
+    _setWindowSize(windowSize) {
+      this.precompute(windowSize);
+    }
+    static normalizeZ(points) {
+      return normalizeZ(Point, points);
+    }
+    static msm(points, scalars) {
+      return pippenger(Point, Fn, points, scalars);
+    }
+    static fromPrivateKey(privateKey) {
+      return Point.BASE.multiply(_normFnElement(Fn, privateKey));
+    }
+  }
+  Point.BASE = new Point(CURVE.Gx, CURVE.Gy, Fp3.ONE);
+  Point.ZERO = new Point(Fp3.ZERO, Fp3.ONE, Fp3.ZERO);
+  Point.Fp = Fp3;
+  Point.Fn = Fn;
+  const bits = Fn.BITS;
+  const wnaf = new wNAF(Point, extraOpts.endo ? Math.ceil(bits / 2) : bits);
+  Point.BASE.precompute(8);
+  return Point;
+}
+function pprefix(hasEvenY) {
+  return Uint8Array.of(hasEvenY ? 2 : 3);
+}
+function SWUFpSqrtRatio(Fp3, Z2) {
+  const q2 = Fp3.ORDER;
+  let l = _0n$4;
+  for (let o2 = q2 - _1n$5; o2 % _2n$5 === _0n$4; o2 /= _2n$5)
+    l += _1n$5;
+  const c1 = l;
+  const _2n_pow_c1_1 = _2n$5 << c1 - _1n$5 - _1n$5;
+  const _2n_pow_c1 = _2n_pow_c1_1 * _2n$5;
+  const c2 = (q2 - _1n$5) / _2n_pow_c1;
+  const c3 = (c2 - _1n$5) / _2n$5;
+  const c4 = _2n_pow_c1 - _1n$5;
+  const c5 = _2n_pow_c1_1;
+  const c6 = Fp3.pow(Z2, c2);
+  const c7 = Fp3.pow(Z2, (c2 + _1n$5) / _2n$5);
+  let sqrtRatio = (u, v2) => {
+    let tv1 = c6;
+    let tv2 = Fp3.pow(v2, c4);
+    let tv3 = Fp3.sqr(tv2);
+    tv3 = Fp3.mul(tv3, v2);
+    let tv5 = Fp3.mul(u, tv3);
+    tv5 = Fp3.pow(tv5, c3);
+    tv5 = Fp3.mul(tv5, tv2);
+    tv2 = Fp3.mul(tv5, v2);
+    tv3 = Fp3.mul(tv5, u);
+    let tv4 = Fp3.mul(tv3, tv2);
+    tv5 = Fp3.pow(tv4, c5);
+    let isQR = Fp3.eql(tv5, Fp3.ONE);
+    tv2 = Fp3.mul(tv3, c7);
+    tv5 = Fp3.mul(tv4, tv1);
+    tv3 = Fp3.cmov(tv2, tv3, isQR);
+    tv4 = Fp3.cmov(tv5, tv4, isQR);
+    for (let i = c1; i > _1n$5; i--) {
+      let tv52 = i - _2n$5;
+      tv52 = _2n$5 << tv52 - _1n$5;
+      let tvv5 = Fp3.pow(tv4, tv52);
+      const e1 = Fp3.eql(tvv5, Fp3.ONE);
+      tv2 = Fp3.mul(tv3, tv1);
+      tv1 = Fp3.mul(tv1, tv1);
+      tvv5 = Fp3.mul(tv4, tv1);
+      tv3 = Fp3.cmov(tv2, tv3, e1);
+      tv4 = Fp3.cmov(tvv5, tv4, e1);
+    }
+    return { isValid: isQR, value: tv3 };
+  };
+  if (Fp3.ORDER % _4n$1 === _3n$3) {
+    const c12 = (Fp3.ORDER - _3n$3) / _4n$1;
+    const c22 = Fp3.sqrt(Fp3.neg(Z2));
+    sqrtRatio = (u, v2) => {
+      let tv1 = Fp3.sqr(v2);
+      const tv2 = Fp3.mul(u, v2);
+      tv1 = Fp3.mul(tv1, tv2);
+      let y1 = Fp3.pow(tv1, c12);
+      y1 = Fp3.mul(y1, tv2);
+      const y2 = Fp3.mul(y1, c22);
+      const tv3 = Fp3.mul(Fp3.sqr(y1), v2);
+      const isQR = Fp3.eql(tv3, u);
+      let y3 = Fp3.cmov(y2, y1, isQR);
+      return { isValid: isQR, value: y3 };
+    };
+  }
+  return sqrtRatio;
+}
+function mapToCurveSimpleSWU(Fp3, opts) {
+  validateField(Fp3);
+  const { A: A2, B: B2, Z: Z2 } = opts;
+  if (!Fp3.isValid(A2) || !Fp3.isValid(B2) || !Fp3.isValid(Z2))
+    throw new Error("mapToCurveSimpleSWU: invalid opts");
+  const sqrtRatio = SWUFpSqrtRatio(Fp3, Z2);
+  if (!Fp3.isOdd)
+    throw new Error("Field does not have .isOdd()");
+  return (u) => {
+    let tv1, tv2, tv3, tv4, tv5, tv6, x2, y2;
+    tv1 = Fp3.sqr(u);
+    tv1 = Fp3.mul(tv1, Z2);
+    tv2 = Fp3.sqr(tv1);
+    tv2 = Fp3.add(tv2, tv1);
+    tv3 = Fp3.add(tv2, Fp3.ONE);
+    tv3 = Fp3.mul(tv3, B2);
+    tv4 = Fp3.cmov(Z2, Fp3.neg(tv2), !Fp3.eql(tv2, Fp3.ZERO));
+    tv4 = Fp3.mul(tv4, A2);
+    tv2 = Fp3.sqr(tv3);
+    tv6 = Fp3.sqr(tv4);
+    tv5 = Fp3.mul(tv6, A2);
+    tv2 = Fp3.add(tv2, tv5);
+    tv2 = Fp3.mul(tv2, tv3);
+    tv6 = Fp3.mul(tv6, tv4);
+    tv5 = Fp3.mul(tv6, B2);
+    tv2 = Fp3.add(tv2, tv5);
+    x2 = Fp3.mul(tv1, tv3);
+    const { isValid, value } = sqrtRatio(tv2, tv6);
+    y2 = Fp3.mul(tv1, u);
+    y2 = Fp3.mul(y2, value);
+    x2 = Fp3.cmov(x2, tv3, isValid);
+    y2 = Fp3.cmov(y2, value, isValid);
+    const e1 = Fp3.isOdd(u) === Fp3.isOdd(y2);
+    y2 = Fp3.cmov(Fp3.neg(y2), y2, e1);
+    const tv4_inv = FpInvertBatch(Fp3, [tv4], true)[0];
+    x2 = Fp3.mul(x2, tv4_inv);
+    return { x: x2, y: y2 };
+  };
+}
+function getWLengths(Fp3, Fn) {
+  return {
+    secretKey: Fn.BYTES,
+    publicKey: 1 + Fp3.BYTES,
+    publicKeyUncompressed: 1 + 2 * Fp3.BYTES,
+    publicKeyHasPrefix: true,
+    signature: 2 * Fn.BYTES
+  };
+}
+function weierstrassPoints(c2) {
+  const { CURVE, curveOpts } = _weierstrass_legacy_opts_to_new(c2);
+  const Point = weierstrassN(CURVE, curveOpts);
+  return _weierstrass_new_output_to_legacy(c2, Point);
+}
+function _weierstrass_legacy_opts_to_new(c2) {
+  const CURVE = {
+    a: c2.a,
+    b: c2.b,
+    p: c2.Fp.ORDER,
+    n: c2.n,
+    h: c2.h,
+    Gx: c2.Gx,
+    Gy: c2.Gy
+  };
+  const Fp3 = c2.Fp;
+  let allowedLengths = c2.allowedPrivateKeyLengths ? Array.from(new Set(c2.allowedPrivateKeyLengths.map((l) => Math.ceil(l / 2)))) : void 0;
+  const Fn = Field(CURVE.n, {
+    BITS: c2.nBitLength,
+    allowedLengths,
+    modFromBytes: c2.wrapPrivateKey
+  });
+  const curveOpts = {
+    Fp: Fp3,
+    Fn,
+    allowInfinityPoint: c2.allowInfinityPoint,
+    endo: c2.endo,
+    isTorsionFree: c2.isTorsionFree,
+    clearCofactor: c2.clearCofactor,
+    fromBytes: c2.fromBytes,
+    toBytes: c2.toBytes
+  };
+  return { CURVE, curveOpts };
+}
+function _legacyHelperEquat(Fp3, a2, b2) {
+  function weierstrassEquation(x2) {
+    const x22 = Fp3.sqr(x2);
+    const x3 = Fp3.mul(x22, x2);
+    return Fp3.add(Fp3.add(x3, Fp3.mul(x2, a2)), b2);
+  }
+  return weierstrassEquation;
+}
+function _weierstrass_new_output_to_legacy(c2, Point) {
+  const { Fp: Fp3, Fn } = Point;
+  function isWithinCurveOrder(num) {
+    return inRange(num, _1n$5, Fn.ORDER);
+  }
+  const weierstrassEquation = _legacyHelperEquat(Fp3, c2.a, c2.b);
+  return Object.assign({}, {
+    CURVE: c2,
+    Point,
+    ProjectivePoint: Point,
+    normPrivateKeyToScalar: (key) => _normFnElement(Fn, key),
+    weierstrassEquation,
+    isWithinCurveOrder
+  });
+}
+/*! noble-curves - MIT License (c) 2022 Paul Miller (paulmillr.com) */
+const _0n$3 = BigInt(0), _1n$4 = BigInt(1), _2n$4 = BigInt(2), _3n$2 = BigInt(3);
+function NAfDecomposition(a2) {
+  const res = [];
+  for (; a2 > _1n$4; a2 >>= _1n$4) {
+    if ((a2 & _1n$4) === _0n$3)
+      res.unshift(0);
+    else if ((a2 & _3n$2) === _3n$2) {
+      res.unshift(-1);
+      a2 += _1n$4;
+    } else
+      res.unshift(1);
+  }
+  return res;
+}
+function aNonEmpty(arr) {
+  if (!Array.isArray(arr) || arr.length === 0)
+    throw new Error("expected non-empty array");
+}
+function createBlsPairing(fields, G1, G2, params) {
+  const { Fp2: Fp22, Fp12: Fp122 } = fields;
+  const { twistType, ateLoopSize, xNegative, postPrecompute } = params;
+  let lineFunction;
+  if (twistType === "multiplicative") {
+    lineFunction = (c0, c1, c2, f, Px, Py) => Fp122.mul014(f, c0, Fp22.mul(c1, Px), Fp22.mul(c2, Py));
+  } else if (twistType === "divisive") {
+    lineFunction = (c0, c1, c2, f, Px, Py) => Fp122.mul034(f, Fp22.mul(c2, Py), Fp22.mul(c1, Px), c0);
+  } else
+    throw new Error("bls: unknown twist type");
+  const Fp2div2 = Fp22.div(Fp22.ONE, Fp22.mul(Fp22.ONE, _2n$4));
+  function pointDouble(ell, Rx, Ry, Rz) {
+    const t0 = Fp22.sqr(Ry);
+    const t1 = Fp22.sqr(Rz);
+    const t2 = Fp22.mulByB(Fp22.mul(t1, _3n$2));
+    const t3 = Fp22.mul(t2, _3n$2);
+    const t4 = Fp22.sub(Fp22.sub(Fp22.sqr(Fp22.add(Ry, Rz)), t1), t0);
+    const c0 = Fp22.sub(t2, t0);
+    const c1 = Fp22.mul(Fp22.sqr(Rx), _3n$2);
+    const c2 = Fp22.neg(t4);
+    ell.push([c0, c1, c2]);
+    Rx = Fp22.mul(Fp22.mul(Fp22.mul(Fp22.sub(t0, t3), Rx), Ry), Fp2div2);
+    Ry = Fp22.sub(Fp22.sqr(Fp22.mul(Fp22.add(t0, t3), Fp2div2)), Fp22.mul(Fp22.sqr(t2), _3n$2));
+    Rz = Fp22.mul(t0, t4);
+    return { Rx, Ry, Rz };
+  }
+  function pointAdd(ell, Rx, Ry, Rz, Qx, Qy) {
+    const t0 = Fp22.sub(Ry, Fp22.mul(Qy, Rz));
+    const t1 = Fp22.sub(Rx, Fp22.mul(Qx, Rz));
+    const c0 = Fp22.sub(Fp22.mul(t0, Qx), Fp22.mul(t1, Qy));
+    const c1 = Fp22.neg(t0);
+    const c2 = t1;
+    ell.push([c0, c1, c2]);
+    const t2 = Fp22.sqr(t1);
+    const t3 = Fp22.mul(t2, t1);
+    const t4 = Fp22.mul(t2, Rx);
+    const t5 = Fp22.add(Fp22.sub(t3, Fp22.mul(t4, _2n$4)), Fp22.mul(Fp22.sqr(t0), Rz));
+    Rx = Fp22.mul(t1, t5);
+    Ry = Fp22.sub(Fp22.mul(Fp22.sub(t4, t5), t0), Fp22.mul(t3, Ry));
+    Rz = Fp22.mul(Rz, t3);
+    return { Rx, Ry, Rz };
+  }
+  const ATE_NAF = NAfDecomposition(ateLoopSize);
+  const calcPairingPrecomputes = memoized((point) => {
+    const p2 = point;
+    const { x: x2, y: y2 } = p2.toAffine();
+    const Qx = x2, Qy = y2, negQy = Fp22.neg(y2);
+    let Rx = Qx, Ry = Qy, Rz = Fp22.ONE;
+    const ell = [];
+    for (const bit of ATE_NAF) {
+      const cur = [];
+      ({ Rx, Ry, Rz } = pointDouble(cur, Rx, Ry, Rz));
+      if (bit)
+        ({ Rx, Ry, Rz } = pointAdd(cur, Rx, Ry, Rz, Qx, bit === -1 ? negQy : Qy));
+      ell.push(cur);
+    }
+    if (postPrecompute) {
+      const last = ell[ell.length - 1];
+      postPrecompute(Rx, Ry, Rz, Qx, Qy, pointAdd.bind(null, last));
+    }
+    return ell;
+  });
+  function millerLoopBatch(pairs, withFinalExponent = false) {
+    let f12 = Fp122.ONE;
+    if (pairs.length) {
+      const ellLen = pairs[0][0].length;
+      for (let i = 0; i < ellLen; i++) {
+        f12 = Fp122.sqr(f12);
+        for (const [ell, Px, Py] of pairs) {
+          for (const [c0, c1, c2] of ell[i])
+            f12 = lineFunction(c0, c1, c2, f12, Px, Py);
+        }
+      }
+    }
+    if (xNegative)
+      f12 = Fp122.conjugate(f12);
+    return withFinalExponent ? Fp122.finalExponentiate(f12) : f12;
+  }
+  function pairingBatch(pairs, withFinalExponent = true) {
+    const res = [];
+    normalizeZ(G1, pairs.map(({ g1 }) => g1));
+    normalizeZ(G2, pairs.map(({ g2 }) => g2));
+    for (const { g1, g2 } of pairs) {
+      if (g1.is0() || g2.is0())
+        throw new Error("pairing is not available for ZERO point");
+      g1.assertValidity();
+      g2.assertValidity();
+      const Qa = g1.toAffine();
+      res.push([calcPairingPrecomputes(g2), Qa.x, Qa.y]);
+    }
+    return millerLoopBatch(res, withFinalExponent);
+  }
+  function pairing(Q2, P2, withFinalExponent = true) {
+    return pairingBatch([{ g1: Q2, g2: P2 }], withFinalExponent);
+  }
+  return {
+    Fp12: Fp122,
+    // NOTE: we re-export Fp12 here because pairing results are Fp12!
+    millerLoopBatch,
+    pairing,
+    pairingBatch,
+    calcPairingPrecomputes
+  };
+}
+function createBlsSig(blsPairing, PubCurve, SigCurve, SignatureCoder, isSigG1) {
+  const { Fp12: Fp122, pairingBatch } = blsPairing;
+  function normPub(point) {
+    return point instanceof PubCurve.Point ? point : PubCurve.Point.fromHex(point);
+  }
+  function normSig(point) {
+    return point instanceof SigCurve.Point ? point : SigCurve.Point.fromHex(point);
+  }
+  function amsg(m2) {
+    if (!(m2 instanceof SigCurve.Point))
+      throw new Error(`expected valid message hashed to ${!isSigG1 ? "G2" : "G1"} curve`);
+    return m2;
+  }
+  const pair = !isSigG1 ? (a2, b2) => ({ g1: a2, g2: b2 }) : (a2, b2) => ({ g1: b2, g2: a2 });
+  return {
+    // P = pk x G
+    getPublicKey(secretKey) {
+      const sec = _normFnElement(PubCurve.Point.Fn, secretKey);
+      return PubCurve.Point.BASE.multiply(sec);
+    },
+    // S = pk x H(m)
+    sign(message, secretKey, unusedArg) {
+      if (unusedArg != null)
+        throw new Error("sign() expects 2 arguments");
+      const sec = _normFnElement(PubCurve.Point.Fn, secretKey);
+      amsg(message).assertValidity();
+      return message.multiply(sec);
+    },
+    // Checks if pairing of public key & hash is equal to pairing of generator & signature.
+    // e(P, H(m)) == e(G, S)
+    // e(S, G) == e(H(m), P)
+    verify(signature, message, publicKey, unusedArg) {
+      if (unusedArg != null)
+        throw new Error("verify() expects 3 arguments");
+      signature = normSig(signature);
+      publicKey = normPub(publicKey);
+      const P2 = publicKey.negate();
+      const G2 = PubCurve.Point.BASE;
+      const Hm = amsg(message);
+      const S2 = signature;
+      const exp = pairingBatch([pair(P2, Hm), pair(G2, S2)]);
+      return Fp122.eql(exp, Fp122.ONE);
+    },
+    // https://ethresear.ch/t/fast-verification-of-multiple-bls-signatures/5407
+    // e(G, S) = e(G, SUM(n)(Si)) = MUL(n)(e(G, Si))
+    // TODO: maybe `{message: G2Hex, publicKey: G1Hex}[]` instead?
+    verifyBatch(signature, messages, publicKeys) {
+      aNonEmpty(messages);
+      if (publicKeys.length !== messages.length)
+        throw new Error("amount of public keys and messages should be equal");
+      const sig = normSig(signature);
+      const nMessages = messages;
+      const nPublicKeys = publicKeys.map(normPub);
+      const messagePubKeyMap = /* @__PURE__ */ new Map();
+      for (let i = 0; i < nPublicKeys.length; i++) {
+        const pub = nPublicKeys[i];
+        const msg = nMessages[i];
+        let keys = messagePubKeyMap.get(msg);
+        if (keys === void 0) {
+          keys = [];
+          messagePubKeyMap.set(msg, keys);
+        }
+        keys.push(pub);
+      }
+      const paired = [];
+      const G2 = PubCurve.Point.BASE;
+      try {
+        for (const [msg, keys] of messagePubKeyMap) {
+          const groupPublicKey = keys.reduce((acc, msg2) => acc.add(msg2));
+          paired.push(pair(groupPublicKey, msg));
+        }
+        paired.push(pair(G2.negate(), sig));
+        return Fp122.eql(pairingBatch(paired), Fp122.ONE);
+      } catch {
+        return false;
+      }
+    },
+    // Adds a bunch of public key points together.
+    // pk1 + pk2 + pk3 = pkA
+    aggregatePublicKeys(publicKeys) {
+      aNonEmpty(publicKeys);
+      publicKeys = publicKeys.map((pub) => normPub(pub));
+      const agg = publicKeys.reduce((sum, p2) => sum.add(p2), PubCurve.Point.ZERO);
+      agg.assertValidity();
+      return agg;
+    },
+    // Adds a bunch of signature points together.
+    // pk1 + pk2 + pk3 = pkA
+    aggregateSignatures(signatures) {
+      aNonEmpty(signatures);
+      signatures = signatures.map((sig) => normSig(sig));
+      const agg = signatures.reduce((sum, s2) => sum.add(s2), SigCurve.Point.ZERO);
+      agg.assertValidity();
+      return agg;
+    },
+    hash(messageBytes, DST) {
+      abytes(messageBytes);
+      const opts = DST ? { DST } : void 0;
+      return SigCurve.hashToCurve(messageBytes, opts);
+    },
+    Signature: SignatureCoder
+  };
+}
+function bls(CURVE) {
+  const { Fp: Fp3, Fr, Fp2: Fp22, Fp6: Fp62, Fp12: Fp122 } = CURVE.fields;
+  const G1_ = weierstrassPoints(CURVE.G1);
+  const G1 = Object.assign(G1_, createHasher(G1_.Point, CURVE.G1.mapToCurve, {
+    ...CURVE.htfDefaults,
+    ...CURVE.G1.htfDefaults
+  }));
+  const G2_ = weierstrassPoints(CURVE.G2);
+  const G2 = Object.assign(G2_, createHasher(G2_.Point, CURVE.G2.mapToCurve, {
+    ...CURVE.htfDefaults,
+    ...CURVE.G2.htfDefaults
+  }));
+  const pairingRes = createBlsPairing(CURVE.fields, G1.Point, G2.Point, {
+    ...CURVE.params,
+    postPrecompute: CURVE.postPrecompute
+  });
+  const { millerLoopBatch, pairing, pairingBatch, calcPairingPrecomputes } = pairingRes;
+  const longSignatures = createBlsSig(pairingRes, G1, G2, CURVE.G2.Signature, false);
+  const shortSignatures = createBlsSig(pairingRes, G2, G1, CURVE.G1.ShortSignature, true);
+  const rand = CURVE.randomBytes || randomBytes;
+  const randomSecretKey = () => {
+    const length = getMinHashLength(Fr.ORDER);
+    return mapHashToField(rand(length), Fr.ORDER);
+  };
+  const utils = {
+    randomSecretKey,
+    randomPrivateKey: randomSecretKey,
+    calcPairingPrecomputes
+  };
+  const { ShortSignature } = CURVE.G1;
+  const { Signature } = CURVE.G2;
+  function normP1Hash(point, htfOpts) {
+    return point instanceof G1.Point ? point : shortSignatures.hash(ensureBytes("point", point), htfOpts == null ? void 0 : htfOpts.DST);
+  }
+  function normP2Hash(point, htfOpts) {
+    return point instanceof G2.Point ? point : longSignatures.hash(ensureBytes("point", point), htfOpts == null ? void 0 : htfOpts.DST);
+  }
+  function getPublicKey(privateKey) {
+    return longSignatures.getPublicKey(privateKey).toBytes(true);
+  }
+  function getPublicKeyForShortSignatures(privateKey) {
+    return shortSignatures.getPublicKey(privateKey).toBytes(true);
+  }
+  function sign(message, privateKey, htfOpts) {
+    const Hm = normP2Hash(message, htfOpts);
+    const S2 = longSignatures.sign(Hm, privateKey);
+    return message instanceof G2.Point ? S2 : Signature.toBytes(S2);
+  }
+  function signShortSignature(message, privateKey, htfOpts) {
+    const Hm = normP1Hash(message, htfOpts);
+    const S2 = shortSignatures.sign(Hm, privateKey);
+    return message instanceof G1.Point ? S2 : ShortSignature.toBytes(S2);
+  }
+  function verify(signature, message, publicKey, htfOpts) {
+    const Hm = normP2Hash(message, htfOpts);
+    return longSignatures.verify(signature, Hm, publicKey);
+  }
+  function verifyShortSignature(signature, message, publicKey, htfOpts) {
+    const Hm = normP1Hash(message, htfOpts);
+    return shortSignatures.verify(signature, Hm, publicKey);
+  }
+  function aggregatePublicKeys(publicKeys) {
+    const agg = longSignatures.aggregatePublicKeys(publicKeys);
+    return publicKeys[0] instanceof G1.Point ? agg : agg.toBytes(true);
+  }
+  function aggregateSignatures(signatures) {
+    const agg = longSignatures.aggregateSignatures(signatures);
+    return signatures[0] instanceof G2.Point ? agg : Signature.toBytes(agg);
+  }
+  function aggregateShortSignatures(signatures) {
+    const agg = shortSignatures.aggregateSignatures(signatures);
+    return signatures[0] instanceof G1.Point ? agg : ShortSignature.toBytes(agg);
+  }
+  function verifyBatch(signature, messages, publicKeys, htfOpts) {
+    const Hm = messages.map((m2) => normP2Hash(m2, htfOpts));
+    return longSignatures.verifyBatch(signature, Hm, publicKeys);
+  }
+  G1.Point.BASE.precompute(4);
+  return {
+    longSignatures,
+    shortSignatures,
+    millerLoopBatch,
+    pairing,
+    pairingBatch,
+    verifyBatch,
+    fields: {
+      Fr,
+      Fp: Fp3,
+      Fp2: Fp22,
+      Fp6: Fp62,
+      Fp12: Fp122
+    },
+    params: {
+      ateLoopSize: CURVE.params.ateLoopSize,
+      twistType: CURVE.params.twistType,
+      // deprecated
+      r: CURVE.params.r,
+      G1b: CURVE.G1.b,
+      G2b: CURVE.G2.b
+    },
+    utils,
+    // deprecated
+    getPublicKey,
+    getPublicKeyForShortSignatures,
+    sign,
+    signShortSignature,
+    verify,
+    verifyShortSignature,
+    aggregatePublicKeys,
+    aggregateSignatures,
+    aggregateShortSignatures,
+    G1,
+    G2,
+    Signature,
+    ShortSignature
+  };
+}
+/*! noble-curves - MIT License (c) 2022 Paul Miller (paulmillr.com) */
+const _0n$2 = BigInt(0), _1n$3 = BigInt(1), _2n$3 = BigInt(2), _3n$1 = BigInt(3);
+function calcFrobeniusCoefficients(Fp3, nonResidue, modulus, degree, num = 1, divisor) {
+  const _divisor = BigInt(divisor === void 0 ? degree : divisor);
+  const towerModulus = modulus ** BigInt(degree);
+  const res = [];
+  for (let i = 0; i < num; i++) {
+    const a2 = BigInt(i + 1);
+    const powers = [];
+    for (let j2 = 0, qPower = _1n$3; j2 < degree; j2++) {
+      const power = (a2 * qPower - a2) / _divisor % towerModulus;
+      powers.push(Fp3.pow(nonResidue, power));
+      qPower *= modulus;
+    }
+    res.push(powers);
+  }
+  return res;
+}
+function psiFrobenius(Fp3, Fp22, base) {
+  const PSI_X = Fp22.pow(base, (Fp3.ORDER - _1n$3) / _3n$1);
+  const PSI_Y = Fp22.pow(base, (Fp3.ORDER - _1n$3) / _2n$3);
+  function psi(x2, y2) {
+    const x22 = Fp22.mul(Fp22.frobeniusMap(x2, 1), PSI_X);
+    const y22 = Fp22.mul(Fp22.frobeniusMap(y2, 1), PSI_Y);
+    return [x22, y22];
+  }
+  const PSI2_X = Fp22.pow(base, (Fp3.ORDER ** _2n$3 - _1n$3) / _3n$1);
+  const PSI2_Y = Fp22.pow(base, (Fp3.ORDER ** _2n$3 - _1n$3) / _2n$3);
+  if (!Fp22.eql(PSI2_Y, Fp22.neg(Fp22.ONE)))
+    throw new Error("psiFrobenius: PSI2_Y!==-1");
+  function psi2(x2, y2) {
+    return [Fp22.mul(x2, PSI2_X), Fp22.neg(y2)];
+  }
+  const mapAffine = (fn) => (c2, P2) => {
+    const affine = P2.toAffine();
+    const p2 = fn(affine.x, affine.y);
+    return c2.fromAffine({ x: p2[0], y: p2[1] });
+  };
+  const G2psi3 = mapAffine(psi);
+  const G2psi22 = mapAffine(psi2);
+  return { psi, psi2, G2psi: G2psi3, G2psi2: G2psi22, PSI_X, PSI_Y, PSI2_X, PSI2_Y };
+}
+const Fp2fromBigTuple = (Fp3, tuple) => {
+  if (tuple.length !== 2)
+    throw new Error("invalid tuple");
+  const fps = tuple.map((n) => Fp3.create(n));
+  return { c0: fps[0], c1: fps[1] };
+};
+class _Field2 {
+  constructor(Fp3, opts = {}) {
+    this.MASK = _1n$3;
+    const ORDER = Fp3.ORDER;
+    const FP2_ORDER = ORDER * ORDER;
+    this.Fp = Fp3;
+    this.ORDER = FP2_ORDER;
+    this.BITS = bitLen(FP2_ORDER);
+    this.BYTES = Math.ceil(bitLen(FP2_ORDER) / 8);
+    this.isLE = Fp3.isLE;
+    this.ZERO = { c0: Fp3.ZERO, c1: Fp3.ZERO };
+    this.ONE = { c0: Fp3.ONE, c1: Fp3.ZERO };
+    this.Fp_NONRESIDUE = Fp3.create(opts.NONRESIDUE || BigInt(-1));
+    this.Fp_div2 = Fp3.div(Fp3.ONE, _2n$3);
+    this.NONRESIDUE = Fp2fromBigTuple(Fp3, opts.FP2_NONRESIDUE);
+    this.FROBENIUS_COEFFICIENTS = calcFrobeniusCoefficients(Fp3, this.Fp_NONRESIDUE, Fp3.ORDER, 2)[0];
+    this.mulByB = opts.Fp2mulByB;
+    Object.seal(this);
+  }
+  fromBigTuple(tuple) {
+    return Fp2fromBigTuple(this.Fp, tuple);
+  }
+  create(num) {
+    return num;
+  }
+  isValid({ c0, c1 }) {
+    function isValidC(num, ORDER) {
+      return typeof num === "bigint" && _0n$2 <= num && num < ORDER;
+    }
+    return isValidC(c0, this.ORDER) && isValidC(c1, this.ORDER);
+  }
+  is0({ c0, c1 }) {
+    return this.Fp.is0(c0) && this.Fp.is0(c1);
+  }
+  isValidNot0(num) {
+    return !this.is0(num) && this.isValid(num);
+  }
+  eql({ c0, c1 }, { c0: r0, c1: r1 }) {
+    return this.Fp.eql(c0, r0) && this.Fp.eql(c1, r1);
+  }
+  neg({ c0, c1 }) {
+    return { c0: this.Fp.neg(c0), c1: this.Fp.neg(c1) };
+  }
+  pow(num, power) {
+    return FpPow(this, num, power);
+  }
+  invertBatch(nums) {
+    return FpInvertBatch(this, nums);
+  }
+  // Normalized
+  add(f1, f2) {
+    const { c0, c1 } = f1;
+    const { c0: r0, c1: r1 } = f2;
+    return {
+      c0: this.Fp.add(c0, r0),
+      c1: this.Fp.add(c1, r1)
+    };
+  }
+  sub({ c0, c1 }, { c0: r0, c1: r1 }) {
+    return {
+      c0: this.Fp.sub(c0, r0),
+      c1: this.Fp.sub(c1, r1)
+    };
+  }
+  mul({ c0, c1 }, rhs) {
+    const { Fp: Fp3 } = this;
+    if (typeof rhs === "bigint")
+      return { c0: Fp3.mul(c0, rhs), c1: Fp3.mul(c1, rhs) };
+    const { c0: r0, c1: r1 } = rhs;
+    let t1 = Fp3.mul(c0, r0);
+    let t2 = Fp3.mul(c1, r1);
+    const o0 = Fp3.sub(t1, t2);
+    const o1 = Fp3.sub(Fp3.mul(Fp3.add(c0, c1), Fp3.add(r0, r1)), Fp3.add(t1, t2));
+    return { c0: o0, c1: o1 };
+  }
+  sqr({ c0, c1 }) {
+    const { Fp: Fp3 } = this;
+    const a2 = Fp3.add(c0, c1);
+    const b2 = Fp3.sub(c0, c1);
+    const c2 = Fp3.add(c0, c0);
+    return { c0: Fp3.mul(a2, b2), c1: Fp3.mul(c2, c1) };
+  }
+  // NonNormalized stuff
+  addN(a2, b2) {
+    return this.add(a2, b2);
+  }
+  subN(a2, b2) {
+    return this.sub(a2, b2);
+  }
+  mulN(a2, b2) {
+    return this.mul(a2, b2);
+  }
+  sqrN(a2) {
+    return this.sqr(a2);
+  }
+  // Why inversion for bigint inside Fp instead of Fp2? it is even used in that context?
+  div(lhs, rhs) {
+    const { Fp: Fp3 } = this;
+    return this.mul(lhs, typeof rhs === "bigint" ? Fp3.inv(Fp3.create(rhs)) : this.inv(rhs));
+  }
+  inv({ c0: a2, c1: b2 }) {
+    const { Fp: Fp3 } = this;
+    const factor = Fp3.inv(Fp3.create(a2 * a2 + b2 * b2));
+    return { c0: Fp3.mul(factor, Fp3.create(a2)), c1: Fp3.mul(factor, Fp3.create(-b2)) };
+  }
+  sqrt(num) {
+    const { Fp: Fp3 } = this;
+    const Fp22 = this;
+    const { c0, c1 } = num;
+    if (Fp3.is0(c1)) {
+      if (FpLegendre(Fp3, c0) === 1)
+        return Fp22.create({ c0: Fp3.sqrt(c0), c1: Fp3.ZERO });
+      else
+        return Fp22.create({ c0: Fp3.ZERO, c1: Fp3.sqrt(Fp3.div(c0, this.Fp_NONRESIDUE)) });
+    }
+    const a2 = Fp3.sqrt(Fp3.sub(Fp3.sqr(c0), Fp3.mul(Fp3.sqr(c1), this.Fp_NONRESIDUE)));
+    let d2 = Fp3.mul(Fp3.add(a2, c0), this.Fp_div2);
+    const legendre = FpLegendre(Fp3, d2);
+    if (legendre === -1)
+      d2 = Fp3.sub(d2, a2);
+    const a0 = Fp3.sqrt(d2);
+    const candidateSqrt = Fp22.create({ c0: a0, c1: Fp3.div(Fp3.mul(c1, this.Fp_div2), a0) });
+    if (!Fp22.eql(Fp22.sqr(candidateSqrt), num))
+      throw new Error("Cannot find square root");
+    const x1 = candidateSqrt;
+    const x2 = Fp22.neg(x1);
+    const { re: re1, im: im1 } = Fp22.reim(x1);
+    const { re: re2, im: im2 } = Fp22.reim(x2);
+    if (im1 > im2 || im1 === im2 && re1 > re2)
+      return x1;
+    return x2;
+  }
+  // Same as sgn0_m_eq_2 in RFC 9380
+  isOdd(x2) {
+    const { re: x0, im: x1 } = this.reim(x2);
+    const sign_0 = x0 % _2n$3;
+    const zero_0 = x0 === _0n$2;
+    const sign_1 = x1 % _2n$3;
+    return BigInt(sign_0 || zero_0 && sign_1) == _1n$3;
+  }
+  // Bytes util
+  fromBytes(b2) {
+    const { Fp: Fp3 } = this;
+    if (b2.length !== this.BYTES)
+      throw new Error("fromBytes invalid length=" + b2.length);
+    return { c0: Fp3.fromBytes(b2.subarray(0, Fp3.BYTES)), c1: Fp3.fromBytes(b2.subarray(Fp3.BYTES)) };
+  }
+  toBytes({ c0, c1 }) {
+    return concatBytes(this.Fp.toBytes(c0), this.Fp.toBytes(c1));
+  }
+  cmov({ c0, c1 }, { c0: r0, c1: r1 }, c2) {
+    return {
+      c0: this.Fp.cmov(c0, r0, c2),
+      c1: this.Fp.cmov(c1, r1, c2)
+    };
+  }
+  reim({ c0, c1 }) {
+    return { re: c0, im: c1 };
+  }
+  Fp4Square(a2, b2) {
+    const Fp22 = this;
+    const a22 = Fp22.sqr(a2);
+    const b22 = Fp22.sqr(b2);
+    return {
+      first: Fp22.add(Fp22.mulByNonresidue(b22), a22),
+      // b² * Nonresidue + a²
+      second: Fp22.sub(Fp22.sub(Fp22.sqr(Fp22.add(a2, b2)), a22), b22)
+      // (a + b)² - a² - b²
+    };
+  }
+  // multiply by u + 1
+  mulByNonresidue({ c0, c1 }) {
+    return this.mul({ c0, c1 }, this.NONRESIDUE);
+  }
+  frobeniusMap({ c0, c1 }, power) {
+    return {
+      c0,
+      c1: this.Fp.mul(c1, this.FROBENIUS_COEFFICIENTS[power % 2])
+    };
+  }
+}
+class _Field6 {
+  constructor(Fp22) {
+    this.MASK = _1n$3;
+    this.Fp2 = Fp22;
+    this.ORDER = Fp22.ORDER;
+    this.BITS = 3 * Fp22.BITS;
+    this.BYTES = 3 * Fp22.BYTES;
+    this.isLE = Fp22.isLE;
+    this.ZERO = { c0: Fp22.ZERO, c1: Fp22.ZERO, c2: Fp22.ZERO };
+    this.ONE = { c0: Fp22.ONE, c1: Fp22.ZERO, c2: Fp22.ZERO };
+    const { Fp: Fp3 } = Fp22;
+    const frob = calcFrobeniusCoefficients(Fp22, Fp22.NONRESIDUE, Fp3.ORDER, 6, 2, 3);
+    this.FROBENIUS_COEFFICIENTS_1 = frob[0];
+    this.FROBENIUS_COEFFICIENTS_2 = frob[1];
+    Object.seal(this);
+  }
+  add({ c0, c1, c2 }, { c0: r0, c1: r1, c2: r2 }) {
+    const { Fp2: Fp22 } = this;
+    return {
+      c0: Fp22.add(c0, r0),
+      c1: Fp22.add(c1, r1),
+      c2: Fp22.add(c2, r2)
+    };
+  }
+  sub({ c0, c1, c2 }, { c0: r0, c1: r1, c2: r2 }) {
+    const { Fp2: Fp22 } = this;
+    return {
+      c0: Fp22.sub(c0, r0),
+      c1: Fp22.sub(c1, r1),
+      c2: Fp22.sub(c2, r2)
+    };
+  }
+  mul({ c0, c1, c2 }, rhs) {
+    const { Fp2: Fp22 } = this;
+    if (typeof rhs === "bigint") {
+      return {
+        c0: Fp22.mul(c0, rhs),
+        c1: Fp22.mul(c1, rhs),
+        c2: Fp22.mul(c2, rhs)
+      };
+    }
+    const { c0: r0, c1: r1, c2: r2 } = rhs;
+    const t0 = Fp22.mul(c0, r0);
+    const t1 = Fp22.mul(c1, r1);
+    const t2 = Fp22.mul(c2, r2);
+    return {
+      // t0 + (c1 + c2) * (r1 * r2) - (T1 + T2) * (u + 1)
+      c0: Fp22.add(t0, Fp22.mulByNonresidue(Fp22.sub(Fp22.mul(Fp22.add(c1, c2), Fp22.add(r1, r2)), Fp22.add(t1, t2)))),
+      // (c0 + c1) * (r0 + r1) - (T0 + T1) + T2 * (u + 1)
+      c1: Fp22.add(Fp22.sub(Fp22.mul(Fp22.add(c0, c1), Fp22.add(r0, r1)), Fp22.add(t0, t1)), Fp22.mulByNonresidue(t2)),
+      // T1 + (c0 + c2) * (r0 + r2) - T0 + T2
+      c2: Fp22.sub(Fp22.add(t1, Fp22.mul(Fp22.add(c0, c2), Fp22.add(r0, r2))), Fp22.add(t0, t2))
+    };
+  }
+  sqr({ c0, c1, c2 }) {
+    const { Fp2: Fp22 } = this;
+    let t0 = Fp22.sqr(c0);
+    let t1 = Fp22.mul(Fp22.mul(c0, c1), _2n$3);
+    let t3 = Fp22.mul(Fp22.mul(c1, c2), _2n$3);
+    let t4 = Fp22.sqr(c2);
+    return {
+      c0: Fp22.add(Fp22.mulByNonresidue(t3), t0),
+      // T3 * (u + 1) + T0
+      c1: Fp22.add(Fp22.mulByNonresidue(t4), t1),
+      // T4 * (u + 1) + T1
+      // T1 + (c0 - c1 + c2)² + T3 - T0 - T4
+      c2: Fp22.sub(Fp22.sub(Fp22.add(Fp22.add(t1, Fp22.sqr(Fp22.add(Fp22.sub(c0, c1), c2))), t3), t0), t4)
+    };
+  }
+  addN(a2, b2) {
+    return this.add(a2, b2);
+  }
+  subN(a2, b2) {
+    return this.sub(a2, b2);
+  }
+  mulN(a2, b2) {
+    return this.mul(a2, b2);
+  }
+  sqrN(a2) {
+    return this.sqr(a2);
+  }
+  create(num) {
+    return num;
+  }
+  isValid({ c0, c1, c2 }) {
+    const { Fp2: Fp22 } = this;
+    return Fp22.isValid(c0) && Fp22.isValid(c1) && Fp22.isValid(c2);
+  }
+  is0({ c0, c1, c2 }) {
+    const { Fp2: Fp22 } = this;
+    return Fp22.is0(c0) && Fp22.is0(c1) && Fp22.is0(c2);
+  }
+  isValidNot0(num) {
+    return !this.is0(num) && this.isValid(num);
+  }
+  neg({ c0, c1, c2 }) {
+    const { Fp2: Fp22 } = this;
+    return { c0: Fp22.neg(c0), c1: Fp22.neg(c1), c2: Fp22.neg(c2) };
+  }
+  eql({ c0, c1, c2 }, { c0: r0, c1: r1, c2: r2 }) {
+    const { Fp2: Fp22 } = this;
+    return Fp22.eql(c0, r0) && Fp22.eql(c1, r1) && Fp22.eql(c2, r2);
+  }
+  sqrt(_2) {
+    return notImplemented();
+  }
+  // Do we need division by bigint at all? Should be done via order:
+  div(lhs, rhs) {
+    const { Fp2: Fp22 } = this;
+    const { Fp: Fp3 } = Fp22;
+    return this.mul(lhs, typeof rhs === "bigint" ? Fp3.inv(Fp3.create(rhs)) : this.inv(rhs));
+  }
+  pow(num, power) {
+    return FpPow(this, num, power);
+  }
+  invertBatch(nums) {
+    return FpInvertBatch(this, nums);
+  }
+  inv({ c0, c1, c2 }) {
+    const { Fp2: Fp22 } = this;
+    let t0 = Fp22.sub(Fp22.sqr(c0), Fp22.mulByNonresidue(Fp22.mul(c2, c1)));
+    let t1 = Fp22.sub(Fp22.mulByNonresidue(Fp22.sqr(c2)), Fp22.mul(c0, c1));
+    let t2 = Fp22.sub(Fp22.sqr(c1), Fp22.mul(c0, c2));
+    let t4 = Fp22.inv(Fp22.add(Fp22.mulByNonresidue(Fp22.add(Fp22.mul(c2, t1), Fp22.mul(c1, t2))), Fp22.mul(c0, t0)));
+    return { c0: Fp22.mul(t4, t0), c1: Fp22.mul(t4, t1), c2: Fp22.mul(t4, t2) };
+  }
+  // Bytes utils
+  fromBytes(b2) {
+    const { Fp2: Fp22 } = this;
+    if (b2.length !== this.BYTES)
+      throw new Error("fromBytes invalid length=" + b2.length);
+    const B2 = Fp22.BYTES;
+    return {
+      c0: Fp22.fromBytes(b2.subarray(0, B2)),
+      c1: Fp22.fromBytes(b2.subarray(B2, B2 * 2)),
+      c2: Fp22.fromBytes(b2.subarray(2 * B2))
+    };
+  }
+  toBytes({ c0, c1, c2 }) {
+    const { Fp2: Fp22 } = this;
+    return concatBytes(Fp22.toBytes(c0), Fp22.toBytes(c1), Fp22.toBytes(c2));
+  }
+  cmov({ c0, c1, c2 }, { c0: r0, c1: r1, c2: r2 }, c3) {
+    const { Fp2: Fp22 } = this;
+    return {
+      c0: Fp22.cmov(c0, r0, c3),
+      c1: Fp22.cmov(c1, r1, c3),
+      c2: Fp22.cmov(c2, r2, c3)
+    };
+  }
+  fromBigSix(t) {
+    const { Fp2: Fp22 } = this;
+    if (!Array.isArray(t) || t.length !== 6)
+      throw new Error("invalid Fp6 usage");
+    return {
+      c0: Fp22.fromBigTuple(t.slice(0, 2)),
+      c1: Fp22.fromBigTuple(t.slice(2, 4)),
+      c2: Fp22.fromBigTuple(t.slice(4, 6))
+    };
+  }
+  frobeniusMap({ c0, c1, c2 }, power) {
+    const { Fp2: Fp22 } = this;
+    return {
+      c0: Fp22.frobeniusMap(c0, power),
+      c1: Fp22.mul(Fp22.frobeniusMap(c1, power), this.FROBENIUS_COEFFICIENTS_1[power % 6]),
+      c2: Fp22.mul(Fp22.frobeniusMap(c2, power), this.FROBENIUS_COEFFICIENTS_2[power % 6])
+    };
+  }
+  mulByFp2({ c0, c1, c2 }, rhs) {
+    const { Fp2: Fp22 } = this;
+    return {
+      c0: Fp22.mul(c0, rhs),
+      c1: Fp22.mul(c1, rhs),
+      c2: Fp22.mul(c2, rhs)
+    };
+  }
+  mulByNonresidue({ c0, c1, c2 }) {
+    const { Fp2: Fp22 } = this;
+    return { c0: Fp22.mulByNonresidue(c2), c1: c0, c2: c1 };
+  }
+  // Sparse multiplication
+  mul1({ c0, c1, c2 }, b1) {
+    const { Fp2: Fp22 } = this;
+    return {
+      c0: Fp22.mulByNonresidue(Fp22.mul(c2, b1)),
+      c1: Fp22.mul(c0, b1),
+      c2: Fp22.mul(c1, b1)
+    };
+  }
+  // Sparse multiplication
+  mul01({ c0, c1, c2 }, b0, b1) {
+    const { Fp2: Fp22 } = this;
+    let t0 = Fp22.mul(c0, b0);
+    let t1 = Fp22.mul(c1, b1);
+    return {
+      // ((c1 + c2) * b1 - T1) * (u + 1) + T0
+      c0: Fp22.add(Fp22.mulByNonresidue(Fp22.sub(Fp22.mul(Fp22.add(c1, c2), b1), t1)), t0),
+      // (b0 + b1) * (c0 + c1) - T0 - T1
+      c1: Fp22.sub(Fp22.sub(Fp22.mul(Fp22.add(b0, b1), Fp22.add(c0, c1)), t0), t1),
+      // (c0 + c2) * b0 - T0 + T1
+      c2: Fp22.add(Fp22.sub(Fp22.mul(Fp22.add(c0, c2), b0), t0), t1)
+    };
+  }
+}
+class _Field12 {
+  constructor(Fp62, opts) {
+    this.MASK = _1n$3;
+    const { Fp2: Fp22 } = Fp62;
+    const { Fp: Fp3 } = Fp22;
+    this.Fp6 = Fp62;
+    this.ORDER = Fp22.ORDER;
+    this.BITS = 2 * Fp62.BITS;
+    this.BYTES = 2 * Fp62.BYTES;
+    this.isLE = Fp62.isLE;
+    this.ZERO = { c0: Fp62.ZERO, c1: Fp62.ZERO };
+    this.ONE = { c0: Fp62.ONE, c1: Fp62.ZERO };
+    this.FROBENIUS_COEFFICIENTS = calcFrobeniusCoefficients(Fp22, Fp22.NONRESIDUE, Fp3.ORDER, 12, 1, 6)[0];
+    this.X_LEN = opts.X_LEN;
+    this.finalExponentiate = opts.Fp12finalExponentiate;
+  }
+  create(num) {
+    return num;
+  }
+  isValid({ c0, c1 }) {
+    const { Fp6: Fp62 } = this;
+    return Fp62.isValid(c0) && Fp62.isValid(c1);
+  }
+  is0({ c0, c1 }) {
+    const { Fp6: Fp62 } = this;
+    return Fp62.is0(c0) && Fp62.is0(c1);
+  }
+  isValidNot0(num) {
+    return !this.is0(num) && this.isValid(num);
+  }
+  neg({ c0, c1 }) {
+    const { Fp6: Fp62 } = this;
+    return { c0: Fp62.neg(c0), c1: Fp62.neg(c1) };
+  }
+  eql({ c0, c1 }, { c0: r0, c1: r1 }) {
+    const { Fp6: Fp62 } = this;
+    return Fp62.eql(c0, r0) && Fp62.eql(c1, r1);
+  }
+  sqrt(_2) {
+    notImplemented();
+  }
+  inv({ c0, c1 }) {
+    const { Fp6: Fp62 } = this;
+    let t = Fp62.inv(Fp62.sub(Fp62.sqr(c0), Fp62.mulByNonresidue(Fp62.sqr(c1))));
+    return { c0: Fp62.mul(c0, t), c1: Fp62.neg(Fp62.mul(c1, t)) };
+  }
+  div(lhs, rhs) {
+    const { Fp6: Fp62 } = this;
+    const { Fp2: Fp22 } = Fp62;
+    const { Fp: Fp3 } = Fp22;
+    return this.mul(lhs, typeof rhs === "bigint" ? Fp3.inv(Fp3.create(rhs)) : this.inv(rhs));
+  }
+  pow(num, power) {
+    return FpPow(this, num, power);
+  }
+  invertBatch(nums) {
+    return FpInvertBatch(this, nums);
+  }
+  // Normalized
+  add({ c0, c1 }, { c0: r0, c1: r1 }) {
+    const { Fp6: Fp62 } = this;
+    return {
+      c0: Fp62.add(c0, r0),
+      c1: Fp62.add(c1, r1)
+    };
+  }
+  sub({ c0, c1 }, { c0: r0, c1: r1 }) {
+    const { Fp6: Fp62 } = this;
+    return {
+      c0: Fp62.sub(c0, r0),
+      c1: Fp62.sub(c1, r1)
+    };
+  }
+  mul({ c0, c1 }, rhs) {
+    const { Fp6: Fp62 } = this;
+    if (typeof rhs === "bigint")
+      return { c0: Fp62.mul(c0, rhs), c1: Fp62.mul(c1, rhs) };
+    let { c0: r0, c1: r1 } = rhs;
+    let t1 = Fp62.mul(c0, r0);
+    let t2 = Fp62.mul(c1, r1);
+    return {
+      c0: Fp62.add(t1, Fp62.mulByNonresidue(t2)),
+      // T1 + T2 * v
+      // (c0 + c1) * (r0 + r1) - (T1 + T2)
+      c1: Fp62.sub(Fp62.mul(Fp62.add(c0, c1), Fp62.add(r0, r1)), Fp62.add(t1, t2))
+    };
+  }
+  sqr({ c0, c1 }) {
+    const { Fp6: Fp62 } = this;
+    let ab = Fp62.mul(c0, c1);
+    return {
+      // (c1 * v + c0) * (c0 + c1) - AB - AB * v
+      c0: Fp62.sub(Fp62.sub(Fp62.mul(Fp62.add(Fp62.mulByNonresidue(c1), c0), Fp62.add(c0, c1)), ab), Fp62.mulByNonresidue(ab)),
+      c1: Fp62.add(ab, ab)
+    };
+  }
+  // NonNormalized stuff
+  addN(a2, b2) {
+    return this.add(a2, b2);
+  }
+  subN(a2, b2) {
+    return this.sub(a2, b2);
+  }
+  mulN(a2, b2) {
+    return this.mul(a2, b2);
+  }
+  sqrN(a2) {
+    return this.sqr(a2);
+  }
+  // Bytes utils
+  fromBytes(b2) {
+    const { Fp6: Fp62 } = this;
+    if (b2.length !== this.BYTES)
+      throw new Error("fromBytes invalid length=" + b2.length);
+    return {
+      c0: Fp62.fromBytes(b2.subarray(0, Fp62.BYTES)),
+      c1: Fp62.fromBytes(b2.subarray(Fp62.BYTES))
+    };
+  }
+  toBytes({ c0, c1 }) {
+    const { Fp6: Fp62 } = this;
+    return concatBytes(Fp62.toBytes(c0), Fp62.toBytes(c1));
+  }
+  cmov({ c0, c1 }, { c0: r0, c1: r1 }, c2) {
+    const { Fp6: Fp62 } = this;
+    return {
+      c0: Fp62.cmov(c0, r0, c2),
+      c1: Fp62.cmov(c1, r1, c2)
+    };
+  }
+  // Utils
+  // toString() {
+  //   return '' + 'Fp12(' + this.c0 + this.c1 + '* w');
+  // },
+  // fromTuple(c: [Fp6, Fp6]) {
+  //   return new Fp12(...c);
+  // }
+  fromBigTwelve(t) {
+    const { Fp6: Fp62 } = this;
+    return {
+      c0: Fp62.fromBigSix(t.slice(0, 6)),
+      c1: Fp62.fromBigSix(t.slice(6, 12))
+    };
+  }
+  // Raises to q**i -th power
+  frobeniusMap(lhs, power) {
+    const { Fp6: Fp62 } = this;
+    const { Fp2: Fp22 } = Fp62;
+    const { c0, c1, c2 } = Fp62.frobeniusMap(lhs.c1, power);
+    const coeff = this.FROBENIUS_COEFFICIENTS[power % 12];
+    return {
+      c0: Fp62.frobeniusMap(lhs.c0, power),
+      c1: Fp62.create({
+        c0: Fp22.mul(c0, coeff),
+        c1: Fp22.mul(c1, coeff),
+        c2: Fp22.mul(c2, coeff)
+      })
+    };
+  }
+  mulByFp2({ c0, c1 }, rhs) {
+    const { Fp6: Fp62 } = this;
+    return {
+      c0: Fp62.mulByFp2(c0, rhs),
+      c1: Fp62.mulByFp2(c1, rhs)
+    };
+  }
+  conjugate({ c0, c1 }) {
+    return { c0, c1: this.Fp6.neg(c1) };
+  }
+  // Sparse multiplication
+  mul014({ c0, c1 }, o0, o1, o4) {
+    const { Fp6: Fp62 } = this;
+    const { Fp2: Fp22 } = Fp62;
+    let t0 = Fp62.mul01(c0, o0, o1);
+    let t1 = Fp62.mul1(c1, o4);
+    return {
+      c0: Fp62.add(Fp62.mulByNonresidue(t1), t0),
+      // T1 * v + T0
+      // (c1 + c0) * [o0, o1+o4] - T0 - T1
+      c1: Fp62.sub(Fp62.sub(Fp62.mul01(Fp62.add(c1, c0), o0, Fp22.add(o1, o4)), t0), t1)
+    };
+  }
+  mul034({ c0, c1 }, o0, o3, o4) {
+    const { Fp6: Fp62 } = this;
+    const { Fp2: Fp22 } = Fp62;
+    const a2 = Fp62.create({
+      c0: Fp22.mul(c0.c0, o0),
+      c1: Fp22.mul(c0.c1, o0),
+      c2: Fp22.mul(c0.c2, o0)
+    });
+    const b2 = Fp62.mul01(c1, o3, o4);
+    const e = Fp62.mul01(Fp62.add(c0, c1), Fp22.add(o0, o3), o4);
+    return {
+      c0: Fp62.add(Fp62.mulByNonresidue(b2), a2),
+      c1: Fp62.sub(e, Fp62.add(a2, b2))
+    };
+  }
+  // A cyclotomic group is a subgroup of Fp^n defined by
+  //   GΦₙ(p) = {α ∈ Fpⁿ : α^Φₙ(p) = 1}
+  // The result of any pairing is in a cyclotomic subgroup
+  // https://eprint.iacr.org/2009/565.pdf
+  // https://eprint.iacr.org/2010/354.pdf
+  _cyclotomicSquare({ c0, c1 }) {
+    const { Fp6: Fp62 } = this;
+    const { Fp2: Fp22 } = Fp62;
+    const { c0: c0c0, c1: c0c1, c2: c0c2 } = c0;
+    const { c0: c1c0, c1: c1c1, c2: c1c2 } = c1;
+    const { first: t3, second: t4 } = Fp22.Fp4Square(c0c0, c1c1);
+    const { first: t5, second: t6 } = Fp22.Fp4Square(c1c0, c0c2);
+    const { first: t7, second: t8 } = Fp22.Fp4Square(c0c1, c1c2);
+    const t9 = Fp22.mulByNonresidue(t8);
+    return {
+      c0: Fp62.create({
+        c0: Fp22.add(Fp22.mul(Fp22.sub(t3, c0c0), _2n$3), t3),
+        // 2 * (T3 - c0c0)  + T3
+        c1: Fp22.add(Fp22.mul(Fp22.sub(t5, c0c1), _2n$3), t5),
+        // 2 * (T5 - c0c1)  + T5
+        c2: Fp22.add(Fp22.mul(Fp22.sub(t7, c0c2), _2n$3), t7)
+      }),
+      // 2 * (T7 - c0c2)  + T7
+      c1: Fp62.create({
+        c0: Fp22.add(Fp22.mul(Fp22.add(t9, c1c0), _2n$3), t9),
+        // 2 * (T9 + c1c0) + T9
+        c1: Fp22.add(Fp22.mul(Fp22.add(t4, c1c1), _2n$3), t4),
+        // 2 * (T4 + c1c1) + T4
+        c2: Fp22.add(Fp22.mul(Fp22.add(t6, c1c2), _2n$3), t6)
+      })
+    };
+  }
+  // https://eprint.iacr.org/2009/565.pdf
+  _cyclotomicExp(num, n) {
+    let z2 = this.ONE;
+    for (let i = this.X_LEN - 1; i >= 0; i--) {
+      z2 = this._cyclotomicSquare(z2);
+      if (bitGet(n, i))
+        z2 = this.mul(z2, num);
+    }
+    return z2;
+  }
+}
+function tower12(opts) {
+  const Fp3 = Field(opts.ORDER);
+  const Fp22 = new _Field2(Fp3, opts);
+  const Fp62 = new _Field6(Fp22);
+  const Fp122 = new _Field12(Fp62, opts);
+  return { Fp: Fp3, Fp2: Fp22, Fp6: Fp62, Fp12: Fp122 };
+}
+/*! noble-curves - MIT License (c) 2022 Paul Miller (paulmillr.com) */
+const _0n$1 = BigInt(0), _1n$2 = BigInt(1), _2n$2 = BigInt(2), _3n = BigInt(3), _4n = BigInt(4);
+const BLS_X = BigInt("0xd201000000010000");
+const BLS_X_LEN = bitLen(BLS_X);
+const bls12_381_CURVE_G1 = {
+  p: BigInt("0x1a0111ea397fe69a4b1ba7b6434bacd764774b84f38512bf6730d2a0f6b0f6241eabfffeb153ffffb9feffffffffaaab"),
+  n: BigInt("0x73eda753299d7d483339d80809a1d80553bda402fffe5bfeffffffff00000001"),
+  h: BigInt("0x396c8c005555e1568c00aaab0000aaab"),
+  a: _0n$1,
+  b: _4n,
+  Gx: BigInt("0x17f1d3a73197d7942695638c4fa9ac0fc3688c4f9774b905a14e3a3f171bac586c55e83ff97a1aeffb3af00adb22c6bb"),
+  Gy: BigInt("0x08b3f481e3aaa0f1a09e30ed741d8ae4fcf5e095d5d00af600db18cb2c04b3edd03cc744a2888ae40caa232946c5e7e1")
+};
+const bls12_381_Fr = Field(bls12_381_CURVE_G1.n, {
+  modFromBytes: true,
+  isLE: true
+});
+const { Fp: Fp$1, Fp2, Fp6, Fp12 } = tower12({
+  ORDER: bls12_381_CURVE_G1.p,
+  X_LEN: BLS_X_LEN,
+  // Finite extension field over irreducible polynominal.
+  // Fp(u) / (u² - β) where β = -1
+  FP2_NONRESIDUE: [_1n$2, _1n$2],
+  Fp2mulByB: ({ c0, c1 }) => {
+    const t0 = Fp$1.mul(c0, _4n);
+    const t1 = Fp$1.mul(c1, _4n);
+    return { c0: Fp$1.sub(t0, t1), c1: Fp$1.add(t0, t1) };
+  },
+  Fp12finalExponentiate: (num) => {
+    const x2 = BLS_X;
+    const t0 = Fp12.div(Fp12.frobeniusMap(num, 6), num);
+    const t1 = Fp12.mul(Fp12.frobeniusMap(t0, 2), t0);
+    const t2 = Fp12.conjugate(Fp12._cyclotomicExp(t1, x2));
+    const t3 = Fp12.mul(Fp12.conjugate(Fp12._cyclotomicSquare(t1)), t2);
+    const t4 = Fp12.conjugate(Fp12._cyclotomicExp(t3, x2));
+    const t5 = Fp12.conjugate(Fp12._cyclotomicExp(t4, x2));
+    const t6 = Fp12.mul(Fp12.conjugate(Fp12._cyclotomicExp(t5, x2)), Fp12._cyclotomicSquare(t2));
+    const t7 = Fp12.conjugate(Fp12._cyclotomicExp(t6, x2));
+    const t2_t5_pow_q2 = Fp12.frobeniusMap(Fp12.mul(t2, t5), 2);
+    const t4_t1_pow_q3 = Fp12.frobeniusMap(Fp12.mul(t4, t1), 3);
+    const t6_t1c_pow_q1 = Fp12.frobeniusMap(Fp12.mul(t6, Fp12.conjugate(t1)), 1);
+    const t7_t3c_t1 = Fp12.mul(Fp12.mul(t7, Fp12.conjugate(t3)), t1);
+    return Fp12.mul(Fp12.mul(Fp12.mul(t2_t5_pow_q2, t4_t1_pow_q3), t6_t1c_pow_q1), t7_t3c_t1);
+  }
+});
+const { G2psi, G2psi2 } = psiFrobenius(Fp$1, Fp2, Fp2.div(Fp2.ONE, Fp2.NONRESIDUE));
+const htfDefaults = Object.freeze({
+  DST: "BLS_SIG_BLS12381G2_XMD:SHA-256_SSWU_RO_NUL_",
+  encodeDST: "BLS_SIG_BLS12381G2_XMD:SHA-256_SSWU_RO_NUL_",
+  p: Fp$1.ORDER,
+  m: 2,
+  k: 128,
+  expand: "xmd",
+  hash: sha256
+});
+const bls12_381_CURVE_G2 = {
+  p: Fp2.ORDER,
+  n: bls12_381_CURVE_G1.n,
+  h: BigInt("0x5d543a95414e7f1091d50792876a202cd91de4547085abaa68a205b2e5a7ddfa628f1cb4d9e82ef21537e293a6691ae1616ec6e786f0c70cf1c38e31c7238e5"),
+  a: Fp2.ZERO,
+  b: Fp2.fromBigTuple([_4n, _4n]),
+  Gx: Fp2.fromBigTuple([
+    BigInt("0x024aa2b2f08f0a91260805272dc51051c6e47ad4fa403b02b4510b647ae3d1770bac0326a805bbefd48056c8c121bdb8"),
+    BigInt("0x13e02b6052719f607dacd3a088274f65596bd0d09920b61ab5da61bbdc7f5049334cf11213945d57e5ac7d055d042b7e")
+  ]),
+  Gy: Fp2.fromBigTuple([
+    BigInt("0x0ce5d527727d6e118cc9cdc6da2e351aadfd9baa8cbdd3a76d429a695160d12c923ac9cc3baca289e193548608b82801"),
+    BigInt("0x0606c4a02ea734cc32acd2b02bc28b99cb3e287e85a763af267492ab572e99ab3f370d275cec1da1aaa9075ff05f79be")
+  ])
+};
+const COMPZERO = setMask(Fp$1.toBytes(_0n$1), { infinity: true, compressed: true });
+function parseMask(bytes) {
+  bytes = bytes.slice();
+  const mask = bytes[0] & 224;
+  const compressed = !!(mask >> 7 & 1);
+  const infinity = !!(mask >> 6 & 1);
+  const sort = !!(mask >> 5 & 1);
+  bytes[0] &= 31;
+  return { compressed, infinity, sort, value: bytes };
+}
+function setMask(bytes, mask) {
+  if (bytes[0] & 224)
+    throw new Error("setMask: non-empty mask");
+  if (mask.compressed)
+    bytes[0] |= 128;
+  if (mask.infinity)
+    bytes[0] |= 64;
+  if (mask.sort)
+    bytes[0] |= 32;
+  return bytes;
+}
+function pointG1ToBytes(_c2, point, isComp) {
+  const { BYTES: L2, ORDER: P2 } = Fp$1;
+  const is0 = point.is0();
+  const { x: x2, y: y2 } = point.toAffine();
+  if (isComp) {
+    if (is0)
+      return COMPZERO.slice();
+    const sort = Boolean(y2 * _2n$2 / P2);
+    return setMask(numberToBytesBE(x2, L2), { compressed: true, sort });
+  } else {
+    if (is0) {
+      return concatBytes(Uint8Array.of(64), new Uint8Array(2 * L2 - 1));
+    } else {
+      return concatBytes(numberToBytesBE(x2, L2), numberToBytesBE(y2, L2));
+    }
+  }
+}
+function signatureG1ToBytes(point) {
+  point.assertValidity();
+  const { BYTES: L2, ORDER: P2 } = Fp$1;
+  const { x: x2, y: y2 } = point.toAffine();
+  if (point.is0())
+    return COMPZERO.slice();
+  const sort = Boolean(y2 * _2n$2 / P2);
+  return setMask(numberToBytesBE(x2, L2), { compressed: true, sort });
+}
+function pointG1FromBytes(bytes) {
+  const { compressed, infinity, sort, value } = parseMask(bytes);
+  const { BYTES: L2, ORDER: P2 } = Fp$1;
+  if (value.length === 48 && compressed) {
+    const compressedValue = bytesToNumberBE(value);
+    const x2 = Fp$1.create(compressedValue & bitMask(Fp$1.BITS));
+    if (infinity) {
+      if (x2 !== _0n$1)
+        throw new Error("invalid G1 point: non-empty, at infinity, with compression");
+      return { x: _0n$1, y: _0n$1 };
+    }
+    const right = Fp$1.add(Fp$1.pow(x2, _3n), Fp$1.create(bls12_381_CURVE_G1.b));
+    let y2 = Fp$1.sqrt(right);
+    if (!y2)
+      throw new Error("invalid G1 point: compressed point");
+    if (y2 * _2n$2 / P2 !== BigInt(sort))
+      y2 = Fp$1.neg(y2);
+    return { x: Fp$1.create(x2), y: Fp$1.create(y2) };
+  } else if (value.length === 96 && !compressed) {
+    const x2 = bytesToNumberBE(value.subarray(0, L2));
+    const y2 = bytesToNumberBE(value.subarray(L2));
+    if (infinity) {
+      if (x2 !== _0n$1 || y2 !== _0n$1)
+        throw new Error("G1: non-empty point at infinity");
+      return bls12_381.G1.Point.ZERO.toAffine();
+    }
+    return { x: Fp$1.create(x2), y: Fp$1.create(y2) };
+  } else {
+    throw new Error("invalid G1 point: expected 48/96 bytes");
+  }
+}
+function signatureG1FromBytes(hex) {
+  const { infinity, sort, value } = parseMask(ensureBytes("signatureHex", hex, 48));
+  const P2 = Fp$1.ORDER;
+  const Point = bls12_381.G1.Point;
+  const compressedValue = bytesToNumberBE(value);
+  if (infinity)
+    return Point.ZERO;
+  const x2 = Fp$1.create(compressedValue & bitMask(Fp$1.BITS));
+  const right = Fp$1.add(Fp$1.pow(x2, _3n), Fp$1.create(bls12_381_CURVE_G1.b));
+  let y2 = Fp$1.sqrt(right);
+  if (!y2)
+    throw new Error("invalid G1 point: compressed");
+  const aflag = BigInt(sort);
+  if (y2 * _2n$2 / P2 !== aflag)
+    y2 = Fp$1.neg(y2);
+  const point = Point.fromAffine({ x: x2, y: y2 });
+  point.assertValidity();
+  return point;
+}
+function pointG2ToBytes(_c2, point, isComp) {
+  const { BYTES: L2, ORDER: P2 } = Fp$1;
+  const is0 = point.is0();
+  const { x: x2, y: y2 } = point.toAffine();
+  if (isComp) {
+    if (is0)
+      return concatBytes(COMPZERO, numberToBytesBE(_0n$1, L2));
+    const flag = Boolean(y2.c1 === _0n$1 ? y2.c0 * _2n$2 / P2 : y2.c1 * _2n$2 / P2);
+    return concatBytes(setMask(numberToBytesBE(x2.c1, L2), { compressed: true, sort: flag }), numberToBytesBE(x2.c0, L2));
+  } else {
+    if (is0)
+      return concatBytes(Uint8Array.of(64), new Uint8Array(4 * L2 - 1));
+    const { re: x0, im: x1 } = Fp2.reim(x2);
+    const { re: y0, im: y1 } = Fp2.reim(y2);
+    return concatBytes(numberToBytesBE(x1, L2), numberToBytesBE(x0, L2), numberToBytesBE(y1, L2), numberToBytesBE(y0, L2));
+  }
+}
+function signatureG2ToBytes(point) {
+  point.assertValidity();
+  const { BYTES: L2 } = Fp$1;
+  if (point.is0())
+    return concatBytes(COMPZERO, numberToBytesBE(_0n$1, L2));
+  const { x: x2, y: y2 } = point.toAffine();
+  const { re: x0, im: x1 } = Fp2.reim(x2);
+  const { re: y0, im: y1 } = Fp2.reim(y2);
+  const tmp = y1 > _0n$1 ? y1 * _2n$2 : y0 * _2n$2;
+  const sort = Boolean(tmp / Fp$1.ORDER & _1n$2);
+  const z2 = x0;
+  return concatBytes(setMask(numberToBytesBE(x1, L2), { sort, compressed: true }), numberToBytesBE(z2, L2));
+}
+function pointG2FromBytes(bytes) {
+  const { BYTES: L2, ORDER: P2 } = Fp$1;
+  const { compressed, infinity, sort, value } = parseMask(bytes);
+  if (!compressed && !infinity && sort || // 00100000
+  !compressed && infinity && sort || // 01100000
+  sort && infinity && compressed) {
+    throw new Error("invalid encoding flag: " + (bytes[0] & 224));
+  }
+  const slc = (b2, from, to) => bytesToNumberBE(b2.slice(from, to));
+  if (value.length === 96 && compressed) {
+    if (infinity) {
+      if (value.reduce((p2, c2) => p2 !== 0 ? c2 + 1 : c2, 0) > 0) {
+        throw new Error("invalid G2 point: compressed");
+      }
+      return { x: Fp2.ZERO, y: Fp2.ZERO };
+    }
+    const x_1 = slc(value, 0, L2);
+    const x_0 = slc(value, L2, 2 * L2);
+    const x2 = Fp2.create({ c0: Fp$1.create(x_0), c1: Fp$1.create(x_1) });
+    const right = Fp2.add(Fp2.pow(x2, _3n), bls12_381_CURVE_G2.b);
+    let y2 = Fp2.sqrt(right);
+    const Y_bit = y2.c1 === _0n$1 ? y2.c0 * _2n$2 / P2 : y2.c1 * _2n$2 / P2 ? _1n$2 : _0n$1;
+    y2 = sort && Y_bit > 0 ? y2 : Fp2.neg(y2);
+    return { x: x2, y: y2 };
+  } else if (value.length === 192 && !compressed) {
+    if (infinity) {
+      if (value.reduce((p2, c2) => p2 !== 0 ? c2 + 1 : c2, 0) > 0) {
+        throw new Error("invalid G2 point: uncompressed");
+      }
+      return { x: Fp2.ZERO, y: Fp2.ZERO };
+    }
+    const x1 = slc(value, 0 * L2, 1 * L2);
+    const x0 = slc(value, 1 * L2, 2 * L2);
+    const y1 = slc(value, 2 * L2, 3 * L2);
+    const y0 = slc(value, 3 * L2, 4 * L2);
+    return { x: Fp2.fromBigTuple([x0, x1]), y: Fp2.fromBigTuple([y0, y1]) };
+  } else {
+    throw new Error("invalid G2 point: expected 96/192 bytes");
+  }
+}
+function signatureG2FromBytes(hex) {
+  const { ORDER: P2 } = Fp$1;
+  const { infinity, sort, value } = parseMask(ensureBytes("signatureHex", hex));
+  const Point = bls12_381.G2.Point;
+  const half = value.length / 2;
+  if (half !== 48 && half !== 96)
+    throw new Error("invalid compressed signature length, expected 96/192 bytes");
+  const z1 = bytesToNumberBE(value.slice(0, half));
+  const z2 = bytesToNumberBE(value.slice(half));
+  if (infinity)
+    return Point.ZERO;
+  const x1 = Fp$1.create(z1 & bitMask(Fp$1.BITS));
+  const x2 = Fp$1.create(z2);
+  const x3 = Fp2.create({ c0: x2, c1: x1 });
+  const y2 = Fp2.add(Fp2.pow(x3, _3n), bls12_381_CURVE_G2.b);
+  let y3 = Fp2.sqrt(y2);
+  if (!y3)
+    throw new Error("Failed to find a square root");
+  const { re: y0, im: y1 } = Fp2.reim(y3);
+  const aflag1 = BigInt(sort);
+  const isGreater = y1 > _0n$1 && y1 * _2n$2 / P2 !== aflag1;
+  const is0 = y1 === _0n$1 && y0 * _2n$2 / P2 !== aflag1;
+  if (isGreater || is0)
+    y3 = Fp2.neg(y3);
+  const point = Point.fromAffine({ x: x3, y: y3 });
+  point.assertValidity();
+  return point;
+}
+const bls12_381 = bls({
+  // Fields
+  fields: {
+    Fp: Fp$1,
+    Fp2,
+    Fp6,
+    Fp12,
+    Fr: bls12_381_Fr
+  },
+  // G1: y² = x³ + 4
+  G1: {
+    ...bls12_381_CURVE_G1,
+    Fp: Fp$1,
+    htfDefaults: { ...htfDefaults, m: 1, DST: "BLS_SIG_BLS12381G1_XMD:SHA-256_SSWU_RO_NUL_" },
+    wrapPrivateKey: true,
+    allowInfinityPoint: true,
+    // Checks is the point resides in prime-order subgroup.
+    // point.isTorsionFree() should return true for valid points
+    // It returns false for shitty points.
+    // https://eprint.iacr.org/2021/1130.pdf
+    isTorsionFree: (c2, point) => {
+      const beta = BigInt("0x5f19672fdf76ce51ba69c6076a0f77eaddb3a93be6f89688de17d813620a00022e01fffffffefffe");
+      const phi = new c2(Fp$1.mul(point.X, beta), point.Y, point.Z);
+      const xP = point.multiplyUnsafe(BLS_X).negate();
+      const u2P = xP.multiplyUnsafe(BLS_X);
+      return u2P.equals(phi);
+    },
+    // Clear cofactor of G1
+    // https://eprint.iacr.org/2019/403
+    clearCofactor: (_c2, point) => {
+      return point.multiplyUnsafe(BLS_X).add(point);
+    },
+    mapToCurve: mapToG1,
+    fromBytes: pointG1FromBytes,
+    toBytes: pointG1ToBytes,
+    ShortSignature: {
+      fromBytes(bytes) {
+        abytes(bytes);
+        return signatureG1FromBytes(bytes);
+      },
+      fromHex(hex) {
+        return signatureG1FromBytes(hex);
+      },
+      toBytes(point) {
+        return signatureG1ToBytes(point);
+      },
+      toRawBytes(point) {
+        return signatureG1ToBytes(point);
+      },
+      toHex(point) {
+        return bytesToHex(signatureG1ToBytes(point));
+      }
+    }
+  },
+  G2: {
+    ...bls12_381_CURVE_G2,
+    Fp: Fp2,
+    // https://datatracker.ietf.org/doc/html/rfc9380#name-clearing-the-cofactor
+    // https://datatracker.ietf.org/doc/html/rfc9380#name-cofactor-clearing-for-bls12
+    hEff: BigInt("0xbc69f08f2ee75b3584c6a0ea91b352888e2a8e9145ad7689986ff031508ffe1329c2f178731db956d82bf015d1212b02ec0ec69d7477c1ae954cbc06689f6a359894c0adebbf6b4e8020005aaa95551"),
+    htfDefaults: { ...htfDefaults },
+    wrapPrivateKey: true,
+    allowInfinityPoint: true,
+    mapToCurve: mapToG2,
+    // Checks is the point resides in prime-order subgroup.
+    // point.isTorsionFree() should return true for valid points
+    // It returns false for shitty points.
+    // https://eprint.iacr.org/2021/1130.pdf
+    // Older version: https://eprint.iacr.org/2019/814.pdf
+    isTorsionFree: (c2, P2) => {
+      return P2.multiplyUnsafe(BLS_X).negate().equals(G2psi(c2, P2));
+    },
+    // Maps the point into the prime-order subgroup G2.
+    // clear_cofactor_bls12381_g2 from RFC 9380.
+    // https://eprint.iacr.org/2017/419.pdf
+    // prettier-ignore
+    clearCofactor: (c2, P2) => {
+      const x2 = BLS_X;
+      let t1 = P2.multiplyUnsafe(x2).negate();
+      let t2 = G2psi(c2, P2);
+      let t3 = P2.double();
+      t3 = G2psi2(c2, t3);
+      t3 = t3.subtract(t2);
+      t2 = t1.add(t2);
+      t2 = t2.multiplyUnsafe(x2).negate();
+      t3 = t3.add(t2);
+      t3 = t3.subtract(t1);
+      const Q2 = t3.subtract(P2);
+      return Q2;
+    },
+    fromBytes: pointG2FromBytes,
+    toBytes: pointG2ToBytes,
+    Signature: {
+      fromBytes(bytes) {
+        abytes(bytes);
+        return signatureG2FromBytes(bytes);
+      },
+      fromHex(hex) {
+        return signatureG2FromBytes(hex);
+      },
+      toBytes(point) {
+        return signatureG2ToBytes(point);
+      },
+      toRawBytes(point) {
+        return signatureG2ToBytes(point);
+      },
+      toHex(point) {
+        return bytesToHex(signatureG2ToBytes(point));
+      }
+    }
+  },
+  params: {
+    ateLoopSize: BLS_X,
+    // The BLS parameter x for BLS12-381
+    r: bls12_381_CURVE_G1.n,
+    // order; z⁴ − z² + 1; CURVE.n from other curves
+    xNegative: true,
+    twistType: "multiplicative"
+  },
+  htfDefaults
+});
+const isogenyMapG2 = isogenyMap(Fp2, [
+  // xNum
+  [
+    [
+      "0x5c759507e8e333ebb5b7a9a47d7ed8532c52d39fd3a042a88b58423c50ae15d5c2638e343d9c71c6238aaaaaaaa97d6",
+      "0x5c759507e8e333ebb5b7a9a47d7ed8532c52d39fd3a042a88b58423c50ae15d5c2638e343d9c71c6238aaaaaaaa97d6"
+    ],
+    [
+      "0x0",
+      "0x11560bf17baa99bc32126fced787c88f984f87adf7ae0c7f9a208c6b4f20a4181472aaa9cb8d555526a9ffffffffc71a"
+    ],
+    [
+      "0x11560bf17baa99bc32126fced787c88f984f87adf7ae0c7f9a208c6b4f20a4181472aaa9cb8d555526a9ffffffffc71e",
+      "0x8ab05f8bdd54cde190937e76bc3e447cc27c3d6fbd7063fcd104635a790520c0a395554e5c6aaaa9354ffffffffe38d"
+    ],
+    [
+      "0x171d6541fa38ccfaed6dea691f5fb614cb14b4e7f4e810aa22d6108f142b85757098e38d0f671c7188e2aaaaaaaa5ed1",
+      "0x0"
+    ]
+  ],
+  // xDen
+  [
+    [
+      "0x0",
+      "0x1a0111ea397fe69a4b1ba7b6434bacd764774b84f38512bf6730d2a0f6b0f6241eabfffeb153ffffb9feffffffffaa63"
+    ],
+    [
+      "0xc",
+      "0x1a0111ea397fe69a4b1ba7b6434bacd764774b84f38512bf6730d2a0f6b0f6241eabfffeb153ffffb9feffffffffaa9f"
+    ],
+    ["0x1", "0x0"]
+    // LAST 1
+  ],
+  // yNum
+  [
+    [
+      "0x1530477c7ab4113b59a4c18b076d11930f7da5d4a07f649bf54439d87d27e500fc8c25ebf8c92f6812cfc71c71c6d706",
+      "0x1530477c7ab4113b59a4c18b076d11930f7da5d4a07f649bf54439d87d27e500fc8c25ebf8c92f6812cfc71c71c6d706"
+    ],
+    [
+      "0x0",
+      "0x5c759507e8e333ebb5b7a9a47d7ed8532c52d39fd3a042a88b58423c50ae15d5c2638e343d9c71c6238aaaaaaaa97be"
+    ],
+    [
+      "0x11560bf17baa99bc32126fced787c88f984f87adf7ae0c7f9a208c6b4f20a4181472aaa9cb8d555526a9ffffffffc71c",
+      "0x8ab05f8bdd54cde190937e76bc3e447cc27c3d6fbd7063fcd104635a790520c0a395554e5c6aaaa9354ffffffffe38f"
+    ],
+    [
+      "0x124c9ad43b6cf79bfbf7043de3811ad0761b0f37a1e26286b0e977c69aa274524e79097a56dc4bd9e1b371c71c718b10",
+      "0x0"
+    ]
+  ],
+  // yDen
+  [
+    [
+      "0x1a0111ea397fe69a4b1ba7b6434bacd764774b84f38512bf6730d2a0f6b0f6241eabfffeb153ffffb9feffffffffa8fb",
+      "0x1a0111ea397fe69a4b1ba7b6434bacd764774b84f38512bf6730d2a0f6b0f6241eabfffeb153ffffb9feffffffffa8fb"
+    ],
+    [
+      "0x0",
+      "0x1a0111ea397fe69a4b1ba7b6434bacd764774b84f38512bf6730d2a0f6b0f6241eabfffeb153ffffb9feffffffffa9d3"
+    ],
+    [
+      "0x12",
+      "0x1a0111ea397fe69a4b1ba7b6434bacd764774b84f38512bf6730d2a0f6b0f6241eabfffeb153ffffb9feffffffffaa99"
+    ],
+    ["0x1", "0x0"]
+    // LAST 1
+  ]
+].map((i) => i.map((pair) => Fp2.fromBigTuple(pair.map(BigInt)))));
+const isogenyMapG1 = isogenyMap(Fp$1, [
+  // xNum
+  [
+    "0x11a05f2b1e833340b809101dd99815856b303e88a2d7005ff2627b56cdb4e2c85610c2d5f2e62d6eaeac1662734649b7",
+    "0x17294ed3e943ab2f0588bab22147a81c7c17e75b2f6a8417f565e33c70d1e86b4838f2a6f318c356e834eef1b3cb83bb",
+    "0xd54005db97678ec1d1048c5d10a9a1bce032473295983e56878e501ec68e25c958c3e3d2a09729fe0179f9dac9edcb0",
+    "0x1778e7166fcc6db74e0609d307e55412d7f5e4656a8dbf25f1b33289f1b330835336e25ce3107193c5b388641d9b6861",
+    "0xe99726a3199f4436642b4b3e4118e5499db995a1257fb3f086eeb65982fac18985a286f301e77c451154ce9ac8895d9",
+    "0x1630c3250d7313ff01d1201bf7a74ab5db3cb17dd952799b9ed3ab9097e68f90a0870d2dcae73d19cd13c1c66f652983",
+    "0xd6ed6553fe44d296a3726c38ae652bfb11586264f0f8ce19008e218f9c86b2a8da25128c1052ecaddd7f225a139ed84",
+    "0x17b81e7701abdbe2e8743884d1117e53356de5ab275b4db1a682c62ef0f2753339b7c8f8c8f475af9ccb5618e3f0c88e",
+    "0x80d3cf1f9a78fc47b90b33563be990dc43b756ce79f5574a2c596c928c5d1de4fa295f296b74e956d71986a8497e317",
+    "0x169b1f8e1bcfa7c42e0c37515d138f22dd2ecb803a0c5c99676314baf4bb1b7fa3190b2edc0327797f241067be390c9e",
+    "0x10321da079ce07e272d8ec09d2565b0dfa7dccdde6787f96d50af36003b14866f69b771f8c285decca67df3f1605fb7b",
+    "0x6e08c248e260e70bd1e962381edee3d31d79d7e22c837bc23c0bf1bc24c6b68c24b1b80b64d391fa9c8ba2e8ba2d229"
+  ],
+  // xDen
+  [
+    "0x8ca8d548cff19ae18b2e62f4bd3fa6f01d5ef4ba35b48ba9c9588617fc8ac62b558d681be343df8993cf9fa40d21b1c",
+    "0x12561a5deb559c4348b4711298e536367041e8ca0cf0800c0126c2588c48bf5713daa8846cb026e9e5c8276ec82b3bff",
+    "0xb2962fe57a3225e8137e629bff2991f6f89416f5a718cd1fca64e00b11aceacd6a3d0967c94fedcfcc239ba5cb83e19",
+    "0x3425581a58ae2fec83aafef7c40eb545b08243f16b1655154cca8abc28d6fd04976d5243eecf5c4130de8938dc62cd8",
+    "0x13a8e162022914a80a6f1d5f43e7a07dffdfc759a12062bb8d6b44e833b306da9bd29ba81f35781d539d395b3532a21e",
+    "0xe7355f8e4e667b955390f7f0506c6e9395735e9ce9cad4d0a43bcef24b8982f7400d24bc4228f11c02df9a29f6304a5",
+    "0x772caacf16936190f3e0c63e0596721570f5799af53a1894e2e073062aede9cea73b3538f0de06cec2574496ee84a3a",
+    "0x14a7ac2a9d64a8b230b3f5b074cf01996e7f63c21bca68a81996e1cdf9822c580fa5b9489d11e2d311f7d99bbdcc5a5e",
+    "0xa10ecf6ada54f825e920b3dafc7a3cce07f8d1d7161366b74100da67f39883503826692abba43704776ec3a79a1d641",
+    "0x95fc13ab9e92ad4476d6e3eb3a56680f682b4ee96f7d03776df533978f31c1593174e4b4b7865002d6384d168ecdd0a",
+    "0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001"
+    // LAST 1
+  ],
+  // yNum
+  [
+    "0x90d97c81ba24ee0259d1f094980dcfa11ad138e48a869522b52af6c956543d3cd0c7aee9b3ba3c2be9845719707bb33",
+    "0x134996a104ee5811d51036d776fb46831223e96c254f383d0f906343eb67ad34d6c56711962fa8bfe097e75a2e41c696",
+    "0xcc786baa966e66f4a384c86a3b49942552e2d658a31ce2c344be4b91400da7d26d521628b00523b8dfe240c72de1f6",
+    "0x1f86376e8981c217898751ad8746757d42aa7b90eeb791c09e4a3ec03251cf9de405aba9ec61deca6355c77b0e5f4cb",
+    "0x8cc03fdefe0ff135caf4fe2a21529c4195536fbe3ce50b879833fd221351adc2ee7f8dc099040a841b6daecf2e8fedb",
+    "0x16603fca40634b6a2211e11db8f0a6a074a7d0d4afadb7bd76505c3d3ad5544e203f6326c95a807299b23ab13633a5f0",
+    "0x4ab0b9bcfac1bbcb2c977d027796b3ce75bb8ca2be184cb5231413c4d634f3747a87ac2460f415ec961f8855fe9d6f2",
+    "0x987c8d5333ab86fde9926bd2ca6c674170a05bfe3bdd81ffd038da6c26c842642f64550fedfe935a15e4ca31870fb29",
+    "0x9fc4018bd96684be88c9e221e4da1bb8f3abd16679dc26c1e8b6e6a1f20cabe69d65201c78607a360370e577bdba587",
+    "0xe1bba7a1186bdb5223abde7ada14a23c42a0ca7915af6fe06985e7ed1e4d43b9b3f7055dd4eba6f2bafaaebca731c30",
+    "0x19713e47937cd1be0dfd0b8f1d43fb93cd2fcbcb6caf493fd1183e416389e61031bf3a5cce3fbafce813711ad011c132",
+    "0x18b46a908f36f6deb918c143fed2edcc523559b8aaf0c2462e6bfe7f911f643249d9cdf41b44d606ce07c8a4d0074d8e",
+    "0xb182cac101b9399d155096004f53f447aa7b12a3426b08ec02710e807b4633f06c851c1919211f20d4c04f00b971ef8",
+    "0x245a394ad1eca9b72fc00ae7be315dc757b3b080d4c158013e6632d3c40659cc6cf90ad1c232a6442d9d3f5db980133",
+    "0x5c129645e44cf1102a159f748c4a3fc5e673d81d7e86568d9ab0f5d396a7ce46ba1049b6579afb7866b1e715475224b",
+    "0x15e6be4e990f03ce4ea50b3b42df2eb5cb181d8f84965a3957add4fa95af01b2b665027efec01c7704b456be69c8b604"
+  ],
+  // yDen
+  [
+    "0x16112c4c3a9c98b252181140fad0eae9601a6de578980be6eec3232b5be72e7a07f3688ef60c206d01479253b03663c1",
+    "0x1962d75c2381201e1a0cbd6c43c348b885c84ff731c4d59ca4a10356f453e01f78a4260763529e3532f6102c2e49a03d",
+    "0x58df3306640da276faaae7d6e8eb15778c4855551ae7f310c35a5dd279cd2eca6757cd636f96f891e2538b53dbf67f2",
+    "0x16b7d288798e5395f20d23bf89edb4d1d115c5dbddbcd30e123da489e726af41727364f2c28297ada8d26d98445f5416",
+    "0xbe0e079545f43e4b00cc912f8228ddcc6d19c9f0f69bbb0542eda0fc9dec916a20b15dc0fd2ededda39142311a5001d",
+    "0x8d9e5297186db2d9fb266eaac783182b70152c65550d881c5ecd87b6f0f5a6449f38db9dfa9cce202c6477faaf9b7ac",
+    "0x166007c08a99db2fc3ba8734ace9824b5eecfdfa8d0cf8ef5dd365bc400a0051d5fa9c01a58b1fb93d1a1399126a775c",
+    "0x16a3ef08be3ea7ea03bcddfabba6ff6ee5a4375efa1f4fd7feb34fd206357132b920f5b00801dee460ee415a15812ed9",
+    "0x1866c8ed336c61231a1be54fd1d74cc4f9fb0ce4c6af5920abc5750c4bf39b4852cfe2f7bb9248836b233d9d55535d4a",
+    "0x167a55cda70a6e1cea820597d94a84903216f763e13d87bb5308592e7ea7d4fbc7385ea3d529b35e346ef48bb8913f55",
+    "0x4d2f259eea405bd48f010a01ad2911d9c6dd039bb61a6290e591b36e636a5c871a5c29f4f83060400f8b49cba8f6aa8",
+    "0xaccbb67481d033ff5852c1e48c50c477f94ff8aefce42d28c0f9a88cea7913516f968986f7ebbea9684b529e2561092",
+    "0xad6b9514c767fe3c3613144b45f1496543346d98adf02267d5ceef9a00d9b8693000763e3b90ac11e99b138573345cc",
+    "0x2660400eb2e4f3b628bdd0d53cd76f2bf565b94e72927c1cb748df27942480e420517bd8714cc80d1fadc1326ed06f7",
+    "0xe0fa1d816ddc03e6b24255e0d7819c171c40f65e273b853324efcd6356caa205ca2f570f13497804415473a1d634b8f",
+    "0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001"
+    // LAST 1
+  ]
+].map((i) => i.map((j2) => BigInt(j2))));
+const G1_SWU = mapToCurveSimpleSWU(Fp$1, {
+  A: Fp$1.create(BigInt("0x144698a3b8e9433d693a02c96d4982b0ea985383ee66a8d8e8981aefd881ac98936f8da0e0f97f5cf428082d584c1d")),
+  B: Fp$1.create(BigInt("0x12e2908d11688030018b12e8753eee3b2016c1f0f24f4070a0b9c14fcef35ef55a23215a316ceaa5d1cc48e98e172be0")),
+  Z: Fp$1.create(BigInt(11))
+});
+const G2_SWU = mapToCurveSimpleSWU(Fp2, {
+  A: Fp2.create({ c0: Fp$1.create(_0n$1), c1: Fp$1.create(BigInt(240)) }),
+  // A' = 240 * I
+  B: Fp2.create({ c0: Fp$1.create(BigInt(1012)), c1: Fp$1.create(BigInt(1012)) }),
+  // B' = 1012 * (1 + I)
+  Z: Fp2.create({ c0: Fp$1.create(BigInt(-2)), c1: Fp$1.create(BigInt(-1)) })
+  // Z: -(2 + I)
+});
+function mapToG1(scalars) {
+  const { x: x2, y: y2 } = G1_SWU(Fp$1.create(scalars[0]));
+  return isogenyMapG1(x2, y2);
+}
+function mapToG2(scalars) {
+  const { x: x2, y: y2 } = G2_SWU(Fp2.fromBigTuple(scalars));
+  return isogenyMapG2(x2, y2);
+}
+function blsVerify(pk, sig, msg) {
+  const primaryKey = typeof pk === "string" ? pk : bytesToHex(pk);
+  const signature = typeof sig === "string" ? sig : bytesToHex(sig);
+  const message = typeof msg === "string" ? msg : bytesToHex(msg);
+  return bls12_381.verifyShortSignature(signature, message, primaryKey);
+}
+const MILLISECOND_TO_NANOSECONDS = BigInt(1e6);
+const decodeLeb128 = (buf) => {
+  return lebDecode(new PipeArrayBuffer(buf));
+};
+const decodeTime = (buf) => {
+  const timestampNs = decodeLeb128(buf);
+  const timestampMs = timestampNs / MILLISECOND_TO_NANOSECONDS;
+  return new Date(Number(timestampMs));
+};
+const MINUTES_TO_MSEC = 60 * 1e3;
+const HOURS_TO_MINUTES = 60;
+const DAYS_TO_HOURS = 24;
+const DAYS_TO_MINUTES = DAYS_TO_HOURS * HOURS_TO_MINUTES;
+const DEFAULT_CERTIFICATE_MAX_AGE_IN_MINUTES = 5;
+const DEFAULT_CERTIFICATE_MAX_MINUTES_IN_FUTURE = 5;
+const DEFAULT_CERTIFICATE_DELEGATION_MAX_AGE_IN_MINUTES = 30 * DAYS_TO_MINUTES;
+var NodeType;
+(function(NodeType2) {
+  NodeType2[NodeType2["Empty"] = 0] = "Empty";
+  NodeType2[NodeType2["Fork"] = 1] = "Fork";
+  NodeType2[NodeType2["Labeled"] = 2] = "Labeled";
+  NodeType2[NodeType2["Leaf"] = 3] = "Leaf";
+  NodeType2[NodeType2["Pruned"] = 4] = "Pruned";
+})(NodeType || (NodeType = {}));
+function isBufferGreaterThan(a2, b2) {
+  for (let i = 0; i < a2.length; i++) {
+    if (a2[i] > b2[i]) {
+      return true;
+    }
+  }
+  return false;
+}
+const _Certificate = class _Certificate {
+  constructor(certificate, _rootKey, _canisterId, _blsVerify, _maxAgeInMinutes = DEFAULT_CERTIFICATE_MAX_AGE_IN_MINUTES, disableTimeVerification = false, agent) {
+    __privateAdd(this, _disableTimeVerification, false);
+    __privateAdd(this, _agent);
+    this._rootKey = _rootKey;
+    this._canisterId = _canisterId;
+    this._blsVerify = _blsVerify;
+    this._maxAgeInMinutes = _maxAgeInMinutes;
+    __privateSet(this, _disableTimeVerification, disableTimeVerification);
+    this.cert = decode(certificate);
+    if (agent && "getTimeDiffMsecs" in agent && "hasSyncedTime" in agent && "syncTime" in agent) {
+      __privateSet(this, _agent, agent);
+    }
+  }
+  /**
+   * Create a new instance of a certificate, automatically verifying it.
+   * @param {CreateCertificateOptions} options {@link CreateCertificateOptions}
+   * @throws if the verification of the certificate fails
+   */
+  static async create(options) {
+    const cert = _Certificate.createUnverified(options);
+    await cert.verify();
+    return cert;
+  }
+  static createUnverified(options) {
+    return new _Certificate(options.certificate, options.rootKey, options.canisterId, options.blsVerify ?? blsVerify, options.maxAgeInMinutes, options.disableTimeVerification, options.agent);
+  }
+  /**
+   * Lookup a path in the certificate tree, using {@link lookup_path}.
+   * @param path The path to lookup.
+   * @returns The result of the lookup.
+   */
+  lookup_path(path) {
+    return lookup_path(path, this.cert.tree);
+  }
+  /**
+   * Lookup a subtree in the certificate tree, using {@link lookup_subtree}.
+   * @param path The path to lookup.
+   * @returns The result of the lookup.
+   */
+  lookup_subtree(path) {
+    return lookup_subtree(path, this.cert.tree);
+  }
+  async verify() {
+    var _a3, _b3;
+    const rootHash = await reconstruct(this.cert.tree);
+    const derKey = await this._checkDelegationAndGetKey(this.cert.delegation);
+    const sig = this.cert.signature;
+    const key = extractDER(derKey);
+    const msg = concatBytes(domain_sep("ic-state-root"), rootHash);
+    const lookupTime = lookupResultToBuffer(this.lookup_path(["time"]));
+    if (!lookupTime) {
+      throw ProtocolError.fromCode(new CertificateVerificationErrorCode("Certificate does not contain a time"));
+    }
+    if (!__privateGet(this, _disableTimeVerification)) {
+      const timeDiffMsecs = ((_a3 = __privateGet(this, _agent)) == null ? void 0 : _a3.getTimeDiffMsecs()) ?? 0;
+      const maxAgeInMsec = this._maxAgeInMinutes * MINUTES_TO_MSEC;
+      const now2 = /* @__PURE__ */ new Date();
+      const adjustedNow = now2.getTime() + timeDiffMsecs;
+      const earliestCertificateTime = adjustedNow - maxAgeInMsec;
+      const latestCertificateTime = adjustedNow + DEFAULT_CERTIFICATE_MAX_MINUTES_IN_FUTURE * MINUTES_TO_MSEC;
+      const certTime = decodeTime(lookupTime);
+      const isCertificateTimePast = certTime.getTime() < earliestCertificateTime;
+      const isCertificateTimeFuture = certTime.getTime() > latestCertificateTime;
+      if ((isCertificateTimePast || isCertificateTimeFuture) && __privateGet(this, _agent) && !__privateGet(this, _agent).hasSyncedTime()) {
+        await __privateGet(this, _agent).syncTime(this._canisterId);
+        return await this.verify();
+      }
+      if (isCertificateTimePast) {
+        throw TrustError.fromCode(new CertificateTimeErrorCode(this._maxAgeInMinutes, certTime, now2, timeDiffMsecs, "past"));
+      } else if (isCertificateTimeFuture) {
+        if ((_b3 = __privateGet(this, _agent)) == null ? void 0 : _b3.hasSyncedTime()) {
+          throw UnknownError.fromCode(new UnexpectedErrorCode("System time has been synced with the IC network, but certificate is still too far in the future."));
+        }
+        throw TrustError.fromCode(new CertificateTimeErrorCode(5, certTime, now2, timeDiffMsecs, "future"));
+      }
+    }
+    try {
+      const sigVer = await this._blsVerify(key, sig, msg);
+      if (!sigVer) {
+        throw TrustError.fromCode(new CertificateVerificationErrorCode("Invalid signature"));
+      }
+    } catch (err) {
+      throw TrustError.fromCode(new CertificateVerificationErrorCode("Signature verification failed", err));
+    }
+  }
+  async _checkDelegationAndGetKey(d2) {
+    if (!d2) {
+      return this._rootKey;
+    }
+    const cert = _Certificate.createUnverified({
+      certificate: d2.certificate,
+      rootKey: this._rootKey,
+      canisterId: this._canisterId,
+      blsVerify: this._blsVerify,
+      disableTimeVerification: __privateGet(this, _disableTimeVerification),
+      maxAgeInMinutes: DEFAULT_CERTIFICATE_DELEGATION_MAX_AGE_IN_MINUTES,
+      agent: __privateGet(this, _agent)
+    });
+    if (cert.cert.delegation) {
+      throw ProtocolError.fromCode(new CertificateHasTooManyDelegationsErrorCode());
+    }
+    await cert.verify();
+    const subnetIdBytes = d2.subnet_id;
+    const subnetId = Principal$1.fromUint8Array(subnetIdBytes);
+    const canisterInRange = check_canister_ranges({
+      canisterId: this._canisterId,
+      subnetId,
+      tree: cert.cert.tree
+    });
+    if (!canisterInRange) {
+      throw TrustError.fromCode(new CertificateNotAuthorizedErrorCode(this._canisterId, subnetId));
+    }
+    const publicKeyLookup = lookupResultToBuffer(cert.lookup_path(["subnet", subnetIdBytes, "public_key"]));
+    if (!publicKeyLookup) {
+      throw TrustError.fromCode(new MissingLookupValueErrorCode(`Could not find subnet key for subnet ID ${subnetId.toText()}`));
+    }
+    return publicKeyLookup;
+  }
+};
+_disableTimeVerification = new WeakMap();
+_agent = new WeakMap();
+let Certificate = _Certificate;
+const DER_PREFIX = hexToBytes("308182301d060d2b0601040182dc7c0503010201060c2b0601040182dc7c05030201036100");
+const KEY_LENGTH = 96;
+function extractDER(buf) {
+  const expectedLength = DER_PREFIX.byteLength + KEY_LENGTH;
+  if (buf.byteLength !== expectedLength) {
+    throw ProtocolError.fromCode(new DerKeyLengthMismatchErrorCode(expectedLength, buf.byteLength));
+  }
+  const prefix2 = buf.slice(0, DER_PREFIX.byteLength);
+  if (!uint8Equals(prefix2, DER_PREFIX)) {
+    throw ProtocolError.fromCode(new DerPrefixMismatchErrorCode(DER_PREFIX, prefix2));
+  }
+  return buf.slice(DER_PREFIX.byteLength);
+}
+function lookupResultToBuffer(result) {
+  if (result.status !== LookupPathStatus.Found) {
+    return void 0;
+  }
+  if (result.value instanceof Uint8Array) {
+    return result.value;
+  }
+  return void 0;
+}
+async function reconstruct(t) {
+  switch (t[0]) {
+    case NodeType.Empty:
+      return sha256(domain_sep("ic-hashtree-empty"));
+    case NodeType.Pruned:
+      return t[1];
+    case NodeType.Leaf:
+      return sha256(concatBytes(domain_sep("ic-hashtree-leaf"), t[1]));
+    case NodeType.Labeled:
+      return sha256(concatBytes(domain_sep("ic-hashtree-labeled"), t[1], await reconstruct(t[2])));
+    case NodeType.Fork:
+      return sha256(concatBytes(domain_sep("ic-hashtree-fork"), await reconstruct(t[1]), await reconstruct(t[2])));
+    default:
+      throw UNREACHABLE_ERROR;
+  }
+}
+function domain_sep(s2) {
+  const len = new Uint8Array([s2.length]);
+  const str = new TextEncoder().encode(s2);
+  return concatBytes(len, str);
+}
+function pathToLabel(path) {
+  return typeof path[0] === "string" ? utf8ToBytes(path[0]) : path[0];
+}
+var LookupPathStatus;
+(function(LookupPathStatus2) {
+  LookupPathStatus2["Unknown"] = "Unknown";
+  LookupPathStatus2["Absent"] = "Absent";
+  LookupPathStatus2["Found"] = "Found";
+  LookupPathStatus2["Error"] = "Error";
+})(LookupPathStatus || (LookupPathStatus = {}));
+var LookupSubtreeStatus;
+(function(LookupSubtreeStatus2) {
+  LookupSubtreeStatus2["Absent"] = "Absent";
+  LookupSubtreeStatus2["Unknown"] = "Unknown";
+  LookupSubtreeStatus2["Found"] = "Found";
+})(LookupSubtreeStatus || (LookupSubtreeStatus = {}));
+var LookupLabelStatus;
+(function(LookupLabelStatus2) {
+  LookupLabelStatus2["Absent"] = "Absent";
+  LookupLabelStatus2["Unknown"] = "Unknown";
+  LookupLabelStatus2["Found"] = "Found";
+  LookupLabelStatus2["Less"] = "Less";
+  LookupLabelStatus2["Greater"] = "Greater";
+})(LookupLabelStatus || (LookupLabelStatus = {}));
+function lookup_path(path, tree) {
+  if (path.length === 0) {
+    switch (tree[0]) {
+      case NodeType.Empty: {
+        return {
+          status: LookupPathStatus.Absent
+        };
+      }
+      case NodeType.Leaf: {
+        if (!tree[1]) {
+          throw UnknownError.fromCode(new HashTreeDecodeErrorCode("Invalid tree structure for leaf"));
+        }
+        if (tree[1] instanceof Uint8Array) {
+          return {
+            status: LookupPathStatus.Found,
+            value: tree[1].slice(tree[1].byteOffset, tree[1].byteLength + tree[1].byteOffset)
+          };
+        }
+        throw UNREACHABLE_ERROR;
+      }
+      case NodeType.Pruned: {
+        return {
+          status: LookupPathStatus.Unknown
+        };
+      }
+      case NodeType.Labeled:
+      case NodeType.Fork: {
+        return {
+          status: LookupPathStatus.Error
+        };
+      }
+      default: {
+        throw UNREACHABLE_ERROR;
+      }
+    }
+  }
+  const label = pathToLabel(path);
+  const lookupResult = find_label(label, tree);
+  switch (lookupResult.status) {
+    case LookupLabelStatus.Found: {
+      return lookup_path(path.slice(1), lookupResult.value);
+    }
+    case LookupLabelStatus.Absent:
+    case LookupLabelStatus.Greater:
+    case LookupLabelStatus.Less: {
+      return {
+        status: LookupPathStatus.Absent
+      };
+    }
+    case LookupLabelStatus.Unknown: {
+      return {
+        status: LookupPathStatus.Unknown
+      };
+    }
+    default: {
+      throw UNREACHABLE_ERROR;
+    }
+  }
+}
+function lookup_subtree(path, tree) {
+  if (path.length === 0) {
+    return {
+      status: LookupSubtreeStatus.Found,
+      value: tree
+    };
+  }
+  const label = pathToLabel(path);
+  const lookupResult = find_label(label, tree);
+  switch (lookupResult.status) {
+    case LookupLabelStatus.Found: {
+      return lookup_subtree(path.slice(1), lookupResult.value);
+    }
+    case LookupLabelStatus.Unknown: {
+      return {
+        status: LookupSubtreeStatus.Unknown
+      };
+    }
+    case LookupLabelStatus.Absent:
+    case LookupLabelStatus.Greater:
+    case LookupLabelStatus.Less: {
+      return {
+        status: LookupSubtreeStatus.Absent
+      };
+    }
+    default: {
+      throw UNREACHABLE_ERROR;
+    }
+  }
+}
+function flatten_forks(t) {
+  switch (t[0]) {
+    case NodeType.Empty:
+      return [];
+    case NodeType.Fork:
+      return flatten_forks(t[1]).concat(flatten_forks(t[2]));
+    default:
+      return [t];
+  }
+}
+function find_label(label, tree) {
+  switch (tree[0]) {
+    case NodeType.Labeled:
+      if (isBufferGreaterThan(label, tree[1])) {
+        return {
+          status: LookupLabelStatus.Greater
+        };
+      }
+      if (uint8Equals(label, tree[1])) {
+        return {
+          status: LookupLabelStatus.Found,
+          value: tree[2]
+        };
+      }
+      return {
+        status: LookupLabelStatus.Less
+      };
+    case NodeType.Fork: {
+      const leftLookupResult = find_label(label, tree[1]);
+      switch (leftLookupResult.status) {
+        case LookupLabelStatus.Greater: {
+          const rightLookupResult = find_label(label, tree[2]);
+          if (rightLookupResult.status === LookupLabelStatus.Less) {
+            return {
+              status: LookupLabelStatus.Absent
+            };
+          }
+          return rightLookupResult;
+        }
+        case LookupLabelStatus.Unknown: {
+          const rightLookupResult = find_label(label, tree[2]);
+          if (rightLookupResult.status === LookupLabelStatus.Less) {
+            return {
+              status: LookupLabelStatus.Unknown
+            };
+          }
+          return rightLookupResult;
+        }
+        default: {
+          return leftLookupResult;
+        }
+      }
+    }
+    case NodeType.Pruned:
+      return {
+        status: LookupLabelStatus.Unknown
+      };
+    default:
+      return {
+        status: LookupLabelStatus.Absent
+      };
+  }
+}
+function check_canister_ranges(params) {
+  const { canisterId, subnetId, tree } = params;
+  const rangeLookup = lookup_path(["subnet", subnetId.toUint8Array(), "canister_ranges"], tree);
+  if (rangeLookup.status !== LookupPathStatus.Found) {
+    throw ProtocolError.fromCode(new LookupErrorCode(`Could not find canister ranges for subnet ${subnetId.toText()}`, rangeLookup.status));
+  }
+  if (!(rangeLookup.value instanceof Uint8Array)) {
+    throw ProtocolError.fromCode(new MalformedLookupFoundValueErrorCode(`Could not find canister ranges for subnet ${subnetId.toText()}`));
+  }
+  const ranges_arr = decode(rangeLookup.value);
+  const ranges = ranges_arr.map((v2) => [
+    Principal$1.fromUint8Array(v2[0]),
+    Principal$1.fromUint8Array(v2[1])
+  ]);
+  const canisterInRange = ranges.some((r2) => r2[0].ltEq(canisterId) && r2[1].gtEq(canisterId));
+  return canisterInRange;
+}
+const request = async (options) => {
+  const { agent, paths, disableCertificateTimeVerification = false } = options;
+  const canisterId = Principal$1.from(options.canisterId);
+  const uniquePaths = [...new Set(paths)];
+  const status = /* @__PURE__ */ new Map();
+  const promises = uniquePaths.map((path, index2) => {
+    const encodedPath = encodePath(path, canisterId);
+    return (async () => {
+      try {
+        if (agent.rootKey === null) {
+          throw ExternalError.fromCode(new MissingRootKeyErrorCode());
+        }
+        const rootKey = agent.rootKey;
+        const response = await agent.readState(canisterId, {
+          paths: [encodedPath]
+        });
+        const certificate = await Certificate.create({
+          certificate: response.certificate,
+          rootKey,
+          canisterId,
+          disableTimeVerification: disableCertificateTimeVerification,
+          agent
+        });
+        const lookup = (cert, path3) => {
+          if (path3 === "subnet") {
+            const data2 = fetchNodeKeys(response.certificate, canisterId, rootKey);
+            return {
+              path: path3,
+              data: data2
+            };
+          } else {
+            return {
+              path: path3,
+              data: lookupResultToBuffer(cert.lookup_path(encodedPath))
+            };
+          }
+        };
+        const { path: path2, data } = lookup(certificate, uniquePaths[index2]);
+        if (!data) {
+          console.warn(`Expected to find result for path ${path2}, but instead found nothing.`);
+          if (typeof path2 === "string") {
+            status.set(path2, null);
+          } else {
+            status.set(path2.key, null);
+          }
+        } else {
+          switch (path2) {
+            case "time": {
+              status.set(path2, decodeTime(data));
+              break;
+            }
+            case "controllers": {
+              status.set(path2, decodeControllers(data));
+              break;
+            }
+            case "module_hash": {
+              status.set(path2, bytesToHex(data));
+              break;
+            }
+            case "subnet": {
+              status.set(path2, data);
+              break;
+            }
+            case "candid": {
+              status.set(path2, new TextDecoder().decode(data));
+              break;
+            }
+            default: {
+              if (typeof path2 !== "string" && "key" in path2 && "path" in path2) {
+                switch (path2.decodeStrategy) {
+                  case "raw":
+                    status.set(path2.key, data);
+                    break;
+                  case "leb128": {
+                    status.set(path2.key, decodeLeb128(data));
+                    break;
+                  }
+                  case "cbor": {
+                    status.set(path2.key, decode(data));
+                    break;
+                  }
+                  case "hex": {
+                    status.set(path2.key, bytesToHex(data));
+                    break;
+                  }
+                  case "utf-8": {
+                    status.set(path2.key, new TextDecoder().decode(data));
+                  }
+                }
+              }
+            }
+          }
+        }
+      } catch (error) {
+        if (error instanceof AgentError && (error.hasCode(CertificateVerificationErrorCode) || error.hasCode(CertificateTimeErrorCode))) {
+          throw error;
+        }
+        if (typeof path !== "string" && "key" in path && "path" in path) {
+          status.set(path.key, null);
+        } else {
+          status.set(path, null);
+        }
+        console.group();
+        console.warn(`Expected to find result for path ${path}, but instead found nothing.`);
+        console.warn(error);
+        console.groupEnd();
+      }
+    })();
+  });
+  await Promise.all(promises);
+  return status;
+};
+const fetchNodeKeys = (certificate, canisterId, root_key) => {
+  if (!canisterId._isPrincipal) {
+    throw InputError.fromCode(new UnexpectedErrorCode("Invalid canisterId"));
+  }
+  const cert = decode(certificate);
+  const tree = cert.tree;
+  let delegation = cert.delegation;
+  let subnetId;
+  if (delegation && delegation.subnet_id) {
+    subnetId = Principal$1.fromUint8Array(new Uint8Array(delegation.subnet_id));
+  } else if (!delegation && typeof root_key !== "undefined") {
+    subnetId = Principal$1.selfAuthenticating(new Uint8Array(root_key));
+    delegation = {
+      subnet_id: subnetId.toUint8Array(),
+      certificate: new Uint8Array(0)
+    };
+  } else {
+    subnetId = Principal$1.selfAuthenticating(Principal$1.fromText("tdb26-jop6k-aogll-7ltgs-eruif-6kk7m-qpktf-gdiqx-mxtrf-vb5e6-eqe").toUint8Array());
+    delegation = {
+      subnet_id: subnetId.toUint8Array(),
+      certificate: new Uint8Array(0)
+    };
+  }
+  const canisterInRange = check_canister_ranges({ canisterId, subnetId, tree });
+  if (!canisterInRange) {
+    throw TrustError.fromCode(new CertificateNotAuthorizedErrorCode(canisterId, subnetId));
+  }
+  const subnetLookupResult = lookup_subtree(["subnet", delegation.subnet_id, "node"], tree);
+  if (subnetLookupResult.status !== LookupSubtreeStatus.Found) {
+    throw ProtocolError.fromCode(new LookupErrorCode("Node not found", subnetLookupResult.status));
+  }
+  if (subnetLookupResult.value instanceof Uint8Array) {
+    throw UnknownError.fromCode(new HashTreeDecodeErrorCode("Invalid node tree"));
+  }
+  const nodeForks = flatten_forks(subnetLookupResult.value);
+  const nodeKeys = /* @__PURE__ */ new Map();
+  nodeForks.forEach((fork) => {
+    const node_id = Principal$1.from(fork[1]).toText();
+    const publicKeyLookupResult = lookup_path(["public_key"], fork[2]);
+    if (publicKeyLookupResult.status !== LookupPathStatus.Found) {
+      throw ProtocolError.fromCode(new LookupErrorCode("Public key not found", publicKeyLookupResult.status));
+    }
+    const derEncodedPublicKey = publicKeyLookupResult.value;
+    if (derEncodedPublicKey.byteLength !== 44) {
+      throw ProtocolError.fromCode(new DerKeyLengthMismatchErrorCode(44, derEncodedPublicKey.byteLength));
+    } else {
+      nodeKeys.set(node_id, derEncodedPublicKey);
+    }
+  });
+  return {
+    subnetId: Principal$1.fromUint8Array(new Uint8Array(delegation.subnet_id)).toText(),
+    nodeKeys
+  };
+};
+const encodePath = (path, canisterId) => {
+  const canisterUint8Array = canisterId.toUint8Array();
+  switch (path) {
+    case "time":
+      return [utf8ToBytes("time")];
+    case "controllers":
+      return [utf8ToBytes("canister"), canisterUint8Array, utf8ToBytes("controllers")];
+    case "module_hash":
+      return [utf8ToBytes("canister"), canisterUint8Array, utf8ToBytes("module_hash")];
+    case "subnet":
+      return [utf8ToBytes("subnet")];
+    case "candid":
+      return [
+        utf8ToBytes("canister"),
+        canisterUint8Array,
+        utf8ToBytes("metadata"),
+        utf8ToBytes("candid:service")
+      ];
+    default: {
+      if ("key" in path && "path" in path) {
+        if (typeof path["path"] === "string" || path["path"] instanceof Uint8Array) {
+          const metaPath = path.path;
+          const encoded = typeof metaPath === "string" ? utf8ToBytes(metaPath) : metaPath;
+          return [utf8ToBytes("canister"), canisterUint8Array, utf8ToBytes("metadata"), encoded];
+        } else {
+          return path["path"];
+        }
+      }
+    }
+  }
+  throw UnknownError.fromCode(new UnexpectedErrorCode(`Error while encoding your path for canister status. Please ensure that your path ${path} was formatted correctly.`));
+};
+const decodeControllers = (buf) => {
+  const controllersRaw = decode(buf);
+  return controllersRaw.map((buf2) => {
+    return Principal$1.fromUint8Array(buf2);
+  });
+};
+/*! noble-curves - MIT License (c) 2022 Paul Miller (paulmillr.com) */
 const _0n = BigInt(0), _1n$1 = BigInt(1), _2n$1 = BigInt(2), _8n$1 = BigInt(8);
-function isEdValidXY(Fp2, CURVE, x, y) {
-  const x2 = Fp2.sqr(x);
-  const y2 = Fp2.sqr(y);
-  const left = Fp2.add(Fp2.mul(CURVE.a, x2), y2);
-  const right = Fp2.add(Fp2.ONE, Fp2.mul(CURVE.d, Fp2.mul(x2, y2)));
-  return Fp2.eql(left, right);
+function isEdValidXY(Fp3, CURVE, x2, y2) {
+  const x22 = Fp3.sqr(x2);
+  const y22 = Fp3.sqr(y2);
+  const left = Fp3.add(Fp3.mul(CURVE.a, x22), y22);
+  const right = Fp3.add(Fp3.ONE, Fp3.mul(CURVE.d, Fp3.mul(x22, y22)));
+  return Fp3.eql(left, right);
 }
 function edwards(params, extraOpts = {}) {
   const validated = _createCurveFields("edwards", params, extraOpts, extraOpts.FpFnLE);
-  const { Fp: Fp2, Fn } = validated;
+  const { Fp: Fp3, Fn } = validated;
   let CURVE = validated.CURVE;
   const { h: cofactor } = CURVE;
   _validateObject(extraOpts, {}, { uvRatio: "function" });
   const MASK = _2n$1 << BigInt(Fn.BYTES * 8) - _1n$1;
-  const modP = (n) => Fp2.create(n);
-  const uvRatio2 = extraOpts.uvRatio || ((u, v) => {
+  const modP = (n) => Fp3.create(n);
+  const uvRatio2 = extraOpts.uvRatio || ((u, v2) => {
     try {
-      return { isValid: true, value: Fp2.sqrt(Fp2.div(u, v)) };
+      return { isValid: true, value: Fp3.sqrt(Fp3.div(u, v2)) };
     } catch (e) {
       return { isValid: false, value: _0n };
     }
   });
-  if (!isEdValidXY(Fp2, CURVE, CURVE.Gx, CURVE.Gy))
+  if (!isEdValidXY(Fp3, CURVE, CURVE.Gx, CURVE.Gy))
     throw new Error("bad curve params: generator point");
   function acoord(title, n, banZero = false) {
     const min2 = banZero ? _1n$1 : _0n;
@@ -2340,84 +8503,84 @@ function edwards(params, extraOpts = {}) {
     if (!(other instanceof Point))
       throw new Error("ExtendedPoint expected");
   }
-  const toAffineMemo = memoized((p, iz) => {
-    const { X, Y, Z } = p;
-    const is0 = p.is0();
+  const toAffineMemo = memoized((p2, iz) => {
+    const { X: X2, Y: Y2, Z: Z2 } = p2;
+    const is0 = p2.is0();
     if (iz == null)
-      iz = is0 ? _8n$1 : Fp2.inv(Z);
-    const x = modP(X * iz);
-    const y = modP(Y * iz);
-    const zz = Fp2.mul(Z, iz);
+      iz = is0 ? _8n$1 : Fp3.inv(Z2);
+    const x2 = modP(X2 * iz);
+    const y2 = modP(Y2 * iz);
+    const zz = Fp3.mul(Z2, iz);
     if (is0)
       return { x: _0n, y: _1n$1 };
     if (zz !== _1n$1)
       throw new Error("invZ was invalid");
-    return { x, y };
+    return { x: x2, y: y2 };
   });
-  const assertValidMemo = memoized((p) => {
-    const { a, d } = CURVE;
-    if (p.is0())
+  const assertValidMemo = memoized((p2) => {
+    const { a: a2, d: d2 } = CURVE;
+    if (p2.is0())
       throw new Error("bad point: ZERO");
-    const { X, Y, Z, T } = p;
-    const X2 = modP(X * X);
-    const Y2 = modP(Y * Y);
-    const Z2 = modP(Z * Z);
-    const Z4 = modP(Z2 * Z2);
-    const aX2 = modP(X2 * a);
-    const left = modP(Z2 * modP(aX2 + Y2));
-    const right = modP(Z4 + modP(d * modP(X2 * Y2)));
+    const { X: X2, Y: Y2, Z: Z2, T: T2 } = p2;
+    const X22 = modP(X2 * X2);
+    const Y22 = modP(Y2 * Y2);
+    const Z22 = modP(Z2 * Z2);
+    const Z4 = modP(Z22 * Z22);
+    const aX2 = modP(X22 * a2);
+    const left = modP(Z22 * modP(aX2 + Y22));
+    const right = modP(Z4 + modP(d2 * modP(X22 * Y22)));
     if (left !== right)
       throw new Error("bad point: equation left != right (1)");
-    const XY = modP(X * Y);
-    const ZT = modP(Z * T);
+    const XY = modP(X2 * Y2);
+    const ZT = modP(Z2 * T2);
     if (XY !== ZT)
       throw new Error("bad point: equation left != right (2)");
     return true;
   });
   class Point {
-    constructor(X, Y, Z, T) {
-      this.X = acoord("x", X);
-      this.Y = acoord("y", Y);
-      this.Z = acoord("z", Z, true);
-      this.T = acoord("t", T);
+    constructor(X2, Y2, Z2, T2) {
+      this.X = acoord("x", X2);
+      this.Y = acoord("y", Y2);
+      this.Z = acoord("z", Z2, true);
+      this.T = acoord("t", T2);
       Object.freeze(this);
     }
     static CURVE() {
       return CURVE;
     }
-    static fromAffine(p) {
-      if (p instanceof Point)
+    static fromAffine(p2) {
+      if (p2 instanceof Point)
         throw new Error("extended point not allowed");
-      const { x, y } = p || {};
-      acoord("x", x);
-      acoord("y", y);
-      return new Point(x, y, _1n$1, modP(x * y));
+      const { x: x2, y: y2 } = p2 || {};
+      acoord("x", x2);
+      acoord("y", y2);
+      return new Point(x2, y2, _1n$1, modP(x2 * y2));
     }
     // Uses algo from RFC8032 5.1.3.
     static fromBytes(bytes, zip215 = false) {
-      const len = Fp2.BYTES;
-      const { a, d } = CURVE;
+      const len = Fp3.BYTES;
+      const { a: a2, d: d2 } = CURVE;
       bytes = copyBytes(_abytes2(bytes, len, "point"));
       _abool2(zip215, "zip215");
       const normed = copyBytes(bytes);
       const lastByte = bytes[len - 1];
       normed[len - 1] = lastByte & -129;
-      const y = bytesToNumberLE(normed);
-      const max2 = zip215 ? MASK : Fp2.ORDER;
-      aInRange("point.y", y, _0n, max2);
-      const y2 = modP(y * y);
-      const u = modP(y2 - _1n$1);
-      const v = modP(d * y2 - a);
-      let { isValid, value: x } = uvRatio2(u, v);
+      const y2 = bytesToNumberLE(normed);
+      const max2 = zip215 ? MASK : Fp3.ORDER;
+      aInRange("point.y", y2, _0n, max2);
+      const y22 = modP(y2 * y2);
+      const u = modP(y22 - _1n$1);
+      const v2 = modP(d2 * y22 - a2);
+      let { isValid, value: x2 } = uvRatio2(u, v2);
       if (!isValid)
         throw new Error("bad point: invalid y coordinate");
-      const isXOdd = (x & _1n$1) === _1n$1;
+      const isXOdd = (x2 & _1n$1) === _1n$1;
       const isLastByteOdd = (lastByte & 128) !== 0;
-      if (!zip215 && x === _0n && isLastByteOdd)
+      if (!zip215 && x2 === _0n && isLastByteOdd)
         throw new Error("bad point: x=0 and x_0=1");
       if (isLastByteOdd !== isXOdd)
-        x = modP(-x);
-      return Point.fromAffine({ x, y });
+        x2 = modP(-x2);
+      return Point.fromAffine({ x: x2, y: y2 });
     }
     static fromHex(bytes, zip215 = false) {
       return Point.fromBytes(ensureBytes("point", bytes), zip215);
@@ -2459,21 +8622,21 @@ function edwards(params, extraOpts = {}) {
     // https://hyperelliptic.org/EFD/g1p/auto-twisted-extended.html#doubling-dbl-2008-hwcd
     // Cost: 4M + 4S + 1*a + 6add + 1*2.
     double() {
-      const { a } = CURVE;
+      const { a: a2 } = CURVE;
       const { X: X1, Y: Y1, Z: Z1 } = this;
-      const A = modP(X1 * X1);
-      const B = modP(Y1 * Y1);
-      const C = modP(_2n$1 * modP(Z1 * Z1));
-      const D = modP(a * A);
+      const A2 = modP(X1 * X1);
+      const B2 = modP(Y1 * Y1);
+      const C2 = modP(_2n$1 * modP(Z1 * Z1));
+      const D = modP(a2 * A2);
       const x1y1 = X1 + Y1;
-      const E = modP(modP(x1y1 * x1y1) - A - B);
-      const G = D + B;
-      const F = G - C;
-      const H = D - B;
-      const X3 = modP(E * F);
-      const Y3 = modP(G * H);
-      const T3 = modP(E * H);
-      const Z3 = modP(F * G);
+      const E2 = modP(modP(x1y1 * x1y1) - A2 - B2);
+      const G2 = D + B2;
+      const F2 = G2 - C2;
+      const H2 = D - B2;
+      const X3 = modP(E2 * F2);
+      const Y3 = modP(G2 * H2);
+      const T3 = modP(E2 * H2);
+      const Z3 = modP(F2 * G2);
       return new Point(X3, Y3, Z3, T3);
     }
     // Fast algo for adding 2 Extended Points.
@@ -2481,21 +8644,21 @@ function edwards(params, extraOpts = {}) {
     // Cost: 9M + 1*a + 1*d + 7add.
     add(other) {
       aextpoint(other);
-      const { a, d } = CURVE;
+      const { a: a2, d: d2 } = CURVE;
       const { X: X1, Y: Y1, Z: Z1, T: T1 } = this;
       const { X: X2, Y: Y2, Z: Z2, T: T2 } = other;
-      const A = modP(X1 * X2);
-      const B = modP(Y1 * Y2);
-      const C = modP(T1 * d * T2);
+      const A2 = modP(X1 * X2);
+      const B2 = modP(Y1 * Y2);
+      const C2 = modP(T1 * d2 * T2);
       const D = modP(Z1 * Z2);
-      const E = modP((X1 + Y1) * (X2 + Y2) - A - B);
-      const F = D - C;
-      const G = D + C;
-      const H = modP(B - a * A);
-      const X3 = modP(E * F);
-      const Y3 = modP(G * H);
-      const T3 = modP(E * H);
-      const Z3 = modP(F * G);
+      const E2 = modP((X1 + Y1) * (X2 + Y2) - A2 - B2);
+      const F2 = D - C2;
+      const G2 = D + C2;
+      const H2 = modP(B2 - a2 * A2);
+      const X3 = modP(E2 * F2);
+      const Y3 = modP(G2 * H2);
+      const T3 = modP(E2 * H2);
+      const Z3 = modP(F2 * G2);
       return new Point(X3, Y3, Z3, T3);
     }
     subtract(other) {
@@ -2505,8 +8668,8 @@ function edwards(params, extraOpts = {}) {
     multiply(scalar) {
       if (!Fn.isValidNot0(scalar))
         throw new Error("invalid scalar: expected 1 <= sc < curve.n");
-      const { p, f } = wnaf.cached(this, scalar, (p2) => normalizeZ(Point, p2));
-      return normalizeZ(Point, [p, f])[0];
+      const { p: p2, f } = wnaf.cached(this, scalar, (p3) => normalizeZ(Point, p3));
+      return normalizeZ(Point, [p2, f])[0];
     }
     // Non-constant-time multiplication. Uses double-and-add algorithm.
     // It's faster, but should only be used when you don't care about
@@ -2520,7 +8683,7 @@ function edwards(params, extraOpts = {}) {
         return Point.ZERO;
       if (this.is0() || scalar === _1n$1)
         return this;
-      return wnaf.unsafe(this, scalar, (p) => normalizeZ(Point, p), acc);
+      return wnaf.unsafe(this, scalar, (p2) => normalizeZ(Point, p2), acc);
     }
     // Checks if point is of small order.
     // If you add something to small order point, you will have "dirty"
@@ -2545,9 +8708,9 @@ function edwards(params, extraOpts = {}) {
       return this.multiplyUnsafe(cofactor);
     }
     toBytes() {
-      const { x, y } = this.toAffine();
-      const bytes = Fp2.toBytes(y);
-      bytes[bytes.length - 1] |= x & _1n$1 ? 128 : 0;
+      const { x: x2, y: y2 } = this.toAffine();
+      const bytes = Fp3.toBytes(y2);
+      bytes[bytes.length - 1] |= x2 & _1n$1 ? 128 : 0;
       return bytes;
     }
     toHex() {
@@ -2584,7 +8747,7 @@ function edwards(params, extraOpts = {}) {
   }
   Point.BASE = new Point(CURVE.Gx, CURVE.Gy, _1n$1, modP(CURVE.Gx * CURVE.Gy));
   Point.ZERO = new Point(_0n, _1n$1, _1n$1, _0n);
-  Point.Fp = Fp2;
+  Point.Fp = Fp3;
   Point.Fn = Fn;
   const wnaf = new wNAF(Point, Fn.BITS);
   Point.BASE.precompute(8);
@@ -2601,7 +8764,7 @@ function eddsa(Point, cHash, eddsaOpts = {}) {
     mapToCurve: "function"
   });
   const { prehash } = eddsaOpts;
-  const { BASE, Fp: Fp2, Fn } = Point;
+  const { BASE, Fp: Fp3, Fn } = Point;
   const randomBytes$1 = eddsaOpts.randomBytes || randomBytes;
   const adjustScalarBytes2 = eddsaOpts.adjustScalarBytes || ((bytes) => bytes);
   const domain = eddsaOpts.domain || ((data, ctx, phflag) => {
@@ -2641,12 +8804,12 @@ function eddsa(Point, cHash, eddsaOpts = {}) {
       msg = prehash(msg);
     const { prefix: prefix2, scalar, pointBytes } = getExtendedPublicKey(secretKey);
     const r2 = hashDomainToScalar(options.context, prefix2, msg);
-    const R = BASE.multiply(r2).toBytes();
-    const k = hashDomainToScalar(options.context, R, pointBytes, msg);
-    const s = Fn.create(r2 + k * scalar);
-    if (!Fn.isValid(s))
+    const R2 = BASE.multiply(r2).toBytes();
+    const k2 = hashDomainToScalar(options.context, R2, pointBytes, msg);
+    const s2 = Fn.create(r2 + k2 * scalar);
+    if (!Fn.isValid(s2))
       throw new Error("sign failed: invalid s");
-    const rs = concatBytes(R, Fn.toBytes(s));
+    const rs = concatBytes(R2, Fn.toBytes(s2));
     return _abytes2(rs, lengths.signature, "result");
   }
   const verifyOpts = { zip215: true };
@@ -2662,22 +8825,22 @@ function eddsa(Point, cHash, eddsaOpts = {}) {
       msg = prehash(msg);
     const mid = len / 2;
     const r2 = sig.subarray(0, mid);
-    const s = bytesToNumberLE(sig.subarray(mid, len));
-    let A, R, SB;
+    const s2 = bytesToNumberLE(sig.subarray(mid, len));
+    let A2, R2, SB;
     try {
-      A = Point.fromBytes(publicKey, zip215);
-      R = Point.fromBytes(r2, zip215);
-      SB = BASE.multiplyUnsafe(s);
+      A2 = Point.fromBytes(publicKey, zip215);
+      R2 = Point.fromBytes(r2, zip215);
+      SB = BASE.multiplyUnsafe(s2);
     } catch (error) {
       return false;
     }
-    if (!zip215 && A.isSmallOrder())
+    if (!zip215 && A2.isSmallOrder())
       return false;
-    const k = hashDomainToScalar(context, R.toBytes(), A.toBytes(), msg);
-    const RkA = R.add(A.multiplyUnsafe(k));
+    const k2 = hashDomainToScalar(context, R2.toBytes(), A2.toBytes(), msg);
+    const RkA = R2.add(A2.multiplyUnsafe(k2));
     return RkA.subtract(SB).clearCofactor().is0();
   }
-  const _size = Fp2.BYTES;
+  const _size = Fp3.BYTES;
   const lengths = {
     secretKey: _size,
     publicKey: _size,
@@ -2716,13 +8879,13 @@ function eddsa(Point, cHash, eddsaOpts = {}) {
      *   - `(x, y) = (sqrt(156324)*u/v, (1+u)/(1-u))`
      */
     toMontgomery(publicKey) {
-      const { y } = Point.fromBytes(publicKey);
+      const { y: y2 } = Point.fromBytes(publicKey);
       const size2 = lengths.publicKey;
       const is25519 = size2 === 32;
       if (!is25519 && size2 !== 57)
         throw new Error("only defined for 25519 and 448");
-      const u = is25519 ? Fp2.div(_1n$1 + y, _1n$1 - y) : Fp2.div(y - _1n$1, y + _1n$1);
-      return Fp2.toBytes(u);
+      const u = is25519 ? Fp3.div(_1n$1 + y2, _1n$1 - y2) : Fp3.div(y2 - _1n$1, y2 + _1n$1);
+      return Fp3.toBytes(u);
     },
     toMontgomerySecret(secretKey) {
       const size2 = lengths.secretKey;
@@ -2747,43 +8910,43 @@ function eddsa(Point, cHash, eddsaOpts = {}) {
     lengths
   });
 }
-function _eddsa_legacy_opts_to_new(c) {
+function _eddsa_legacy_opts_to_new(c2) {
   const CURVE = {
-    a: c.a,
-    d: c.d,
-    p: c.Fp.ORDER,
-    n: c.n,
-    h: c.h,
-    Gx: c.Gx,
-    Gy: c.Gy
+    a: c2.a,
+    d: c2.d,
+    p: c2.Fp.ORDER,
+    n: c2.n,
+    h: c2.h,
+    Gx: c2.Gx,
+    Gy: c2.Gy
   };
-  const Fp2 = c.Fp;
-  const Fn = Field(CURVE.n, c.nBitLength, true);
-  const curveOpts = { Fp: Fp2, Fn, uvRatio: c.uvRatio };
+  const Fp3 = c2.Fp;
+  const Fn = Field(CURVE.n, c2.nBitLength, true);
+  const curveOpts = { Fp: Fp3, Fn, uvRatio: c2.uvRatio };
   const eddsaOpts = {
-    randomBytes: c.randomBytes,
-    adjustScalarBytes: c.adjustScalarBytes,
-    domain: c.domain,
-    prehash: c.prehash,
-    mapToCurve: c.mapToCurve
+    randomBytes: c2.randomBytes,
+    adjustScalarBytes: c2.adjustScalarBytes,
+    domain: c2.domain,
+    prehash: c2.prehash,
+    mapToCurve: c2.mapToCurve
   };
-  return { CURVE, curveOpts, hash: c.hash, eddsaOpts };
+  return { CURVE, curveOpts, hash: c2.hash, eddsaOpts };
 }
-function _eddsa_new_output_to_legacy(c, eddsa2) {
+function _eddsa_new_output_to_legacy(c2, eddsa2) {
   const Point = eddsa2.Point;
   const legacy = Object.assign({}, eddsa2, {
     ExtendedPoint: Point,
-    CURVE: c,
+    CURVE: c2,
     nBitLength: Point.Fn.BITS,
     nByteLength: Point.Fn.BYTES
   });
   return legacy;
 }
-function twistedEdwards(c) {
-  const { CURVE, curveOpts, hash, eddsaOpts } = _eddsa_legacy_opts_to_new(c);
+function twistedEdwards(c2) {
+  const { CURVE, curveOpts, hash, eddsaOpts } = _eddsa_legacy_opts_to_new(c2);
   const Point = edwards(CURVE, curveOpts);
   const EDDSA = eddsa(Point, hash, eddsaOpts);
-  return _eddsa_new_output_to_legacy(c, EDDSA);
+  return _eddsa_new_output_to_legacy(c2, EDDSA);
 }
 /*! noble-curves - MIT License (c) 2022 Paul Miller (paulmillr.com) */
 const _1n = BigInt(1), _2n = BigInt(2);
@@ -2799,21 +8962,21 @@ const ed25519_CURVE = /* @__PURE__ */ (() => ({
   Gx: BigInt("0x216936d3cd6e53fec0a4e231fdd6dc5c692cc7609525a7b2c9562d608f25d51a"),
   Gy: BigInt("0x6666666666666666666666666666666666666666666666666666666666666658")
 }))();
-function ed25519_pow_2_252_3(x) {
+function ed25519_pow_2_252_3(x2) {
   const _10n = BigInt(10), _20n = BigInt(20), _40n = BigInt(40), _80n = BigInt(80);
-  const P = ed25519_CURVE_p;
-  const x2 = x * x % P;
-  const b2 = x2 * x % P;
-  const b4 = pow2(b2, _2n, P) * b2 % P;
-  const b5 = pow2(b4, _1n, P) * x % P;
-  const b10 = pow2(b5, _5n, P) * b5 % P;
-  const b20 = pow2(b10, _10n, P) * b10 % P;
-  const b40 = pow2(b20, _20n, P) * b20 % P;
-  const b80 = pow2(b40, _40n, P) * b40 % P;
-  const b160 = pow2(b80, _80n, P) * b80 % P;
-  const b240 = pow2(b160, _80n, P) * b80 % P;
-  const b250 = pow2(b240, _10n, P) * b10 % P;
-  const pow_p_5_8 = pow2(b250, _2n, P) * x % P;
+  const P2 = ed25519_CURVE_p;
+  const x22 = x2 * x2 % P2;
+  const b2 = x22 * x2 % P2;
+  const b4 = pow2(b2, _2n, P2) * b2 % P2;
+  const b5 = pow2(b4, _1n, P2) * x2 % P2;
+  const b10 = pow2(b5, _5n, P2) * b5 % P2;
+  const b20 = pow2(b10, _10n, P2) * b10 % P2;
+  const b40 = pow2(b20, _20n, P2) * b20 % P2;
+  const b80 = pow2(b40, _40n, P2) * b40 % P2;
+  const b160 = pow2(b80, _80n, P2) * b80 % P2;
+  const b240 = pow2(b160, _80n, P2) * b80 % P2;
+  const b250 = pow2(b240, _10n, P2) * b10 % P2;
+  const pow_p_5_8 = pow2(b250, _2n, P2) * x2 % P2;
   return { pow_p_5_8, b2 };
 }
 function adjustScalarBytes(bytes) {
@@ -2823,25 +8986,25 @@ function adjustScalarBytes(bytes) {
   return bytes;
 }
 const ED25519_SQRT_M1 = /* @__PURE__ */ BigInt("19681161376707505956807079304988542015446066515923890162744021073123829784752");
-function uvRatio(u, v) {
-  const P = ed25519_CURVE_p;
-  const v3 = mod(v * v * v, P);
-  const v7 = mod(v3 * v3 * v, P);
+function uvRatio(u, v2) {
+  const P2 = ed25519_CURVE_p;
+  const v3 = mod(v2 * v2 * v2, P2);
+  const v7 = mod(v3 * v3 * v2, P2);
   const pow = ed25519_pow_2_252_3(u * v7).pow_p_5_8;
-  let x = mod(u * v3 * pow, P);
-  const vx2 = mod(v * x * x, P);
-  const root1 = x;
-  const root2 = mod(x * ED25519_SQRT_M1, P);
+  let x2 = mod(u * v3 * pow, P2);
+  const vx2 = mod(v2 * x2 * x2, P2);
+  const root1 = x2;
+  const root2 = mod(x2 * ED25519_SQRT_M1, P2);
   const useRoot1 = vx2 === u;
-  const useRoot2 = vx2 === mod(-u, P);
-  const noRoot = vx2 === mod(-u * ED25519_SQRT_M1, P);
+  const useRoot2 = vx2 === mod(-u, P2);
+  const noRoot = vx2 === mod(-u * ED25519_SQRT_M1, P2);
   if (useRoot1)
-    x = root1;
+    x2 = root1;
   if (useRoot2 || noRoot)
-    x = root2;
-  if (isNegativeLE(x, P))
-    x = mod(-x, P);
-  return { isValid: useRoot1 || useRoot2, value: x };
+    x2 = root2;
+  if (isNegativeLE(x2, P2))
+    x2 = mod(-x2, P2);
+  return { isValid: useRoot1 || useRoot2, value: x2 };
 }
 const Fp = /* @__PURE__ */ (() => Field(ed25519_CURVE.p, { isLE: true }))();
 const ed25519Defaults = /* @__PURE__ */ (() => ({
@@ -2855,6 +9018,147 @@ const ed25519Defaults = /* @__PURE__ */ (() => ({
   uvRatio
 }))();
 const ed25519 = /* @__PURE__ */ (() => twistedEdwards(ed25519Defaults))();
+var _a, _b;
+class ExpirableMap {
+  /**
+   * Create a new ExpirableMap.
+   * @param {ExpirableMapOptions<any, any>} options - options for the map.
+   * @param {Iterable<[any, any]>} options.source - an optional source of entries to initialize the map with.
+   * @param {number} options.expirationTime - the time in milliseconds after which entries will expire.
+   */
+  constructor(options = {}) {
+    // Internals
+    __privateAdd(this, _inner);
+    __privateAdd(this, _expirationTime);
+    this[_a] = this.entries.bind(this);
+    this[_b] = "ExpirableMap";
+    const { source = [], expirationTime = 10 * 60 * 1e3 } = options;
+    const currentTime = Date.now();
+    __privateSet(this, _inner, new Map([...source].map(([key, value]) => [key, { value, timestamp: currentTime }])));
+    __privateSet(this, _expirationTime, expirationTime);
+  }
+  /**
+   * Prune removes all expired entries.
+   */
+  prune() {
+    const currentTime = Date.now();
+    for (const [key, entry] of __privateGet(this, _inner).entries()) {
+      if (currentTime - entry.timestamp > __privateGet(this, _expirationTime)) {
+        __privateGet(this, _inner).delete(key);
+      }
+    }
+    return this;
+  }
+  // Implementing the Map interface
+  /**
+   * Set the value for the given key. Prunes expired entries.
+   * @param key for the entry
+   * @param value of the entry
+   * @returns this
+   */
+  set(key, value) {
+    this.prune();
+    const entry = {
+      value,
+      timestamp: Date.now()
+    };
+    __privateGet(this, _inner).set(key, entry);
+    return this;
+  }
+  /**
+   * Get the value associated with the key, if it exists and has not expired.
+   * @param key K
+   * @returns the value associated with the key, or undefined if the key is not present or has expired.
+   */
+  get(key) {
+    const entry = __privateGet(this, _inner).get(key);
+    if (entry === void 0) {
+      return void 0;
+    }
+    if (Date.now() - entry.timestamp > __privateGet(this, _expirationTime)) {
+      __privateGet(this, _inner).delete(key);
+      return void 0;
+    }
+    return entry.value;
+  }
+  /**
+   * Clear all entries.
+   */
+  clear() {
+    __privateGet(this, _inner).clear();
+  }
+  /**
+   * Entries returns the entries of the map, without the expiration time.
+   * @returns an iterator over the entries of the map.
+   */
+  entries() {
+    const iterator = __privateGet(this, _inner).entries();
+    const generator = function* () {
+      for (const [key, value] of iterator) {
+        yield [key, value.value];
+      }
+      return void 0;
+    };
+    return generator();
+  }
+  /**
+   * Values returns the values of the map, without the expiration time.
+   * @returns an iterator over the values of the map.
+   */
+  values() {
+    const iterator = __privateGet(this, _inner).values();
+    const generator = function* () {
+      for (const value of iterator) {
+        yield value.value;
+      }
+      return void 0;
+    };
+    return generator();
+  }
+  /**
+   * Keys returns the keys of the map
+   * @returns an iterator over the keys of the map.
+   */
+  keys() {
+    return __privateGet(this, _inner).keys();
+  }
+  /**
+   * forEach calls the callbackfn on each entry of the map.
+   * @param callbackfn to call on each entry
+   * @param thisArg to use as this when calling the callbackfn
+   */
+  forEach(callbackfn, thisArg) {
+    for (const [key, value] of __privateGet(this, _inner).entries()) {
+      callbackfn.call(thisArg, value.value, key, this);
+    }
+  }
+  /**
+   * has returns true if the key exists and has not expired.
+   * @param key K
+   * @returns true if the key exists and has not expired.
+   */
+  has(key) {
+    return __privateGet(this, _inner).has(key);
+  }
+  /**
+   * delete the entry for the given key.
+   * @param key K
+   * @returns true if the key existed and has been deleted.
+   */
+  delete(key) {
+    return __privateGet(this, _inner).delete(key);
+  }
+  /**
+   * get size of the map.
+   * @returns the size of the map.
+   */
+  get size() {
+    return __privateGet(this, _inner).size;
+  }
+}
+_inner = new WeakMap();
+_expirationTime = new WeakMap();
+_a = Symbol.iterator, _b = Symbol.toStringTag;
 const encodeLenBytes = (len) => {
   if (len <= 127) {
     return 1;
@@ -2993,9 +9297,1849 @@ const unwrapDER = (derEncoded, oid) => {
   }
   return result;
 };
-new TextEncoder().encode("icfs-chunk/");
-new TextEncoder().encode("icfs-metadata/");
-new TextEncoder().encode("ynode/");
+let Ed25519PublicKey$1 = (_a2 = class {
+  // `fromRaw` and `fromDer` should be used for instantiation, not this constructor.
+  constructor(key) {
+    __privateAdd(this, _rawKey);
+    __privateAdd(this, _derKey);
+    if (key.byteLength !== _a2.RAW_KEY_LENGTH) {
+      throw InputError.fromCode(new DerDecodeErrorCode("An Ed25519 public key must be exactly 32 bytes long"));
+    }
+    __privateSet(this, _rawKey, key);
+    __privateSet(this, _derKey, _a2.derEncode(key));
+  }
+  static from(key) {
+    return this.fromDer(key.toDer());
+  }
+  static fromRaw(rawKey) {
+    return new _a2(rawKey);
+  }
+  static fromDer(derKey) {
+    return new _a2(this.derDecode(derKey));
+  }
+  static derEncode(publicKey) {
+    return wrapDER(publicKey, ED25519_OID);
+  }
+  static derDecode(key) {
+    const unwrapped = unwrapDER(key, ED25519_OID);
+    if (unwrapped.length !== this.RAW_KEY_LENGTH) {
+      throw InputError.fromCode(new DerDecodeErrorCode("An Ed25519 public key must be exactly 32 bytes long"));
+    }
+    return unwrapped;
+  }
+  get rawKey() {
+    return __privateGet(this, _rawKey);
+  }
+  get derKey() {
+    return __privateGet(this, _derKey);
+  }
+  toDer() {
+    return this.derKey;
+  }
+  toRaw() {
+    return this.rawKey;
+  }
+}, _rawKey = new WeakMap(), _derKey = new WeakMap(), _a2.RAW_KEY_LENGTH = 32, _a2);
+class Observable {
+  constructor() {
+    this.observers = [];
+  }
+  subscribe(func) {
+    this.observers.push(func);
+  }
+  unsubscribe(func) {
+    this.observers = this.observers.filter((observer) => observer !== func);
+  }
+  notify(data, ...rest) {
+    this.observers.forEach((observer) => observer(data, ...rest));
+  }
+}
+class ObservableLog extends Observable {
+  constructor() {
+    super();
+  }
+  print(message, ...rest) {
+    this.notify({ message, level: "info" }, ...rest);
+  }
+  warn(message, ...rest) {
+    this.notify({ message, level: "warn" }, ...rest);
+  }
+  error(message, error, ...rest) {
+    this.notify({ message, level: "error", error }, ...rest);
+  }
+}
+const RANDOMIZATION_FACTOR = 0.5;
+const MULTIPLIER = 1.5;
+const INITIAL_INTERVAL_MSEC = 500;
+const MAX_INTERVAL_MSEC = 6e4;
+const MAX_ELAPSED_TIME_MSEC = 9e5;
+const MAX_ITERATIONS = 10;
+const _ExponentialBackoff = class _ExponentialBackoff {
+  constructor(options = _ExponentialBackoff.default) {
+    __privateAdd(this, _currentInterval);
+    __privateAdd(this, _randomizationFactor);
+    __privateAdd(this, _multiplier);
+    __privateAdd(this, _maxInterval);
+    __privateAdd(this, _startTime);
+    __privateAdd(this, _maxElapsedTime);
+    __privateAdd(this, _maxIterations);
+    __privateAdd(this, _date);
+    __privateAdd(this, _count, 0);
+    const { initialInterval = INITIAL_INTERVAL_MSEC, randomizationFactor = RANDOMIZATION_FACTOR, multiplier = MULTIPLIER, maxInterval = MAX_INTERVAL_MSEC, maxElapsedTime = MAX_ELAPSED_TIME_MSEC, maxIterations = MAX_ITERATIONS, date = Date } = options;
+    __privateSet(this, _currentInterval, initialInterval);
+    __privateSet(this, _randomizationFactor, randomizationFactor);
+    __privateSet(this, _multiplier, multiplier);
+    __privateSet(this, _maxInterval, maxInterval);
+    __privateSet(this, _date, date);
+    __privateSet(this, _startTime, date.now());
+    __privateSet(this, _maxElapsedTime, maxElapsedTime);
+    __privateSet(this, _maxIterations, maxIterations);
+  }
+  get ellapsedTimeInMsec() {
+    return __privateGet(this, _date).now() - __privateGet(this, _startTime);
+  }
+  get currentInterval() {
+    return __privateGet(this, _currentInterval);
+  }
+  get count() {
+    return __privateGet(this, _count);
+  }
+  get randomValueFromInterval() {
+    const delta = __privateGet(this, _randomizationFactor) * __privateGet(this, _currentInterval);
+    const min2 = __privateGet(this, _currentInterval) - delta;
+    const max2 = __privateGet(this, _currentInterval) + delta;
+    return Math.random() * (max2 - min2) + min2;
+  }
+  incrementCurrentInterval() {
+    __privateSet(this, _currentInterval, Math.min(__privateGet(this, _currentInterval) * __privateGet(this, _multiplier), __privateGet(this, _maxInterval)));
+    __privateWrapper(this, _count)._++;
+    return __privateGet(this, _currentInterval);
+  }
+  next() {
+    if (this.ellapsedTimeInMsec >= __privateGet(this, _maxElapsedTime) || __privateGet(this, _count) >= __privateGet(this, _maxIterations)) {
+      return null;
+    } else {
+      this.incrementCurrentInterval();
+      return this.randomValueFromInterval;
+    }
+  }
+};
+_currentInterval = new WeakMap();
+_randomizationFactor = new WeakMap();
+_multiplier = new WeakMap();
+_maxInterval = new WeakMap();
+_startTime = new WeakMap();
+_maxElapsedTime = new WeakMap();
+_maxIterations = new WeakMap();
+_date = new WeakMap();
+_count = new WeakMap();
+_ExponentialBackoff.default = {
+  initialInterval: INITIAL_INTERVAL_MSEC,
+  randomizationFactor: RANDOMIZATION_FACTOR,
+  multiplier: MULTIPLIER,
+  maxInterval: MAX_INTERVAL_MSEC,
+  // 1 minute
+  maxElapsedTime: MAX_ELAPSED_TIME_MSEC,
+  maxIterations: MAX_ITERATIONS,
+  date: Date
+};
+let ExponentialBackoff = _ExponentialBackoff;
+var RequestStatusResponseStatus;
+(function(RequestStatusResponseStatus2) {
+  RequestStatusResponseStatus2["Received"] = "received";
+  RequestStatusResponseStatus2["Processing"] = "processing";
+  RequestStatusResponseStatus2["Replied"] = "replied";
+  RequestStatusResponseStatus2["Rejected"] = "rejected";
+  RequestStatusResponseStatus2["Unknown"] = "unknown";
+  RequestStatusResponseStatus2["Done"] = "done";
+})(RequestStatusResponseStatus || (RequestStatusResponseStatus = {}));
+const MINUTE_TO_MSECS = 60 * 1e3;
+const MSECS_TO_NANOSECONDS = 1e6;
+const DEFAULT_TIME_DIFF_MSECS = 0;
+const IC_ROOT_KEY = "308182301d060d2b0601040182dc7c0503010201060c2b0601040182dc7c05030201036100814c0e6ec71fab583b08bd81373c255c3c371b2e84863c98a4f1e08b74235d14fb5d9c0cd546d9685f913a0c0b2cc5341583bf4b4392e467db96d65b9bb4cb717112f8472e0d5a4d14505ffd7484b01291091c5f87b98883463f98091a0baaae";
+const IC0_DOMAIN = "ic0.app";
+const IC0_SUB_DOMAIN = ".ic0.app";
+const ICP0_DOMAIN = "icp0.io";
+const ICP0_SUB_DOMAIN = ".icp0.io";
+const ICP_API_DOMAIN = "icp-api.io";
+const ICP_API_SUB_DOMAIN = ".icp-api.io";
+const HTTP_STATUS_OK = 200;
+const HTTP_STATUS_ACCEPTED = 202;
+const HTTP_STATUS_NOT_FOUND = 404;
+function getDefaultFetch() {
+  let defaultFetch;
+  if (typeof window !== "undefined") {
+    if (window.fetch) {
+      defaultFetch = window.fetch.bind(window);
+    } else {
+      throw ExternalError.fromCode(new HttpDefaultFetchErrorCode("Fetch implementation was not available. You appear to be in a browser context, but window.fetch was not present."));
+    }
+  } else if (typeof global !== "undefined") {
+    if (global.fetch) {
+      defaultFetch = global.fetch.bind(global);
+    } else {
+      throw ExternalError.fromCode(new HttpDefaultFetchErrorCode("Fetch implementation was not available. You appear to be in a Node.js context, but global.fetch was not available."));
+    }
+  } else if (typeof self !== "undefined") {
+    if (self.fetch) {
+      defaultFetch = self.fetch.bind(self);
+    }
+  }
+  if (defaultFetch) {
+    return defaultFetch;
+  }
+  throw ExternalError.fromCode(new HttpDefaultFetchErrorCode("Fetch implementation was not available. Please provide fetch to the HttpAgent constructor, or ensure it is available in the window or global context."));
+}
+function determineHost(configuredHost) {
+  let host;
+  if (configuredHost !== void 0) {
+    if (!configuredHost.match(/^[a-z]+:/) && typeof window !== "undefined") {
+      host = new URL(window.location.protocol + "//" + configuredHost);
+    } else {
+      host = new URL(configuredHost);
+    }
+  } else {
+    const knownHosts = ["ic0.app", "icp0.io", "127.0.0.1", "localhost"];
+    const remoteHosts = [".github.dev", ".gitpod.io"];
+    const location2 = typeof window !== "undefined" ? window.location : void 0;
+    const hostname = location2 == null ? void 0 : location2.hostname;
+    let knownHost;
+    if (hostname && typeof hostname === "string") {
+      if (remoteHosts.some((host2) => hostname.endsWith(host2))) {
+        knownHost = hostname;
+      } else {
+        knownHost = knownHosts.find((host2) => hostname.endsWith(host2));
+      }
+    }
+    if (location2 && knownHost) {
+      host = new URL(`${location2.protocol}//${knownHost}${location2.port ? ":" + location2.port : ""}`);
+    } else {
+      host = new URL("https://icp-api.io");
+    }
+  }
+  return host.toString();
+}
+const _HttpAgent = class _HttpAgent {
+  /**
+   * @param options - Options for the HttpAgent
+   * @deprecated Use `HttpAgent.create` or `HttpAgent.createSync` instead
+   */
+  constructor(options = {}) {
+    __privateAdd(this, _HttpAgent_instances);
+    __privateAdd(this, _rootKeyPromise);
+    __privateAdd(this, _shouldFetchRootKey);
+    __privateAdd(this, _timeDiffMsecs);
+    __privateAdd(this, _hasSyncedTime);
+    __privateAdd(this, _syncTimePromise);
+    __privateAdd(this, _shouldSyncTime);
+    __privateAdd(this, _identity);
+    __privateAdd(this, _fetch);
+    __privateAdd(this, _fetchOptions);
+    __privateAdd(this, _callOptions);
+    __privateAdd(this, _credentials);
+    __privateAdd(this, _retryTimes);
+    // Retry requests N times before erroring by default
+    __privateAdd(this, _backoffStrategy);
+    __privateAdd(this, _maxIngressExpiryInMinutes);
+    __privateAdd(this, _queryPipeline);
+    __privateAdd(this, _updatePipeline);
+    __privateAdd(this, _subnetKeys);
+    __privateAdd(this, _verifyQuerySignatures);
+    /**
+     * See https://internetcomputer.org/docs/current/references/ic-interface-spec/#http-query for details on validation
+     * @param queryResponse - The response from the query
+     * @param subnetStatus - The subnet status, including all node keys
+     * @returns ApiQueryResponse
+     */
+    __privateAdd(this, _verifyQueryResponse);
+    __privateSet(this, _rootKeyPromise, null);
+    __privateSet(this, _shouldFetchRootKey, false);
+    __privateSet(this, _timeDiffMsecs, DEFAULT_TIME_DIFF_MSECS);
+    __privateSet(this, _hasSyncedTime, false);
+    __privateSet(this, _syncTimePromise, null);
+    __privateSet(this, _shouldSyncTime, false);
+    this._isAgent = true;
+    this.config = {};
+    this.log = new ObservableLog();
+    __privateSet(this, _queryPipeline, []);
+    __privateSet(this, _updatePipeline, []);
+    __privateSet(this, _subnetKeys, new ExpirableMap({
+      expirationTime: 5 * MINUTE_TO_MSECS
+    }));
+    __privateSet(this, _verifyQuerySignatures, true);
+    __privateSet(this, _verifyQueryResponse, (queryResponse, subnetStatus) => {
+      if (__privateGet(this, _verifyQuerySignatures) === false) {
+        return queryResponse;
+      }
+      const { status, signatures = [], requestId } = queryResponse;
+      for (const sig of signatures) {
+        const { timestamp, identity } = sig;
+        const nodeId = Principal$1.fromUint8Array(identity).toText();
+        let hash;
+        if (status === QueryResponseStatus.Replied) {
+          const { reply } = queryResponse;
+          hash = hashOfMap({
+            status,
+            reply,
+            timestamp: BigInt(timestamp),
+            request_id: requestId
+          });
+        } else if (status === QueryResponseStatus.Rejected) {
+          const { reject_code, reject_message, error_code } = queryResponse;
+          hash = hashOfMap({
+            status,
+            reject_code,
+            reject_message,
+            error_code,
+            timestamp: BigInt(timestamp),
+            request_id: requestId
+          });
+        } else {
+          throw UnknownError.fromCode(new UnexpectedErrorCode(`Unknown status: ${status}`));
+        }
+        const separatorWithHash = concatBytes(IC_RESPONSE_DOMAIN_SEPARATOR, hash);
+        const pubKey = subnetStatus.nodeKeys.get(nodeId);
+        if (!pubKey) {
+          throw ProtocolError.fromCode(new MalformedPublicKeyErrorCode());
+        }
+        const rawKey = Ed25519PublicKey$1.fromDer(pubKey).rawKey;
+        const valid = ed25519.verify(sig.signature, separatorWithHash, rawKey);
+        if (valid)
+          return queryResponse;
+        throw TrustError.fromCode(new QuerySignatureVerificationFailedErrorCode(nodeId));
+      }
+      return queryResponse;
+    });
+    this.config = options;
+    __privateSet(this, _fetch, options.fetch || getDefaultFetch() || fetch.bind(global));
+    __privateSet(this, _fetchOptions, options.fetchOptions);
+    __privateSet(this, _callOptions, options.callOptions);
+    __privateSet(this, _shouldFetchRootKey, options.shouldFetchRootKey ?? false);
+    __privateSet(this, _shouldSyncTime, options.shouldSyncTime ?? false);
+    if (options.rootKey) {
+      this.rootKey = options.rootKey;
+    } else if (__privateGet(this, _shouldFetchRootKey)) {
+      this.rootKey = null;
+    } else {
+      this.rootKey = hexToBytes(IC_ROOT_KEY);
+    }
+    const host = determineHost(options.host);
+    this.host = new URL(host);
+    if (options.verifyQuerySignatures !== void 0) {
+      __privateSet(this, _verifyQuerySignatures, options.verifyQuerySignatures);
+    }
+    __privateSet(this, _retryTimes, options.retryTimes ?? 3);
+    const defaultBackoffFactory = () => new ExponentialBackoff({
+      maxIterations: __privateGet(this, _retryTimes)
+    });
+    __privateSet(this, _backoffStrategy, options.backoffStrategy || defaultBackoffFactory);
+    if (this.host.hostname.endsWith(IC0_SUB_DOMAIN)) {
+      this.host.hostname = IC0_DOMAIN;
+    } else if (this.host.hostname.endsWith(ICP0_SUB_DOMAIN)) {
+      this.host.hostname = ICP0_DOMAIN;
+    } else if (this.host.hostname.endsWith(ICP_API_SUB_DOMAIN)) {
+      this.host.hostname = ICP_API_DOMAIN;
+    }
+    if (options.credentials) {
+      const { name, password } = options.credentials;
+      __privateSet(this, _credentials, `${name}${password ? ":" + password : ""}`);
+    }
+    __privateSet(this, _identity, Promise.resolve(options.identity || new AnonymousIdentity()));
+    if (options.ingressExpiryInMinutes && options.ingressExpiryInMinutes > 5) {
+      throw InputError.fromCode(new IngressExpiryInvalidErrorCode("The maximum ingress expiry time is 5 minutes.", options.ingressExpiryInMinutes));
+    }
+    if (options.ingressExpiryInMinutes && options.ingressExpiryInMinutes <= 0) {
+      throw InputError.fromCode(new IngressExpiryInvalidErrorCode("Ingress expiry time must be greater than 0.", options.ingressExpiryInMinutes));
+    }
+    __privateSet(this, _maxIngressExpiryInMinutes, options.ingressExpiryInMinutes || 5);
+    this.addTransform("update", makeNonceTransform(makeNonce));
+    if (options.useQueryNonces) {
+      this.addTransform("query", makeNonceTransform(makeNonce));
+    }
+    if (options.logToConsole) {
+      this.log.subscribe((log2) => {
+        if (log2.level === "error") {
+          console.error(log2.message);
+        } else if (log2.level === "warn") {
+          console.warn(log2.message);
+        } else {
+          console.log(log2.message);
+        }
+      });
+    }
+  }
+  static createSync(options = {}) {
+    return new this({ ...options });
+  }
+  static async create(options = {}) {
+    var _a3;
+    const agent = _HttpAgent.createSync(options);
+    await __privateMethod(_a3 = agent, _HttpAgent_instances, asyncGuard_fn).call(_a3);
+    return agent;
+  }
+  static async from(agent) {
+    try {
+      if ("config" in agent) {
+        return await _HttpAgent.create(agent.config);
+      }
+      return await _HttpAgent.create({
+        fetch: agent._fetch,
+        fetchOptions: agent._fetchOptions,
+        callOptions: agent._callOptions,
+        host: agent._host.toString(),
+        identity: agent._identity ?? void 0
+      });
+    } catch {
+      throw InputError.fromCode(new CreateHttpAgentErrorCode());
+    }
+  }
+  isLocal() {
+    const hostname = this.host.hostname;
+    return hostname === "127.0.0.1" || hostname.endsWith("127.0.0.1");
+  }
+  addTransform(type, fn, priority = fn.priority || 0) {
+    if (type === "update") {
+      const i = __privateGet(this, _updatePipeline).findIndex((x2) => (x2.priority || 0) < priority);
+      __privateGet(this, _updatePipeline).splice(i >= 0 ? i : __privateGet(this, _updatePipeline).length, 0, Object.assign(fn, { priority }));
+    } else if (type === "query") {
+      const i = __privateGet(this, _queryPipeline).findIndex((x2) => (x2.priority || 0) < priority);
+      __privateGet(this, _queryPipeline).splice(i >= 0 ? i : __privateGet(this, _queryPipeline).length, 0, Object.assign(fn, { priority }));
+    }
+  }
+  async getPrincipal() {
+    if (!__privateGet(this, _identity)) {
+      throw ExternalError.fromCode(new IdentityInvalidErrorCode());
+    }
+    return (await __privateGet(this, _identity)).getPrincipal();
+  }
+  /**
+   * Makes a call to a canister method.
+   * @param canisterId - The ID of the canister to call. Can be a Principal or a string.
+   * @param options - Options for the call.
+   * @param options.methodName - The name of the method to call.
+   * @param options.arg - The argument to pass to the method, as a Uint8Array.
+   * @param options.effectiveCanisterId - (Optional) The effective canister ID, if different from the target canister ID.
+   * @param options.callSync - (Optional) Whether to use synchronous call mode. Defaults to true.
+   * @param options.nonce - (Optional) A unique nonce for the request. If provided, it will override any nonce set by transforms.
+   * @param identity - (Optional) The identity to use for the call. If not provided, the agent's current identity will be used.
+   * @returns A promise that resolves to the response of the call, including the request ID and response details.
+   */
+  async call(canisterId, options, identity) {
+    const callSync = options.callSync ?? true;
+    const id = await (identity ?? __privateGet(this, _identity));
+    if (!id) {
+      throw ExternalError.fromCode(new IdentityInvalidErrorCode());
+    }
+    const canister = Principal$1.from(canisterId);
+    const ecid = options.effectiveCanisterId ? Principal$1.from(options.effectiveCanisterId) : canister;
+    await __privateMethod(this, _HttpAgent_instances, asyncGuard_fn).call(this, ecid);
+    const sender = id.getPrincipal();
+    const ingress_expiry = calculateIngressExpiry(__privateGet(this, _maxIngressExpiryInMinutes), __privateGet(this, _timeDiffMsecs));
+    const submit = {
+      request_type: SubmitRequestType.Call,
+      canister_id: canister,
+      method_name: options.methodName,
+      arg: options.arg,
+      sender,
+      ingress_expiry
+    };
+    let transformedRequest = await this._transform({
+      request: {
+        body: null,
+        method: "POST",
+        headers: {
+          "Content-Type": "application/cbor",
+          ...__privateGet(this, _credentials) ? { Authorization: "Basic " + btoa(__privateGet(this, _credentials)) } : {}
+        }
+      },
+      endpoint: Endpoint.Call,
+      body: submit
+    });
+    let nonce;
+    if (options == null ? void 0 : options.nonce) {
+      nonce = toNonce(options.nonce);
+    } else if (transformedRequest.body.nonce) {
+      nonce = toNonce(transformedRequest.body.nonce);
+    } else {
+      nonce = void 0;
+    }
+    submit.nonce = nonce;
+    function toNonce(buf) {
+      return Object.assign(buf, { __nonce__: void 0 });
+    }
+    transformedRequest = await id.transformRequest(transformedRequest);
+    const body = encode(transformedRequest.body);
+    const backoff2 = __privateGet(this, _backoffStrategy).call(this);
+    const requestId = requestIdOf(submit);
+    try {
+      const requestSync = () => {
+        this.log.print(`fetching "/api/v3/canister/${ecid.toText()}/call" with request:`, transformedRequest);
+        return __privateGet(this, _fetch).call(this, "" + new URL(`/api/v3/canister/${ecid.toText()}/call`, this.host), {
+          ...__privateGet(this, _callOptions),
+          ...transformedRequest.request,
+          body
+        });
+      };
+      const requestAsync = () => {
+        this.log.print(`fetching "/api/v2/canister/${ecid.toText()}/call" with request:`, transformedRequest);
+        return __privateGet(this, _fetch).call(this, "" + new URL(`/api/v2/canister/${ecid.toText()}/call`, this.host), {
+          ...__privateGet(this, _callOptions),
+          ...transformedRequest.request,
+          body
+        });
+      };
+      const requestFn = callSync ? requestSync : requestAsync;
+      const { responseBodyBytes, ...response } = await __privateMethod(this, _HttpAgent_instances, requestAndRetry_fn).call(this, {
+        requestFn,
+        backoff: backoff2,
+        tries: 0
+      });
+      const responseBody = responseBodyBytes.byteLength > 0 ? decode(responseBodyBytes) : null;
+      return {
+        requestId,
+        response: {
+          ...response,
+          body: responseBody
+        },
+        requestDetails: submit
+      };
+    } catch (error) {
+      let callError;
+      if (error instanceof AgentError) {
+        if (error.hasCode(HttpV3ApiNotSupportedErrorCode)) {
+          this.log.warn("v3 api not supported. Fall back to v2");
+          return this.call(canisterId, {
+            ...options,
+            // disable v3 api
+            callSync: false
+          }, identity);
+        } else if (error.hasCode(IngressExpiryInvalidErrorCode) && !__privateGet(this, _hasSyncedTime)) {
+          await this.syncTime(canister);
+          return this.call(canister, options, identity);
+        } else {
+          error.code.requestContext = {
+            requestId,
+            senderPubKey: transformedRequest.body.sender_pubkey,
+            senderSignature: transformedRequest.body.sender_sig,
+            ingressExpiry: transformedRequest.body.content.ingress_expiry
+          };
+          callError = error;
+        }
+      } else {
+        callError = UnknownError.fromCode(new UnexpectedErrorCode(error));
+      }
+      this.log.error(`Error while making call: ${callError.message}`, callError);
+      throw callError;
+    }
+  }
+  async query(canisterId, fields, identity) {
+    const backoff2 = __privateGet(this, _backoffStrategy).call(this);
+    const ecid = fields.effectiveCanisterId ? Principal$1.from(fields.effectiveCanisterId) : Principal$1.from(canisterId);
+    await __privateMethod(this, _HttpAgent_instances, asyncGuard_fn).call(this, ecid);
+    this.log.print(`ecid ${ecid.toString()}`);
+    this.log.print(`canisterId ${canisterId.toString()}`);
+    let transformedRequest;
+    const id = await (identity ?? __privateGet(this, _identity));
+    if (!id) {
+      throw ExternalError.fromCode(new IdentityInvalidErrorCode());
+    }
+    const canister = Principal$1.from(canisterId);
+    const sender = id.getPrincipal();
+    const ingressExpiry = calculateIngressExpiry(__privateGet(this, _maxIngressExpiryInMinutes), __privateGet(this, _timeDiffMsecs));
+    const request2 = {
+      request_type: ReadRequestType.Query,
+      canister_id: canister,
+      method_name: fields.methodName,
+      arg: fields.arg,
+      sender,
+      ingress_expiry: ingressExpiry
+    };
+    const requestId = requestIdOf(request2);
+    transformedRequest = await this._transform({
+      request: {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/cbor",
+          ...__privateGet(this, _credentials) ? { Authorization: "Basic " + btoa(__privateGet(this, _credentials)) } : {}
+        }
+      },
+      endpoint: Endpoint.Query,
+      body: request2
+    });
+    transformedRequest = await id.transformRequest(transformedRequest);
+    const body = encode(transformedRequest.body);
+    const args = {
+      canister: canister.toText(),
+      ecid,
+      transformedRequest,
+      body,
+      requestId,
+      backoff: backoff2,
+      tries: 0
+    };
+    const makeQuery = async () => {
+      const query = await __privateMethod(this, _HttpAgent_instances, requestAndRetryQuery_fn).call(this, args);
+      return {
+        requestDetails: request2,
+        ...query
+      };
+    };
+    const getSubnetStatus = async () => {
+      const cachedSubnetStatus = __privateGet(this, _subnetKeys).get(ecid.toString());
+      if (cachedSubnetStatus) {
+        return cachedSubnetStatus;
+      }
+      await this.fetchSubnetKeys(ecid.toString());
+      const subnetStatus = __privateGet(this, _subnetKeys).get(ecid.toString());
+      if (!subnetStatus) {
+        throw TrustError.fromCode(new MissingSignatureErrorCode());
+      }
+      return subnetStatus;
+    };
+    try {
+      if (!__privateGet(this, _verifyQuerySignatures)) {
+        return await makeQuery();
+      }
+      const [queryWithDetails, subnetStatus] = await Promise.all([makeQuery(), getSubnetStatus()]);
+      try {
+        return __privateGet(this, _verifyQueryResponse).call(this, queryWithDetails, subnetStatus);
+      } catch {
+        this.log.warn("Query response verification failed. Retrying with fresh subnet keys.");
+        __privateGet(this, _subnetKeys).delete(ecid.toString());
+        const updatedSubnetStatus = await getSubnetStatus();
+        return __privateGet(this, _verifyQueryResponse).call(this, queryWithDetails, updatedSubnetStatus);
+      }
+    } catch (error) {
+      let queryError;
+      if (error instanceof AgentError) {
+        error.code.requestContext = {
+          requestId,
+          senderPubKey: transformedRequest.body.sender_pubkey,
+          senderSignature: transformedRequest.body.sender_sig,
+          ingressExpiry: transformedRequest.body.content.ingress_expiry
+        };
+        queryError = error;
+      } else {
+        queryError = UnknownError.fromCode(new UnexpectedErrorCode(error));
+      }
+      this.log.error(`Error while making query: ${queryError.message}`, queryError);
+      throw queryError;
+    }
+  }
+  async createReadStateRequest(fields, identity) {
+    await __privateMethod(this, _HttpAgent_instances, asyncGuard_fn).call(this);
+    const id = await (identity ?? __privateGet(this, _identity));
+    if (!id) {
+      throw ExternalError.fromCode(new IdentityInvalidErrorCode());
+    }
+    const sender = id.getPrincipal();
+    const transformedRequest = await this._transform({
+      request: {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/cbor",
+          ...__privateGet(this, _credentials) ? { Authorization: "Basic " + btoa(__privateGet(this, _credentials)) } : {}
+        }
+      },
+      endpoint: Endpoint.ReadState,
+      body: {
+        request_type: ReadRequestType.ReadState,
+        paths: fields.paths,
+        sender,
+        ingress_expiry: calculateIngressExpiry(__privateGet(this, _maxIngressExpiryInMinutes), __privateGet(this, _timeDiffMsecs))
+      }
+    });
+    return id.transformRequest(transformedRequest);
+  }
+  async readState(canisterId, fields, _identity2, request2) {
+    await __privateMethod(this, _HttpAgent_instances, rootKeyGuard_fn).call(this);
+    const canister = Principal$1.from(canisterId);
+    function getRequestId(options) {
+      for (const path of options.paths) {
+        const [pathName, value] = path;
+        const request_status = new TextEncoder().encode("request_status");
+        if (uint8Equals(pathName, request_status)) {
+          return value;
+        }
+      }
+    }
+    let transformedRequest;
+    let requestId;
+    if (request2) {
+      transformedRequest = request2;
+      requestId = requestIdOf(transformedRequest);
+    } else {
+      requestId = getRequestId(fields);
+      const identity = await __privateGet(this, _identity);
+      if (!identity) {
+        throw ExternalError.fromCode(new IdentityInvalidErrorCode());
+      }
+      transformedRequest = await this.createReadStateRequest(fields, identity);
+    }
+    this.log.print(`fetching "/api/v2/canister/${canister}/read_state" with request:`, transformedRequest);
+    const backoff2 = __privateGet(this, _backoffStrategy).call(this);
+    try {
+      const { responseBodyBytes } = await __privateMethod(this, _HttpAgent_instances, requestAndRetry_fn).call(this, {
+        requestFn: () => __privateGet(this, _fetch).call(this, "" + new URL(`/api/v2/canister/${canister.toString()}/read_state`, this.host), {
+          ...__privateGet(this, _fetchOptions),
+          ...transformedRequest.request,
+          body: encode(transformedRequest.body)
+        }),
+        backoff: backoff2,
+        tries: 0
+      });
+      const decodedResponse = decode(responseBodyBytes);
+      this.log.print("Read state response:", decodedResponse);
+      return decodedResponse;
+    } catch (error) {
+      let readStateError;
+      if (error instanceof AgentError) {
+        error.code.requestContext = {
+          requestId,
+          senderPubKey: transformedRequest.body.sender_pubkey,
+          senderSignature: transformedRequest.body.sender_sig,
+          ingressExpiry: transformedRequest.body.content.ingress_expiry
+        };
+        readStateError = error;
+      } else {
+        readStateError = UnknownError.fromCode(new UnexpectedErrorCode(error));
+      }
+      this.log.error(`Error while making read state: ${readStateError.message}`, readStateError);
+      throw readStateError;
+    }
+  }
+  parseTimeFromResponse(response) {
+    let tree;
+    if (response.certificate) {
+      const decoded = decode(response.certificate);
+      if (decoded && "tree" in decoded) {
+        tree = decoded.tree;
+      } else {
+        throw ProtocolError.fromCode(new HashTreeDecodeErrorCode("Could not decode time from response"));
+      }
+      const timeLookup = lookup_path(["time"], tree);
+      if (timeLookup.status !== LookupPathStatus.Found) {
+        throw ProtocolError.fromCode(new LookupErrorCode("Time was not found in the response or was not in its expected format.", timeLookup.status));
+      }
+      if (!(timeLookup.value instanceof Uint8Array) && !ArrayBuffer.isView(timeLookup)) {
+        throw ProtocolError.fromCode(new MalformedLookupFoundValueErrorCode("Time was not in its expected format."));
+      }
+      const date = decodeTime(timeLookup.value);
+      this.log.print("Time from response:", date);
+      this.log.print("Time from response in milliseconds:", date.getTime());
+      return date.getTime();
+    } else {
+      this.log.warn("No certificate found in response");
+    }
+    return 0;
+  }
+  /**
+   * Allows agent to sync its time with the network. Can be called during intialization or mid-lifecycle if the device's clock has drifted away from the network time. This is necessary to set the Expiry for a request
+   * @param {Principal} canisterIdOverride - Pass a canister ID if you need to sync the time with a particular subnet. Uses the ICP ledger canister by default.
+   */
+  async syncTime(canisterIdOverride) {
+    __privateSet(this, _syncTimePromise, __privateGet(this, _syncTimePromise) ?? (async () => {
+      await __privateMethod(this, _HttpAgent_instances, rootKeyGuard_fn).call(this);
+      const callTime = Date.now();
+      try {
+        if (!canisterIdOverride) {
+          this.log.print("Syncing time with the IC. No canisterId provided, so falling back to ryjl3-tyaaa-aaaaa-aaaba-cai");
+        }
+        const canisterId = canisterIdOverride ?? Principal$1.from("ryjl3-tyaaa-aaaaa-aaaba-cai");
+        const anonymousAgent = _HttpAgent.createSync({
+          identity: new AnonymousIdentity(),
+          host: this.host.toString(),
+          fetch: __privateGet(this, _fetch),
+          retryTimes: 0,
+          rootKey: this.rootKey ?? void 0,
+          shouldSyncTime: false
+        });
+        const replicaTimes = await Promise.all(Array(3).fill(null).map(async () => {
+          const status = await request({
+            canisterId,
+            agent: anonymousAgent,
+            paths: ["time"],
+            disableCertificateTimeVerification: true
+            // avoid recursive calls to syncTime
+          });
+          const date = status.get("time");
+          if (date instanceof Date) {
+            return date.getTime();
+          }
+        }, []));
+        const maxReplicaTime = replicaTimes.reduce((max2, current) => {
+          return typeof current === "number" && current > max2 ? current : max2;
+        }, 0);
+        if (maxReplicaTime > 0) {
+          __privateSet(this, _timeDiffMsecs, maxReplicaTime - callTime);
+          __privateSet(this, _hasSyncedTime, true);
+          this.log.notify({
+            message: `Syncing time: offset of ${__privateGet(this, _timeDiffMsecs)}`,
+            level: "info"
+          });
+        }
+      } catch (error) {
+        const syncTimeError = error instanceof AgentError ? error : UnknownError.fromCode(new UnexpectedErrorCode(error));
+        this.log.error("Caught exception while attempting to sync time", syncTimeError);
+        throw syncTimeError;
+      }
+    })());
+    await __privateGet(this, _syncTimePromise).finally(() => {
+      __privateSet(this, _syncTimePromise, null);
+    });
+  }
+  async status() {
+    const headers = __privateGet(this, _credentials) ? {
+      Authorization: "Basic " + btoa(__privateGet(this, _credentials))
+    } : {};
+    this.log.print(`fetching "/api/v2/status"`);
+    const backoff2 = __privateGet(this, _backoffStrategy).call(this);
+    const { responseBodyBytes } = await __privateMethod(this, _HttpAgent_instances, requestAndRetry_fn).call(this, {
+      backoff: backoff2,
+      requestFn: () => __privateGet(this, _fetch).call(this, "" + new URL(`/api/v2/status`, this.host), { headers, ...__privateGet(this, _fetchOptions) }),
+      tries: 0
+    });
+    return decode(responseBodyBytes);
+  }
+  async fetchRootKey() {
+    __privateSet(this, _rootKeyPromise, __privateGet(this, _rootKeyPromise) ?? (async () => {
+      const value = await this.status();
+      this.rootKey = value.root_key;
+      return this.rootKey;
+    })());
+    return await __privateGet(this, _rootKeyPromise).finally(() => {
+      __privateSet(this, _rootKeyPromise, null);
+    });
+  }
+  invalidateIdentity() {
+    __privateSet(this, _identity, null);
+  }
+  replaceIdentity(identity) {
+    __privateSet(this, _identity, Promise.resolve(identity));
+  }
+  async fetchSubnetKeys(canisterId) {
+    const effectiveCanisterId = Principal$1.from(canisterId);
+    await __privateMethod(this, _HttpAgent_instances, asyncGuard_fn).call(this, effectiveCanisterId);
+    const response = await request({
+      canisterId: effectiveCanisterId,
+      paths: ["subnet"],
+      agent: this
+    });
+    const subnetResponse = response.get("subnet");
+    if (subnetResponse && typeof subnetResponse === "object" && "nodeKeys" in subnetResponse) {
+      __privateGet(this, _subnetKeys).set(effectiveCanisterId.toText(), subnetResponse);
+      return subnetResponse;
+    }
+    return void 0;
+  }
+  _transform(request2) {
+    let p2 = Promise.resolve(request2);
+    if (request2.endpoint === Endpoint.Call) {
+      for (const fn of __privateGet(this, _updatePipeline)) {
+        p2 = p2.then((r2) => fn(r2).then((r22) => r22 || r2));
+      }
+    } else {
+      for (const fn of __privateGet(this, _queryPipeline)) {
+        p2 = p2.then((r2) => fn(r2).then((r22) => r22 || r2));
+      }
+    }
+    return p2;
+  }
+  /**
+   * Returns the time difference in milliseconds between the IC network clock and the client's clock,
+   * after the clock has been synced.
+   *
+   * If the time has not been synced, returns `0`.
+   */
+  getTimeDiffMsecs() {
+    return __privateGet(this, _timeDiffMsecs);
+  }
+  /**
+   * Returns `true` if the time has been synced at least once with the IC network, `false` otherwise.
+   */
+  hasSyncedTime() {
+    return __privateGet(this, _hasSyncedTime);
+  }
+};
+_rootKeyPromise = new WeakMap();
+_shouldFetchRootKey = new WeakMap();
+_timeDiffMsecs = new WeakMap();
+_hasSyncedTime = new WeakMap();
+_syncTimePromise = new WeakMap();
+_shouldSyncTime = new WeakMap();
+_identity = new WeakMap();
+_fetch = new WeakMap();
+_fetchOptions = new WeakMap();
+_callOptions = new WeakMap();
+_credentials = new WeakMap();
+_retryTimes = new WeakMap();
+_backoffStrategy = new WeakMap();
+_maxIngressExpiryInMinutes = new WeakMap();
+_HttpAgent_instances = new WeakSet();
+maxIngressExpiryInMs_get = function() {
+  return __privateGet(this, _maxIngressExpiryInMinutes) * MINUTE_TO_MSECS;
+};
+_queryPipeline = new WeakMap();
+_updatePipeline = new WeakMap();
+_subnetKeys = new WeakMap();
+_verifyQuerySignatures = new WeakMap();
+requestAndRetryQuery_fn = async function(args) {
+  var _a3, _b3;
+  const { ecid, transformedRequest, body, requestId, backoff: backoff2, tries } = args;
+  const delay = tries === 0 ? 0 : backoff2.next();
+  this.log.print(`fetching "/api/v2/canister/${ecid.toString()}/query" with tries:`, {
+    tries,
+    backoff: backoff2,
+    delay
+  });
+  if (delay === null) {
+    throw UnknownError.fromCode(new TimeoutWaitingForResponseErrorCode(`Backoff strategy exhausted after ${tries} attempts.`, requestId));
+  }
+  if (delay > 0) {
+    await new Promise((resolve) => setTimeout(resolve, delay));
+  }
+  let response;
+  try {
+    this.log.print(`fetching "/api/v2/canister/${ecid.toString()}/query" with request:`, transformedRequest);
+    const fetchResponse = await __privateGet(this, _fetch).call(this, "" + new URL(`/api/v2/canister/${ecid.toString()}/query`, this.host), {
+      ...__privateGet(this, _fetchOptions),
+      ...transformedRequest.request,
+      body
+    });
+    if (fetchResponse.status === HTTP_STATUS_OK) {
+      const queryResponse = decode(uint8FromBufLike(await fetchResponse.arrayBuffer()));
+      response = {
+        ...queryResponse,
+        httpDetails: {
+          ok: fetchResponse.ok,
+          status: fetchResponse.status,
+          statusText: fetchResponse.statusText,
+          headers: httpHeadersTransform(fetchResponse.headers)
+        },
+        requestId
+      };
+    } else {
+      throw ProtocolError.fromCode(new HttpErrorCode(fetchResponse.status, fetchResponse.statusText, httpHeadersTransform(fetchResponse.headers), await fetchResponse.text()));
+    }
+  } catch (error) {
+    if (tries < __privateGet(this, _retryTimes)) {
+      this.log.warn(`Caught exception while attempting to make query:
+  ${error}
+  Retrying query.`);
+      return await __privateMethod(this, _HttpAgent_instances, requestAndRetryQuery_fn).call(this, { ...args, tries: tries + 1 });
+    }
+    if (error instanceof AgentError) {
+      throw error;
+    }
+    throw TransportError.fromCode(new HttpFetchErrorCode(error));
+  }
+  if (!__privateGet(this, _verifyQuerySignatures)) {
+    return response;
+  }
+  const signatureTimestampNs = (_b3 = (_a3 = response.signatures) == null ? void 0 : _a3[0]) == null ? void 0 : _b3.timestamp;
+  if (!signatureTimestampNs) {
+    throw ProtocolError.fromCode(new MalformedSignatureErrorCode("Timestamp not found in query response. This suggests a malformed or malicious response."));
+  }
+  const signatureTimestampMs = Number(BigInt(signatureTimestampNs) / BigInt(MSECS_TO_NANOSECONDS));
+  const currentTimestampInMs = Date.now() + __privateGet(this, _timeDiffMsecs);
+  if (currentTimestampInMs - signatureTimestampMs > __privateGet(this, _HttpAgent_instances, maxIngressExpiryInMs_get)) {
+    if (tries < __privateGet(this, _retryTimes)) {
+      this.log.warn("Timestamp is older than the max ingress expiry. Retrying query.", {
+        requestId,
+        signatureTimestampMs
+      });
+      return await __privateMethod(this, _HttpAgent_instances, requestAndRetryQuery_fn).call(this, { ...args, tries: tries + 1 });
+    }
+    throw TrustError.fromCode(new CertificateOutdatedErrorCode(__privateGet(this, _maxIngressExpiryInMinutes), requestId, tries));
+  }
+  return response;
+};
+requestAndRetry_fn = async function(args) {
+  const { requestFn, backoff: backoff2, tries } = args;
+  const delay = tries === 0 ? 0 : backoff2.next();
+  if (delay === null) {
+    throw ProtocolError.fromCode(new TimeoutWaitingForResponseErrorCode(`Retry strategy exhausted after ${tries} attempts.`));
+  }
+  if (delay > 0) {
+    await new Promise((resolve) => setTimeout(resolve, delay));
+  }
+  let response;
+  let responseBodyBytes = new Uint8Array();
+  try {
+    response = await requestFn();
+    if (response.status === HTTP_STATUS_OK) {
+      responseBodyBytes = uint8FromBufLike(await response.clone().arrayBuffer());
+    }
+  } catch (error) {
+    if (tries < __privateGet(this, _retryTimes)) {
+      this.log.warn(`Caught exception while attempting to make request:
+  ${error}
+  Retrying request.`);
+      return await __privateMethod(this, _HttpAgent_instances, requestAndRetry_fn).call(this, { requestFn, backoff: backoff2, tries: tries + 1 });
+    }
+    throw TransportError.fromCode(new HttpFetchErrorCode(error));
+  }
+  const headers = httpHeadersTransform(response.headers);
+  if (response.status === HTTP_STATUS_OK || response.status === HTTP_STATUS_ACCEPTED) {
+    return {
+      ok: response.ok,
+      // should always be true
+      status: response.status,
+      statusText: response.statusText,
+      responseBodyBytes,
+      headers
+    };
+  }
+  const responseText = await response.text();
+  if (response.status === HTTP_STATUS_NOT_FOUND && response.url.includes("api/v3")) {
+    throw ProtocolError.fromCode(new HttpV3ApiNotSupportedErrorCode());
+  }
+  if (responseText.startsWith("Invalid request expiry: ")) {
+    throw InputError.fromCode(new IngressExpiryInvalidErrorCode(responseText, __privateGet(this, _maxIngressExpiryInMinutes)));
+  }
+  if (tries < __privateGet(this, _retryTimes)) {
+    return await __privateMethod(this, _HttpAgent_instances, requestAndRetry_fn).call(this, { requestFn, backoff: backoff2, tries: tries + 1 });
+  }
+  throw ProtocolError.fromCode(new HttpErrorCode(response.status, response.statusText, headers, responseText));
+};
+_verifyQueryResponse = new WeakMap();
+asyncGuard_fn = async function(canisterIdOverride) {
+  await Promise.all([__privateMethod(this, _HttpAgent_instances, rootKeyGuard_fn).call(this), __privateMethod(this, _HttpAgent_instances, syncTimeGuard_fn).call(this, canisterIdOverride)]);
+};
+rootKeyGuard_fn = async function() {
+  if (this.rootKey) {
+    return;
+  } else if (this.rootKey === null && this.host.toString() !== "https://icp-api.io" && __privateGet(this, _shouldFetchRootKey)) {
+    await this.fetchRootKey();
+  } else {
+    throw ExternalError.fromCode(new MissingRootKeyErrorCode(__privateGet(this, _shouldFetchRootKey)));
+  }
+};
+syncTimeGuard_fn = async function(canisterIdOverride) {
+  if (__privateGet(this, _shouldSyncTime) && !this.hasSyncedTime()) {
+    await this.syncTime(canisterIdOverride);
+  }
+};
+let HttpAgent = _HttpAgent;
+function calculateIngressExpiry(maxIngressExpiryInMinutes, timeDiffMsecs) {
+  const ingressExpiryMs = maxIngressExpiryInMinutes * MINUTE_TO_MSECS;
+  return Expiry.fromDeltaInMilliseconds(ingressExpiryMs, timeDiffMsecs);
+}
+const FIVE_MINUTES_IN_MSEC = 5 * 60 * 1e3;
+function defaultStrategy() {
+  return chain(conditionalDelay(once(), 1e3), backoff(1e3, 1.2), timeout(FIVE_MINUTES_IN_MSEC));
+}
+function once() {
+  let first = true;
+  return async () => {
+    if (first) {
+      first = false;
+      return true;
+    }
+    return false;
+  };
+}
+function conditionalDelay(condition, timeInMsec) {
+  return async (canisterId, requestId, status) => {
+    if (await condition(canisterId, requestId, status)) {
+      return new Promise((resolve) => setTimeout(resolve, timeInMsec));
+    }
+  };
+}
+function timeout(timeInMsec) {
+  const end = Date.now() + timeInMsec;
+  return async (_canisterId, requestId, status) => {
+    if (Date.now() > end) {
+      throw ProtocolError.fromCode(new TimeoutWaitingForResponseErrorCode(`Request timed out after ${timeInMsec} msec`, requestId, status));
+    }
+  };
+}
+function backoff(startingThrottleInMsec, backoffFactor) {
+  let currentThrottling = startingThrottleInMsec;
+  return () => new Promise((resolve) => setTimeout(() => {
+    currentThrottling *= backoffFactor;
+    resolve();
+  }, currentThrottling));
+}
+function chain(...strategies) {
+  return async (canisterId, requestId, status) => {
+    for (const a2 of strategies) {
+      await a2(canisterId, requestId, status);
+    }
+  };
+}
+const DEFAULT_POLLING_OPTIONS = {
+  preSignReadStateRequest: false
+};
+function hasProperty(value, property) {
+  return Object.prototype.hasOwnProperty.call(value, property);
+}
+function isObjectWithProperty(value, property) {
+  return value !== null && typeof value === "object" && hasProperty(value, property);
+}
+function hasFunction(value, property) {
+  return hasProperty(value, property) && typeof value[property] === "function";
+}
+function isSignedReadStateRequestWithExpiry(value) {
+  return isObjectWithProperty(value, "body") && isObjectWithProperty(value.body, "content") && value.body.content.request_type === ReadRequestType.ReadState && isObjectWithProperty(value.body.content, "ingress_expiry") && typeof value.body.content.ingress_expiry === "object" && value.body.content.ingress_expiry !== null && hasFunction(value.body.content.ingress_expiry, "toHash");
+}
+async function pollForResponse(agent, canisterId, requestId, options = {}) {
+  const path = [utf8ToBytes("request_status"), requestId];
+  let state;
+  let currentRequest;
+  const preSignReadStateRequest = options.preSignReadStateRequest ?? false;
+  if (preSignReadStateRequest) {
+    currentRequest = await constructRequest({
+      paths: [path],
+      agent,
+      pollingOptions: options
+    });
+    state = await agent.readState(canisterId, { paths: [path] }, void 0, currentRequest);
+  } else {
+    state = await agent.readState(canisterId, { paths: [path] });
+  }
+  if (agent.rootKey == null) {
+    throw ExternalError.fromCode(new MissingRootKeyErrorCode());
+  }
+  const cert = await Certificate.create({
+    certificate: state.certificate,
+    rootKey: agent.rootKey,
+    canisterId,
+    blsVerify: options.blsVerify,
+    agent
+  });
+  const maybeBuf = lookupResultToBuffer(cert.lookup_path([...path, utf8ToBytes("status")]));
+  let status;
+  if (typeof maybeBuf === "undefined") {
+    status = RequestStatusResponseStatus.Unknown;
+  } else {
+    status = new TextDecoder().decode(maybeBuf);
+  }
+  switch (status) {
+    case RequestStatusResponseStatus.Replied: {
+      return {
+        reply: lookupResultToBuffer(cert.lookup_path([...path, "reply"])),
+        certificate: cert
+      };
+    }
+    case RequestStatusResponseStatus.Received:
+    case RequestStatusResponseStatus.Unknown:
+    case RequestStatusResponseStatus.Processing: {
+      const strategy = options.strategy ?? defaultStrategy();
+      await strategy(canisterId, requestId, status);
+      return pollForResponse(agent, canisterId, requestId, {
+        ...options,
+        // Pass over either the strategy already provided or the new one created above
+        strategy,
+        request: currentRequest
+      });
+    }
+    case RequestStatusResponseStatus.Rejected: {
+      const rejectCode = new Uint8Array(lookupResultToBuffer(cert.lookup_path([...path, "reject_code"])))[0];
+      const rejectMessage = new TextDecoder().decode(lookupResultToBuffer(cert.lookup_path([...path, "reject_message"])));
+      const errorCodeBuf = lookupResultToBuffer(cert.lookup_path([...path, "error_code"]));
+      const errorCode = errorCodeBuf ? new TextDecoder().decode(errorCodeBuf) : void 0;
+      throw RejectError.fromCode(new CertifiedRejectErrorCode(requestId, rejectCode, rejectMessage, errorCode));
+    }
+    case RequestStatusResponseStatus.Done:
+      throw UnknownError.fromCode(new RequestStatusDoneNoReplyErrorCode(requestId));
+  }
+  throw UNREACHABLE_ERROR;
+}
+async function constructRequest(options) {
+  var _a3;
+  const { paths, agent, pollingOptions } = options;
+  if (pollingOptions.request && isSignedReadStateRequestWithExpiry(pollingOptions.request)) {
+    return pollingOptions.request;
+  }
+  const request2 = await ((_a3 = agent.createReadStateRequest) == null ? void 0 : _a3.call(agent, {
+    paths
+  }, void 0));
+  if (!isSignedReadStateRequestWithExpiry(request2)) {
+    throw InputError.fromCode(new InvalidReadStateRequestErrorCode(request2));
+  }
+  return request2;
+}
+const metadataSymbol = Symbol.for("ic-agent-metadata");
+class Actor {
+  /**
+   * Get the Agent class this Actor would call, or undefined if the Actor would use
+   * the default agent (global.ic.agent).
+   * @param actor The actor to get the agent of.
+   */
+  static agentOf(actor) {
+    return actor[metadataSymbol].config.agent;
+  }
+  /**
+   * Get the interface of an actor, in the form of an instance of a Service.
+   * @param actor The actor to get the interface of.
+   */
+  static interfaceOf(actor) {
+    return actor[metadataSymbol].service;
+  }
+  static canisterIdOf(actor) {
+    return Principal$1.from(actor[metadataSymbol].config.canisterId);
+  }
+  static createActorClass(interfaceFactory, options) {
+    const service = interfaceFactory({ IDL });
+    class CanisterActor extends Actor {
+      constructor(config) {
+        if (!config.canisterId) {
+          throw InputError.fromCode(new MissingCanisterIdErrorCode(config.canisterId));
+        }
+        const canisterId = typeof config.canisterId === "string" ? Principal$1.fromText(config.canisterId) : config.canisterId;
+        super({
+          config: {
+            ...DEFAULT_ACTOR_CONFIG,
+            ...config,
+            canisterId
+          },
+          service
+        });
+        for (const [methodName, func] of service._fields) {
+          if (options == null ? void 0 : options.httpDetails) {
+            func.annotations.push(ACTOR_METHOD_WITH_HTTP_DETAILS);
+          }
+          if (options == null ? void 0 : options.certificate) {
+            func.annotations.push(ACTOR_METHOD_WITH_CERTIFICATE);
+          }
+          this[methodName] = _createActorMethod(this, methodName, func, config.blsVerify);
+        }
+      }
+    }
+    return CanisterActor;
+  }
+  /**
+   * Creates an actor with the given interface factory and configuration.
+   *
+   * The [`@icp-sdk/bindgen`](https://js.icp.build/bindgen/) package can be used to generate the interface factory for your canister.
+   * @param interfaceFactory - the interface factory for the actor, typically generated by the [`@icp-sdk/bindgen`](https://js.icp.build/bindgen/) package
+   * @param configuration - the configuration for the actor
+   * @returns an actor with the given interface factory and configuration
+   * @example
+   * Using the interface factory generated by the [`@icp-sdk/bindgen`](https://js.icp.build/bindgen/) package:
+   * ```ts
+   * import { Actor, HttpAgent } from '@icp-sdk/core/agent';
+   * import { Principal } from '@icp-sdk/core/principal';
+   * import { idlFactory } from './api/declarations/hello-world.did';
+   *
+   * const canisterId = Principal.fromText('rrkah-fqaaa-aaaaa-aaaaq-cai');
+   *
+   * const agent = await HttpAgent.create({
+   *   host: 'https://icp-api.io',
+   * });
+   *
+   * const actor = Actor.createActor(idlFactory, {
+   *   agent,
+   *   canisterId,
+   * });
+   *
+   * const response = await actor.greet('world');
+   * console.log(response);
+   * ```
+   * @example
+   * Using the `createActor` wrapper function generated by the [`@icp-sdk/bindgen`](https://js.icp.build/bindgen/) package:
+   * ```ts
+   * import { HttpAgent } from '@icp-sdk/core/agent';
+   * import { Principal } from '@icp-sdk/core/principal';
+   * import { createActor } from './api/hello-world';
+   *
+   * const canisterId = Principal.fromText('rrkah-fqaaa-aaaaa-aaaaq-cai');
+   *
+   * const agent = await HttpAgent.create({
+   *   host: 'https://icp-api.io',
+   * });
+   *
+   * const actor = createActor(canisterId, {
+   *   agent,
+   * });
+   *
+   * const response = await actor.greet('world');
+   * console.log(response);
+   * ```
+   */
+  static createActor(interfaceFactory, configuration) {
+    if (!configuration.canisterId) {
+      throw InputError.fromCode(new MissingCanisterIdErrorCode(configuration.canisterId));
+    }
+    return new (this.createActorClass(interfaceFactory))(configuration);
+  }
+  /**
+   * Returns an actor with methods that return the http response details along with the result
+   * @param interfaceFactory - the interface factory for the actor
+   * @param configuration - the configuration for the actor
+   * @deprecated - use createActor with actorClassOptions instead
+   */
+  static createActorWithHttpDetails(interfaceFactory, configuration) {
+    return new (this.createActorClass(interfaceFactory, { httpDetails: true }))(configuration);
+  }
+  /**
+   * Returns an actor with methods that return the http response details along with the result
+   * @param interfaceFactory - the interface factory for the actor
+   * @param configuration - the configuration for the actor
+   * @param actorClassOptions - options for the actor class extended details to return with the result
+   */
+  static createActorWithExtendedDetails(interfaceFactory, configuration, actorClassOptions = {
+    httpDetails: true,
+    certificate: true
+  }) {
+    return new (this.createActorClass(interfaceFactory, actorClassOptions))(configuration);
+  }
+  constructor(metadata) {
+    this[metadataSymbol] = Object.freeze(metadata);
+  }
+}
+function decodeReturnValue(types, msg) {
+  const returnValues = decode$1(types, msg);
+  switch (returnValues.length) {
+    case 0:
+      return void 0;
+    case 1:
+      return returnValues[0];
+    default:
+      return returnValues;
+  }
+}
+const DEFAULT_ACTOR_CONFIG = {
+  pollingOptions: DEFAULT_POLLING_OPTIONS
+};
+const ACTOR_METHOD_WITH_HTTP_DETAILS = "http-details";
+const ACTOR_METHOD_WITH_CERTIFICATE = "certificate";
+function _createActorMethod(actor, methodName, func, blsVerify2) {
+  let caller;
+  if (func.annotations.includes("query") || func.annotations.includes("composite_query")) {
+    caller = async (options, ...args) => {
+      var _a3, _b3;
+      options = {
+        ...options,
+        ...(_b3 = (_a3 = actor[metadataSymbol].config).queryTransform) == null ? void 0 : _b3.call(_a3, methodName, args, {
+          ...actor[metadataSymbol].config,
+          ...options
+        })
+      };
+      const agent = options.agent || actor[metadataSymbol].config.agent || new HttpAgent();
+      const cid = Principal$1.from(options.canisterId || actor[metadataSymbol].config.canisterId);
+      const arg = encode$1(func.argTypes, args);
+      const result = await agent.query(cid, {
+        methodName,
+        arg,
+        effectiveCanisterId: options.effectiveCanisterId
+      });
+      const httpDetails = {
+        ...result.httpDetails,
+        requestDetails: result.requestDetails
+      };
+      switch (result.status) {
+        case QueryResponseStatus.Rejected: {
+          const uncertifiedRejectErrorCode = new UncertifiedRejectErrorCode(result.requestId, result.reject_code, result.reject_message, result.error_code, result.signatures);
+          uncertifiedRejectErrorCode.callContext = {
+            canisterId: cid,
+            methodName,
+            httpDetails
+          };
+          throw RejectError.fromCode(uncertifiedRejectErrorCode);
+        }
+        case QueryResponseStatus.Replied:
+          return func.annotations.includes(ACTOR_METHOD_WITH_HTTP_DETAILS) ? {
+            httpDetails,
+            result: decodeReturnValue(func.retTypes, result.reply.arg)
+          } : decodeReturnValue(func.retTypes, result.reply.arg);
+      }
+    };
+  } else {
+    caller = async (options, ...args) => {
+      var _a3, _b3;
+      options = {
+        ...options,
+        ...(_b3 = (_a3 = actor[metadataSymbol].config).callTransform) == null ? void 0 : _b3.call(_a3, methodName, args, {
+          ...actor[metadataSymbol].config,
+          ...options
+        })
+      };
+      const agent = options.agent || actor[metadataSymbol].config.agent || HttpAgent.createSync();
+      const { canisterId, effectiveCanisterId, pollingOptions } = {
+        ...DEFAULT_ACTOR_CONFIG,
+        ...actor[metadataSymbol].config,
+        ...options
+      };
+      const cid = Principal$1.from(canisterId);
+      const ecid = effectiveCanisterId !== void 0 ? Principal$1.from(effectiveCanisterId) : cid;
+      const arg = encode$1(func.argTypes, args);
+      const { requestId, response, requestDetails } = await agent.call(cid, {
+        methodName,
+        arg,
+        effectiveCanisterId: ecid,
+        nonce: options.nonce
+      });
+      let reply;
+      let certificate;
+      if (isV3ResponseBody(response.body)) {
+        if (agent.rootKey == null) {
+          throw ExternalError.fromCode(new MissingRootKeyErrorCode());
+        }
+        const cert = response.body.certificate;
+        certificate = await Certificate.create({
+          certificate: cert,
+          rootKey: agent.rootKey,
+          canisterId: ecid,
+          blsVerify: blsVerify2,
+          agent
+        });
+        const path = [utf8ToBytes("request_status"), requestId];
+        const status = new TextDecoder().decode(lookupResultToBuffer(certificate.lookup_path([...path, "status"])));
+        switch (status) {
+          case "replied":
+            reply = lookupResultToBuffer(certificate.lookup_path([...path, "reply"]));
+            break;
+          case "rejected": {
+            const rejectCode = new Uint8Array(lookupResultToBuffer(certificate.lookup_path([...path, "reject_code"])))[0];
+            const rejectMessage = new TextDecoder().decode(lookupResultToBuffer(certificate.lookup_path([...path, "reject_message"])));
+            const error_code_buf = lookupResultToBuffer(certificate.lookup_path([...path, "error_code"]));
+            const error_code = error_code_buf ? new TextDecoder().decode(error_code_buf) : void 0;
+            const certifiedRejectErrorCode = new CertifiedRejectErrorCode(requestId, rejectCode, rejectMessage, error_code);
+            certifiedRejectErrorCode.callContext = {
+              canisterId: cid,
+              methodName,
+              httpDetails: response
+            };
+            throw RejectError.fromCode(certifiedRejectErrorCode);
+          }
+        }
+      } else if (isV2ResponseBody(response.body)) {
+        const { reject_code, reject_message, error_code } = response.body;
+        const errorCode = new UncertifiedRejectUpdateErrorCode(requestId, reject_code, reject_message, error_code);
+        errorCode.callContext = {
+          canisterId: cid,
+          methodName,
+          httpDetails: response
+        };
+        throw RejectError.fromCode(errorCode);
+      }
+      if (response.status === 202) {
+        const pollOptions = {
+          ...pollingOptions,
+          blsVerify: blsVerify2
+        };
+        const response2 = await pollForResponse(agent, ecid, requestId, pollOptions);
+        certificate = response2.certificate;
+        reply = response2.reply;
+      }
+      const shouldIncludeHttpDetails = func.annotations.includes(ACTOR_METHOD_WITH_HTTP_DETAILS);
+      const shouldIncludeCertificate = func.annotations.includes(ACTOR_METHOD_WITH_CERTIFICATE);
+      const httpDetails = { ...response, requestDetails };
+      if (reply !== void 0) {
+        if (shouldIncludeHttpDetails && shouldIncludeCertificate) {
+          return {
+            httpDetails,
+            certificate,
+            result: decodeReturnValue(func.retTypes, reply)
+          };
+        } else if (shouldIncludeCertificate) {
+          return {
+            certificate,
+            result: decodeReturnValue(func.retTypes, reply)
+          };
+        } else if (shouldIncludeHttpDetails) {
+          return {
+            httpDetails,
+            result: decodeReturnValue(func.retTypes, reply)
+          };
+        }
+        return decodeReturnValue(func.retTypes, reply);
+      } else {
+        const errorCode = new UnexpectedErrorCode(`Call was returned undefined. We cannot determine if the call was successful or not. Return types: [${func.retTypes.map((t) => t.display()).join(",")}].`);
+        errorCode.callContext = {
+          canisterId: cid,
+          methodName,
+          httpDetails
+        };
+        throw UnknownError.fromCode(errorCode);
+      }
+    };
+  }
+  const handler = (...args) => caller({}, ...args);
+  handler.withOptions = (options) => (...args) => caller(options, ...args);
+  return handler;
+}
+const MAXIMUM_CONCURRENT_UPLOADS = 10;
+const MAX_RETRIES = 3;
+const BASE_DELAY_MS = 1e3;
+const MAX_DELAY_MS = 3e4;
+const GATEWAY_VERSION = "v1";
+const HASH_ALGORITHM = "SHA-256";
+const SHA256_PREFIX = "sha256:";
+const DOMAIN_SEPARATOR_FOR_CHUNKS = new TextEncoder().encode("icfs-chunk/");
+const DOMAIN_SEPARATOR_FOR_METADATA = new TextEncoder().encode("icfs-metadata/");
+const DOMAIN_SEPARATOR_FOR_NODES = new TextEncoder().encode("ynode/");
+async function withRetry(operation) {
+  let lastError;
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      return await operation();
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error(String(error));
+      const shouldRetry = isRetriableError(error);
+      if (attempt === MAX_RETRIES || !shouldRetry) {
+        if (!shouldRetry && attempt < MAX_RETRIES) {
+          console.warn(`Non-retriable error encountered: ${lastError.message}. Not retrying.`);
+        }
+        throw error;
+      }
+      const delay = Math.min(BASE_DELAY_MS * 2 ** attempt + Math.random() * 1e3, MAX_DELAY_MS);
+      console.warn(`Request failed (attempt ${attempt + 1}/${MAX_RETRIES + 1}): ${lastError.message}. Retrying in ${Math.round(delay)}ms...`);
+      await new Promise((resolve) => setTimeout(resolve, delay));
+    }
+  }
+  throw lastError || new Error("Unknown error occurred during retry attempts");
+}
+function isRetriableError(error) {
+  var _a3, _b3;
+  const errorMessage = ((_a3 = error == null ? void 0 : error.message) == null ? void 0 : _a3.toLowerCase()) || "";
+  if ((_b3 = error == null ? void 0 : error.response) == null ? void 0 : _b3.status) {
+    const status = error.response.status;
+    if (status === 408 || status === 429)
+      return true;
+    if (status >= 400 && status < 500)
+      return false;
+    if (status >= 500)
+      return true;
+  }
+  if (errorMessage.includes("ssl") || errorMessage.includes("tls") || errorMessage.includes("network error") || errorMessage.includes("connection") || errorMessage.includes("timeout") || errorMessage.includes("fetch")) {
+    return true;
+  }
+  if (errorMessage.includes("validation") || errorMessage.includes("invalid") || errorMessage.includes("malformed") || errorMessage.includes("unauthorized") || errorMessage.includes("forbidden") || errorMessage.includes("not found")) {
+    return false;
+  }
+  return true;
+}
+function validateHashFormat(hash, context) {
+  if (!hash) {
+    throw new Error(`${context}: Hash cannot be empty`);
+  }
+  if (!hash.startsWith(SHA256_PREFIX)) {
+    throw new Error(`${context}: Invalid hash format. Expected format: ${SHA256_PREFIX}<64-char-hex>, got: ${hash}`);
+  }
+  const hexPart = hash.substring(SHA256_PREFIX.length);
+  if (hexPart.length !== 64) {
+    throw new Error(`${context}: Invalid hash format. Expected 64 hex characters after ${SHA256_PREFIX}, got ${hexPart.length} characters: ${hash}`);
+  }
+  if (!/^[0-9a-f]{64}$/i.test(hexPart)) {
+    throw new Error(`${context}: Invalid hash format. Hash must contain only hex characters (0-9, a-f), got: ${hash}`);
+  }
+}
+class YHash {
+  constructor(bytes) {
+    __publicField(this, "bytes");
+    if (bytes.length !== 32) {
+      throw new Error(`YHash must be exactly 32 bytes, got ${bytes.length}`);
+    }
+    this.bytes = new Uint8Array(bytes);
+  }
+  static async fromNodes(left, right) {
+    const leftBytes = left instanceof YHash ? left.bytes : new TextEncoder().encode("UNBALANCED");
+    const rightBytes = right instanceof YHash ? right.bytes : new TextEncoder().encode("UNBALANCED");
+    const combined = new Uint8Array(DOMAIN_SEPARATOR_FOR_NODES.length + leftBytes.length + rightBytes.length);
+    const arrays = [DOMAIN_SEPARATOR_FOR_NODES, leftBytes, rightBytes];
+    let offset2 = 0;
+    for (const data of arrays) {
+      combined.set(data, offset2);
+      offset2 += data.length;
+    }
+    const hashBuffer = await crypto.subtle.digest(HASH_ALGORITHM, combined);
+    return new YHash(new Uint8Array(hashBuffer));
+  }
+  static async fromChunk(data) {
+    return YHash.fromBytes(DOMAIN_SEPARATOR_FOR_CHUNKS, data);
+  }
+  static async fromHeaders(headers) {
+    const headerLines = [];
+    for (const [key, value] of Object.entries(headers)) {
+      headerLines.push(`${key.trim()}: ${value.trim()}
+`);
+    }
+    headerLines.sort();
+    const hash = await YHash.fromBytes(DOMAIN_SEPARATOR_FOR_METADATA, new TextEncoder().encode(headerLines.join("")));
+    return hash;
+  }
+  static async fromBytes(domainSeparator, data) {
+    const combined = new Uint8Array(domainSeparator.length + data.length);
+    combined.set(domainSeparator);
+    combined.set(data, domainSeparator.length);
+    const hashBuffer = await crypto.subtle.digest(HASH_ALGORITHM, combined);
+    return new YHash(new Uint8Array(hashBuffer));
+  }
+  static fromHex(hexString) {
+    const bytes = new Uint8Array(hexString.match(/.{1,2}/g).map((byte) => Number.parseInt(byte, 16)));
+    return new YHash(bytes);
+  }
+  toShaString() {
+    return `${SHA256_PREFIX}${this.toHex()}`;
+  }
+  toString() {
+    throw new Error("toString is not supported for YHash");
+  }
+  toHex() {
+    return Array.from(this.bytes).map((b2) => b2.toString(16).padStart(2, "0")).join("");
+  }
+}
+function nodeToJSON(node) {
+  return {
+    hash: node.hash.toShaString(),
+    left: node.left ? nodeToJSON(node.left) : null,
+    right: node.right ? nodeToJSON(node.right) : null
+  };
+}
+class BlobHashTree {
+  constructor(chunk_hashes, tree, headers = null) {
+    __publicField(this, "tree_type");
+    __publicField(this, "chunk_hashes");
+    __publicField(this, "tree");
+    __publicField(this, "headers");
+    this.tree_type = "DSBMTWH";
+    this.chunk_hashes = chunk_hashes;
+    this.tree = tree;
+    if (headers == null) {
+      this.headers = [];
+    } else if (Array.isArray(headers)) {
+      this.headers = headers;
+    } else {
+      this.headers = Object.entries(headers).map(([key, value]) => `${key.trim()}: ${value.trim()}`);
+    }
+    this.headers.sort();
+  }
+  static async build(chunkHashes, headers = {}) {
+    if (chunkHashes.length === 0) {
+      const hex = "8b8e620f084e48da0be2287fd12c5aaa4dbe14b468fd2e360f48d741fe7628a0";
+      const bytes = new TextEncoder().encode(hex);
+      chunkHashes.push(new YHash(bytes));
+    }
+    let level = chunkHashes.map((hash) => ({
+      hash,
+      left: null,
+      right: null
+    }));
+    while (level.length > 1) {
+      const nextLevel = [];
+      for (let i = 0; i < level.length; i += 2) {
+        const left = level[i];
+        const right = level[i + 1] || null;
+        const parentHash = await YHash.fromNodes(left.hash, right ? right.hash : null);
+        nextLevel.push({
+          hash: parentHash,
+          left,
+          right
+        });
+      }
+      level = nextLevel;
+    }
+    const chunksRoot = level[0];
+    if (headers && Object.keys(headers).length > 0) {
+      const metadataRootHash = await YHash.fromHeaders(headers);
+      const metadataRoot = {
+        hash: metadataRootHash,
+        left: null,
+        right: null
+      };
+      const combinedRootHash = await YHash.fromNodes(chunksRoot.hash, metadataRoot.hash);
+      const combinedRoot = {
+        hash: combinedRootHash,
+        left: chunksRoot,
+        right: metadataRoot
+      };
+      return new BlobHashTree(chunkHashes, combinedRoot, headers);
+    }
+    return new BlobHashTree(chunkHashes, chunksRoot, headers);
+  }
+  toJSON() {
+    return {
+      tree_type: this.tree_type,
+      chunk_hashes: this.chunk_hashes.map((h2) => h2.toShaString()),
+      tree: nodeToJSON(this.tree),
+      headers: this.headers
+    };
+  }
+}
+class StorageGatewayClient {
+  constructor(storageGatewayUrl) {
+    __publicField(this, "storageGatewayUrl");
+    this.storageGatewayUrl = storageGatewayUrl;
+  }
+  getStorageGatewayUrl() {
+    return this.storageGatewayUrl;
+  }
+  async uploadChunk(params) {
+    const blobHashString = params.blobRootHash.toShaString();
+    const chunkHashString = params.chunkHash.toShaString();
+    validateHashFormat(blobHashString, `uploadChunk[${params.chunkIndex}] blob_hash`);
+    validateHashFormat(chunkHashString, `uploadChunk[${params.chunkIndex}] chunk_hash`);
+    return await withRetry(async () => {
+      const queryParams = new URLSearchParams({
+        owner_id: params.owner,
+        blob_hash: blobHashString,
+        chunk_hash: chunkHashString,
+        chunk_index: params.chunkIndex.toString(),
+        bucket_name: params.bucketName,
+        project_id: params.projectId
+      });
+      const url = `${this.storageGatewayUrl}/${GATEWAY_VERSION}/chunk/?${queryParams.toString()}`;
+      const response = await fetch(url, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/octet-stream",
+          "X-Caffeine-Project-ID": params.projectId
+        },
+        body: params.chunkData
+      });
+      if (!response.ok) {
+        const errorText = await response.text();
+        const error = new Error(`Failed to upload chunk ${params.chunkIndex}: ${response.status} ${response.statusText} - ${errorText}`);
+        error.response = { status: response.status };
+        throw error;
+      }
+      const result = await response.json();
+      return {
+        isComplete: result.status === "blob_complete"
+      };
+    });
+  }
+  async uploadBlobTree(blobHashTree, bucketName, numBlobBytes, owner, projectId, certificateBytes) {
+    const treeJSON = blobHashTree.toJSON();
+    validateHashFormat(treeJSON.tree.hash, "uploadBlobTree root hash");
+    treeJSON.chunk_hashes.forEach((hash, index2) => {
+      validateHashFormat(hash, `uploadBlobTree chunk_hash[${index2}]`);
+    });
+    return await withRetry(async () => {
+      const url = `${this.storageGatewayUrl}/${GATEWAY_VERSION}/blob-tree/`;
+      const requestBody = {
+        blob_tree: treeJSON,
+        bucket_name: bucketName,
+        num_blob_bytes: numBlobBytes,
+        owner,
+        project_id: projectId,
+        headers: blobHashTree.headers,
+        auth: {
+          OwnerEgressSignature: Array.from(certificateBytes)
+        }
+      };
+      const response = await fetch(url, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Caffeine-Project-ID": projectId
+        },
+        body: JSON.stringify(requestBody)
+      });
+      if (!response.ok) {
+        const errorText = await response.text();
+        const error = new Error(`Failed to upload blob tree: ${response.status} ${response.statusText} - ${errorText}`);
+        error.response = { status: response.status };
+        throw error;
+      }
+    });
+  }
+}
+class StorageClient {
+  constructor(bucket, storageGatewayUrl, backendCanisterId, projectId, agent) {
+    __publicField(this, "bucket");
+    __publicField(this, "backendCanisterId");
+    __publicField(this, "projectId");
+    __publicField(this, "agent");
+    __publicField(this, "storageGatewayClient");
+    this.bucket = bucket;
+    this.backendCanisterId = backendCanisterId;
+    this.projectId = projectId;
+    this.agent = agent;
+    this.storageGatewayClient = new StorageGatewayClient(storageGatewayUrl);
+  }
+  async getCertificate(hash) {
+    const args = encode$1([Text], [hash]);
+    const result = await this.agent.call(this.backendCanisterId, {
+      methodName: "_immutableObjectStorageCreateCertificate",
+      arg: args
+    });
+    const respone = result.response.body;
+    if (isV3ResponseBody(respone)) {
+      console.log("Certificate:", respone.certificate);
+      return respone.certificate;
+    }
+    throw new Error("Expected v3 response body");
+  }
+  async putFile(blobBytes, onProgress) {
+    const httpHeaders = {
+      "Content-Type": "application/json"
+    };
+    const file = new Blob([new Uint8Array(blobBytes)], {
+      type: "application/octet-stream"
+    });
+    const fileHeaders = {
+      "Content-Type": "application/octet-stream",
+      "Content-Length": file.size.toString()
+    };
+    const { chunks, chunkHashes, blobHashTree } = await this.processFileForUpload(file, fileHeaders);
+    const blobRootHash = blobHashTree.tree.hash;
+    const hashString2 = blobRootHash.toShaString();
+    const certificateBytes = await this.getCertificate(hashString2);
+    await this.storageGatewayClient.uploadBlobTree(blobHashTree, this.bucket, file.size, this.backendCanisterId, this.projectId, certificateBytes);
+    await this.parallelUpload(chunks, chunkHashes, blobRootHash, httpHeaders, onProgress);
+    return { hash: hashString2 };
+  }
+  async getDirectURL(hash) {
+    if (!hash) {
+      throw new Error("Hash must not be empty");
+    }
+    validateHashFormat(hash, `getDirectURL for path '${hash}'`);
+    return `${this.storageGatewayClient.getStorageGatewayUrl()}/${GATEWAY_VERSION}/blob/?blob_hash=${encodeURIComponent(hash)}&owner_id=${encodeURIComponent(this.backendCanisterId)}&project_id=${encodeURIComponent(this.projectId)}`;
+  }
+  async processFileForUpload(file, headers) {
+    const chunks = this.createFileChunks(file);
+    const chunkHashes = [];
+    for (let i = 0; i < chunks.length; i++) {
+      const chunkData = new Uint8Array(await chunks[i].arrayBuffer());
+      const hash = await YHash.fromChunk(chunkData);
+      chunkHashes.push(hash);
+    }
+    const blobHashTree = await BlobHashTree.build(chunkHashes, headers);
+    return { chunks, chunkHashes, blobHashTree };
+  }
+  async parallelUpload(chunks, chunkHashes, blobRootHash, httpHeaders, onProgress) {
+    let completedChunks = 0;
+    const uploadSingleChunk = async (index2) => {
+      const chunkData = new Uint8Array(await chunks[index2].arrayBuffer());
+      const chunkHash = chunkHashes[index2];
+      await this.storageGatewayClient.uploadChunk({
+        blobRootHash,
+        chunkHash,
+        chunkIndex: index2,
+        chunkData,
+        bucketName: this.bucket,
+        owner: this.backendCanisterId,
+        projectId: this.projectId,
+        httpHeaders
+      });
+      const currentCompleted = ++completedChunks;
+      if (onProgress != null) {
+        const percentage = chunks.length === 0 ? 100 : Math.round(currentCompleted / chunks.length * 100);
+        onProgress(percentage);
+      }
+    };
+    await Promise.all(Array.from({ length: MAXIMUM_CONCURRENT_UPLOADS }, async (_2, workerId) => {
+      for (let i = workerId; i < chunks.length; i += MAXIMUM_CONCURRENT_UPLOADS) {
+        await uploadSingleChunk(i);
+      }
+    }));
+  }
+  createFileChunks(file, chunkSize = 1024 * 1024) {
+    const chunks = [];
+    const totalChunks = Math.ceil(file.size / chunkSize);
+    for (let index2 = 0; index2 < totalChunks; index2++) {
+      const start = index2 * chunkSize;
+      const end = Math.min(start + chunkSize, file.size);
+      const chunk = file.slice(start, end);
+      chunks.push(chunk);
+    }
+    return chunks;
+  }
+}
 var define_process_env_default = {};
 const DEFAULT_STORAGE_GATEWAY_URL = "https://blob.caffeine.ai";
 const DEFAULT_BUCKET_NAME = "default-bucket";
@@ -3041,6 +11185,59 @@ async function loadConfig() {
     return fallbackConfig;
   }
 }
+function extractAgentErrorMessage(error) {
+  const errorString = String(error);
+  const match = errorString.match(/with message:\s*'([^']+)'/s);
+  return match ? match[1] : errorString;
+}
+function processError(e) {
+  if (e && typeof e === "object" && "message" in e) {
+    throw new Error(extractAgentErrorMessage(`${e.message}`));
+  }
+  throw e;
+}
+async function maybeLoadMockBackend() {
+  {
+    return null;
+  }
+}
+async function createActorWithConfig(createActor2, options) {
+  var _a3;
+  const mock = await maybeLoadMockBackend();
+  if (mock) {
+    return mock;
+  }
+  const config = await loadConfig();
+  const resolvedOptions = options ?? {};
+  const agent = new HttpAgent({
+    ...resolvedOptions.agentOptions,
+    host: config.backend_host
+  });
+  if ((_a3 = config.backend_host) == null ? void 0 : _a3.includes("localhost")) {
+    await agent.fetchRootKey().catch((err) => {
+      console.warn("Unable to fetch root key. Check to ensure that your local replica is running");
+      console.error(err);
+    });
+  }
+  const actorOptions = {
+    ...resolvedOptions,
+    agent,
+    processError
+  };
+  const storageClient = new StorageClient(config.bucket_name, config.storage_gateway_url, config.backend_canister_id, config.project_id, agent);
+  const MOTOKO_DEDUPLICATION_SENTINEL = "!caf!";
+  const uploadFile = async (file) => {
+    const { hash } = await storageClient.putFile(await file.getBytes(), file.onProgress);
+    return new TextEncoder().encode(MOTOKO_DEDUPLICATION_SENTINEL + hash);
+  };
+  const downloadFile = async (bytes) => {
+    const hashWithPrefix = new TextDecoder().decode(new Uint8Array(bytes));
+    const hash = hashWithPrefix.substring(MOTOKO_DEDUPLICATION_SENTINEL.length);
+    const url = await storageClient.getDirectURL(hash);
+    return ExternalBlob.fromURL(url);
+  };
+  return createActor2(config.backend_canister_id, uploadFile, downloadFile, actorOptions);
+}
 var Subscribable = class {
   constructor() {
     this.listeners = /* @__PURE__ */ new Set();
@@ -3062,7 +11259,7 @@ var Subscribable = class {
   onUnsubscribe() {
   }
 };
-var FocusManager = (_a = class extends Subscribable {
+var FocusManager = (_b2 = class extends Subscribable {
   constructor() {
     super();
     __privateAdd(this, _focused);
@@ -3085,16 +11282,16 @@ var FocusManager = (_a = class extends Subscribable {
     }
   }
   onUnsubscribe() {
-    var _a2;
+    var _a3;
     if (!this.hasListeners()) {
-      (_a2 = __privateGet(this, _cleanup)) == null ? void 0 : _a2.call(this);
+      (_a3 = __privateGet(this, _cleanup)) == null ? void 0 : _a3.call(this);
       __privateSet(this, _cleanup, void 0);
     }
   }
   setEventListener(setup) {
-    var _a2;
+    var _a3;
     __privateSet(this, _setup, setup);
-    (_a2 = __privateGet(this, _cleanup)) == null ? void 0 : _a2.call(this);
+    (_a3 = __privateGet(this, _cleanup)) == null ? void 0 : _a3.call(this);
     __privateSet(this, _cleanup, setup((focused) => {
       if (typeof focused === "boolean") {
         this.setFocused(focused);
@@ -3117,13 +11314,13 @@ var FocusManager = (_a = class extends Subscribable {
     });
   }
   isFocused() {
-    var _a2;
+    var _a3;
     if (typeof __privateGet(this, _focused) === "boolean") {
       return __privateGet(this, _focused);
     }
-    return ((_a2 = globalThis.document) == null ? void 0 : _a2.visibilityState) !== "hidden";
+    return ((_a3 = globalThis.document) == null ? void 0 : _a3.visibilityState) !== "hidden";
   }
-}, _focused = new WeakMap(), _cleanup = new WeakMap(), _setup = new WeakMap(), _a);
+}, _focused = new WeakMap(), _cleanup = new WeakMap(), _setup = new WeakMap(), _b2);
 var focusManager = new FocusManager();
 var defaultTimeoutProvider = {
   // We need the wrapper function syntax below instead of direct references to
@@ -3141,7 +11338,7 @@ var defaultTimeoutProvider = {
   setInterval: (callback, delay) => setInterval(callback, delay),
   clearInterval: (intervalId) => clearInterval(intervalId)
 };
-var TimeoutManager = (_b = class {
+var TimeoutManager = (_c = class {
   constructor() {
     // We cannot have TimeoutManager<T> as we must instantiate it with a concrete
     // type at app boot; and if we leave that type, then any new timer provider
@@ -3168,7 +11365,7 @@ var TimeoutManager = (_b = class {
   clearInterval(intervalId) {
     __privateGet(this, _provider).clearInterval(intervalId);
   }
-}, _provider = new WeakMap(), _providerCalled = new WeakMap(), _b);
+}, _provider = new WeakMap(), _providerCalled = new WeakMap(), _c);
 var timeoutManager = new TimeoutManager();
 function systemSetTimeoutZero(callback) {
   setTimeout(callback, 0);
@@ -3258,65 +11455,76 @@ function hashQueryKeyByOptions(queryKey, options) {
 function hashKey(queryKey) {
   return JSON.stringify(
     queryKey,
-    (_, val) => isPlainObject(val) ? Object.keys(val).sort().reduce((result, key) => {
+    (_2, val) => isPlainObject(val) ? Object.keys(val).sort().reduce((result, key) => {
       result[key] = val[key];
       return result;
     }, {}) : val
   );
 }
-function partialMatchKey(a, b) {
-  if (a === b) {
+function partialMatchKey(a2, b2) {
+  if (a2 === b2) {
     return true;
   }
-  if (typeof a !== typeof b) {
+  if (typeof a2 !== typeof b2) {
     return false;
   }
-  if (a && b && typeof a === "object" && typeof b === "object") {
-    return Object.keys(b).every((key) => partialMatchKey(a[key], b[key]));
+  if (a2 && b2 && typeof a2 === "object" && typeof b2 === "object") {
+    return Object.keys(b2).every((key) => partialMatchKey(a2[key], b2[key]));
   }
   return false;
 }
 var hasOwn = Object.prototype.hasOwnProperty;
-function replaceEqualDeep(a, b, depth = 0) {
-  if (a === b) {
-    return a;
+function replaceEqualDeep(a2, b2, depth = 0) {
+  if (a2 === b2) {
+    return a2;
   }
-  if (depth > 500) return b;
-  const array = isPlainArray(a) && isPlainArray(b);
-  if (!array && !(isPlainObject(a) && isPlainObject(b))) return b;
-  const aItems = array ? a : Object.keys(a);
+  if (depth > 500) return b2;
+  const array = isPlainArray(a2) && isPlainArray(b2);
+  if (!array && !(isPlainObject(a2) && isPlainObject(b2))) return b2;
+  const aItems = array ? a2 : Object.keys(a2);
   const aSize = aItems.length;
-  const bItems = array ? b : Object.keys(b);
+  const bItems = array ? b2 : Object.keys(b2);
   const bSize = bItems.length;
   const copy = array ? new Array(bSize) : {};
   let equalItems = 0;
   for (let i = 0; i < bSize; i++) {
     const key = array ? i : bItems[i];
-    const aItem = a[key];
-    const bItem = b[key];
+    const aItem = a2[key];
+    const bItem = b2[key];
     if (aItem === bItem) {
       copy[key] = aItem;
-      if (array ? i < aSize : hasOwn.call(a, key)) equalItems++;
+      if (array ? i < aSize : hasOwn.call(a2, key)) equalItems++;
       continue;
     }
     if (aItem === null || bItem === null || typeof aItem !== "object" || typeof bItem !== "object") {
       copy[key] = bItem;
       continue;
     }
-    const v = replaceEqualDeep(aItem, bItem, depth + 1);
-    copy[key] = v;
-    if (v === aItem) equalItems++;
+    const v2 = replaceEqualDeep(aItem, bItem, depth + 1);
+    copy[key] = v2;
+    if (v2 === aItem) equalItems++;
   }
-  return aSize === bSize && equalItems === aSize ? a : copy;
+  return aSize === bSize && equalItems === aSize ? a2 : copy;
+}
+function shallowEqualObjects(a2, b2) {
+  if (!b2 || Object.keys(a2).length !== Object.keys(b2).length) {
+    return false;
+  }
+  for (const key in a2) {
+    if (a2[key] !== b2[key]) {
+      return false;
+    }
+  }
+  return true;
 }
 function isPlainArray(value) {
   return Array.isArray(value) && value.length === Object.keys(value).length;
 }
-function isPlainObject(o) {
-  if (!hasObjectPrototype(o)) {
+function isPlainObject(o2) {
+  if (!hasObjectPrototype(o2)) {
     return false;
   }
-  const ctor = o.constructor;
+  const ctor = o2.constructor;
   if (ctor === void 0) {
     return true;
   }
@@ -3327,17 +11535,17 @@ function isPlainObject(o) {
   if (!prot.hasOwnProperty("isPrototypeOf")) {
     return false;
   }
-  if (Object.getPrototypeOf(o) !== Object.prototype) {
+  if (Object.getPrototypeOf(o2) !== Object.prototype) {
     return false;
   }
   return true;
 }
-function hasObjectPrototype(o) {
-  return Object.prototype.toString.call(o) === "[object Object]";
+function hasObjectPrototype(o2) {
+  return Object.prototype.toString.call(o2) === "[object Object]";
 }
-function sleep(timeout) {
+function sleep(timeout2) {
   return new Promise((resolve) => {
-    timeoutManager.setTimeout(resolve, timeout);
+    timeoutManager.setTimeout(resolve, timeout2);
   });
 }
 function replaceData(prevData, data, options) {
@@ -3365,6 +11573,12 @@ function ensureQueryFn(options, fetchOptions) {
     return () => Promise.reject(new Error(`Missing queryFn: '${options.queryHash}'`));
   }
   return options.queryFn;
+}
+function shouldThrowError(throwOnError, params) {
+  if (typeof throwOnError === "function") {
+    return throwOnError(...params);
+  }
+  return !!throwOnError;
 }
 function addConsumeAwareSignal(object, getSignal, onCancelled) {
   let consumed = false;
@@ -3513,7 +11727,7 @@ function createNotifyManager() {
   };
 }
 var notifyManager = createNotifyManager();
-var OnlineManager = (_c = class extends Subscribable {
+var OnlineManager = (_d = class extends Subscribable {
   constructor() {
     super();
     __privateAdd(this, _online, true);
@@ -3539,16 +11753,16 @@ var OnlineManager = (_c = class extends Subscribable {
     }
   }
   onUnsubscribe() {
-    var _a2;
+    var _a3;
     if (!this.hasListeners()) {
-      (_a2 = __privateGet(this, _cleanup2)) == null ? void 0 : _a2.call(this);
+      (_a3 = __privateGet(this, _cleanup2)) == null ? void 0 : _a3.call(this);
       __privateSet(this, _cleanup2, void 0);
     }
   }
   setEventListener(setup) {
-    var _a2;
+    var _a3;
     __privateSet(this, _setup2, setup);
-    (_a2 = __privateGet(this, _cleanup2)) == null ? void 0 : _a2.call(this);
+    (_a3 = __privateGet(this, _cleanup2)) == null ? void 0 : _a3.call(this);
     __privateSet(this, _cleanup2, setup(this.setOnline.bind(this)));
   }
   setOnline(online) {
@@ -3563,7 +11777,7 @@ var OnlineManager = (_c = class extends Subscribable {
   isOnline() {
     return __privateGet(this, _online);
   }
-}, _online = new WeakMap(), _cleanup2 = new WeakMap(), _setup2 = new WeakMap(), _c);
+}, _online = new WeakMap(), _cleanup2 = new WeakMap(), _setup2 = new WeakMap(), _d);
 var onlineManager = new OnlineManager();
 function defaultRetryDelay(failureCount) {
   return Math.min(1e3 * 2 ** failureCount, 3e4);
@@ -3585,11 +11799,11 @@ function createRetryer(config) {
   const thenable = pendingThenable();
   const isResolved = () => thenable.status !== "pending";
   const cancel = (cancelOptions) => {
-    var _a2;
+    var _a3;
     if (!isResolved()) {
       const error = new CancelledError(cancelOptions);
       reject(error);
-      (_a2 = config.onCancel) == null ? void 0 : _a2.call(config, error);
+      (_a3 = config.onCancel) == null ? void 0 : _a3.call(config, error);
     }
   };
   const cancelRetry = () => {
@@ -3614,18 +11828,18 @@ function createRetryer(config) {
   };
   const pause = () => {
     return new Promise((continueResolve) => {
-      var _a2;
+      var _a3;
       continueFn = (value) => {
         if (isResolved() || canContinue()) {
           continueResolve(value);
         }
       };
-      (_a2 = config.onPause) == null ? void 0 : _a2.call(config);
+      (_a3 = config.onPause) == null ? void 0 : _a3.call(config);
     }).then(() => {
-      var _a2;
+      var _a3;
       continueFn = void 0;
       if (!isResolved()) {
-        (_a2 = config.onContinue) == null ? void 0 : _a2.call(config);
+        (_a3 = config.onContinue) == null ? void 0 : _a3.call(config);
       }
     });
   };
@@ -3641,7 +11855,7 @@ function createRetryer(config) {
       promiseOrValue = Promise.reject(error);
     }
     Promise.resolve(promiseOrValue).then(resolve).catch((error) => {
-      var _a2;
+      var _a3;
       if (isResolved()) {
         return;
       }
@@ -3654,7 +11868,7 @@ function createRetryer(config) {
         return;
       }
       failureCount++;
-      (_a2 = config.onFail) == null ? void 0 : _a2.call(config, failureCount, error);
+      (_a3 = config.onFail) == null ? void 0 : _a3.call(config, failureCount, error);
       sleep(delay).then(() => {
         return canContinue() ? void 0 : pause();
       }).then(() => {
@@ -3687,7 +11901,7 @@ function createRetryer(config) {
     }
   };
 }
-var Removable = (_d = class {
+var Removable = (_e = class {
   constructor() {
     __privateAdd(this, _gcTimeout);
   }
@@ -3714,8 +11928,8 @@ var Removable = (_d = class {
       __privateSet(this, _gcTimeout, void 0);
     }
   }
-}, _gcTimeout = new WeakMap(), _d);
-var Query = (_e = class extends Removable {
+}, _gcTimeout = new WeakMap(), _e);
+var Query = (_f = class extends Removable {
   constructor(config) {
     super();
     __privateAdd(this, _Query_instances);
@@ -3742,8 +11956,8 @@ var Query = (_e = class extends Removable {
     return this.options.meta;
   }
   get promise() {
-    var _a2;
-    return (_a2 = __privateGet(this, _retryer)) == null ? void 0 : _a2.promise;
+    var _a3;
+    return (_a3 = __privateGet(this, _retryer)) == null ? void 0 : _a3.promise;
   }
   setOptions(options) {
     this.options = { ...__privateGet(this, _defaultOptions), ...options };
@@ -3777,9 +11991,9 @@ var Query = (_e = class extends Removable {
     __privateMethod(this, _Query_instances, dispatch_fn).call(this, { type: "setState", state, setStateOptions });
   }
   cancel(options) {
-    var _a2, _b2;
-    const promise = (_a2 = __privateGet(this, _retryer)) == null ? void 0 : _a2.promise;
-    (_b2 = __privateGet(this, _retryer)) == null ? void 0 : _b2.cancel(options);
+    var _a3, _b3;
+    const promise = (_a3 = __privateGet(this, _retryer)) == null ? void 0 : _a3.promise;
+    (_b3 = __privateGet(this, _retryer)) == null ? void 0 : _b3.cancel(options);
     return promise ? promise.then(noop$7).catch(noop$7) : Promise.resolve();
   }
   destroy() {
@@ -3836,16 +12050,16 @@ var Query = (_e = class extends Removable {
     return !timeUntilStale(this.state.dataUpdatedAt, staleTime);
   }
   onFocus() {
-    var _a2;
-    const observer = this.observers.find((x) => x.shouldFetchOnWindowFocus());
+    var _a3;
+    const observer = this.observers.find((x2) => x2.shouldFetchOnWindowFocus());
     observer == null ? void 0 : observer.refetch({ cancelRefetch: false });
-    (_a2 = __privateGet(this, _retryer)) == null ? void 0 : _a2.continue();
+    (_a3 = __privateGet(this, _retryer)) == null ? void 0 : _a3.continue();
   }
   onOnline() {
-    var _a2;
-    const observer = this.observers.find((x) => x.shouldFetchOnReconnect());
+    var _a3;
+    const observer = this.observers.find((x2) => x2.shouldFetchOnReconnect());
     observer == null ? void 0 : observer.refetch({ cancelRefetch: false });
-    (_a2 = __privateGet(this, _retryer)) == null ? void 0 : _a2.continue();
+    (_a3 = __privateGet(this, _retryer)) == null ? void 0 : _a3.continue();
   }
   addObserver(observer) {
     if (!this.observers.includes(observer)) {
@@ -3856,7 +12070,7 @@ var Query = (_e = class extends Removable {
   }
   removeObserver(observer) {
     if (this.observers.includes(observer)) {
-      this.observers = this.observers.filter((x) => x !== observer);
+      this.observers = this.observers.filter((x2) => x2 !== observer);
       if (!this.observers.length) {
         if (__privateGet(this, _retryer)) {
           if (__privateGet(this, _abortSignalConsumed) || __privateMethod(this, _Query_instances, isInitialPausedFetch_fn).call(this)) {
@@ -3879,11 +12093,11 @@ var Query = (_e = class extends Removable {
     }
   }
   async fetch(options, fetchOptions) {
-    var _a2, _b2, _c2, _d2, _e2, _f2, _g2, _h2, _i2, _j, _k, _l;
+    var _a3, _b3, _c2, _d2, _e2, _f2, _g2, _h2, _i2, _j2, _k2, _l2;
     if (this.state.fetchStatus !== "idle" && // If the promise in the retryer is already rejected, we have to definitely
     // re-start the fetch; there is a chance that the query is still in a
     // pending state when that happens
-    ((_a2 = __privateGet(this, _retryer)) == null ? void 0 : _a2.status()) !== "rejected") {
+    ((_a3 = __privateGet(this, _retryer)) == null ? void 0 : _a3.status()) !== "rejected") {
       if (this.state.data !== void 0 && (fetchOptions == null ? void 0 : fetchOptions.cancelRefetch)) {
         this.cancel({ silent: true });
       } else if (__privateGet(this, _retryer)) {
@@ -3895,7 +12109,7 @@ var Query = (_e = class extends Removable {
       this.setOptions(options);
     }
     if (!this.options.queryFn) {
-      const observer = this.observers.find((x) => x.options.queryFn);
+      const observer = this.observers.find((x2) => x2.options.queryFn);
       if (observer) {
         this.setOptions(observer.options);
       }
@@ -3945,7 +12159,7 @@ var Query = (_e = class extends Removable {
       return context2;
     };
     const context = createFetchContext();
-    (_b2 = this.options.behavior) == null ? void 0 : _b2.onFetch(context, this);
+    (_b3 = this.options.behavior) == null ? void 0 : _b3.onFetch(context, this);
     __privateSet(this, _revertState, this.state);
     if (this.state.fetchStatus === "idle" || this.state.fetchMeta !== ((_c2 = context.fetchOptions) == null ? void 0 : _c2.meta)) {
       __privateMethod(this, _Query_instances, dispatch_fn).call(this, { type: "fetch", meta: (_d2 = context.fetchOptions) == null ? void 0 : _d2.meta });
@@ -4006,13 +12220,13 @@ var Query = (_e = class extends Removable {
         type: "error",
         error
       });
-      (_j = (_i2 = __privateGet(this, _cache).config).onError) == null ? void 0 : _j.call(
+      (_j2 = (_i2 = __privateGet(this, _cache).config).onError) == null ? void 0 : _j2.call(
         _i2,
         error,
         this
       );
-      (_l = (_k = __privateGet(this, _cache).config).onSettled) == null ? void 0 : _l.call(
-        _k,
+      (_l2 = (_k2 = __privateGet(this, _cache).config).onSettled) == null ? void 0 : _l2.call(
+        _k2,
         this.state.data,
         error,
         this
@@ -4096,7 +12310,7 @@ var Query = (_e = class extends Removable {
     });
     __privateGet(this, _cache).notify({ query: this, type: "updated", action });
   });
-}, _e);
+}, _f);
 function fetchState(data, options) {
   return {
     fetchFailureCount: 0,
@@ -4136,12 +12350,456 @@ function getDefaultState$1(options) {
     fetchStatus: "idle"
   };
 }
+var QueryObserver = (_g = class extends Subscribable {
+  constructor(client2, options) {
+    super();
+    __privateAdd(this, _QueryObserver_instances);
+    __privateAdd(this, _client2);
+    __privateAdd(this, _currentQuery);
+    __privateAdd(this, _currentQueryInitialState);
+    __privateAdd(this, _currentResult);
+    __privateAdd(this, _currentResultState);
+    __privateAdd(this, _currentResultOptions);
+    __privateAdd(this, _currentThenable);
+    __privateAdd(this, _selectError);
+    __privateAdd(this, _selectFn);
+    __privateAdd(this, _selectResult);
+    // This property keeps track of the last query with defined data.
+    // It will be used to pass the previous data and query to the placeholder function between renders.
+    __privateAdd(this, _lastQueryWithDefinedData);
+    __privateAdd(this, _staleTimeoutId);
+    __privateAdd(this, _refetchIntervalId);
+    __privateAdd(this, _currentRefetchInterval);
+    __privateAdd(this, _trackedProps, /* @__PURE__ */ new Set());
+    this.options = options;
+    __privateSet(this, _client2, client2);
+    __privateSet(this, _selectError, null);
+    __privateSet(this, _currentThenable, pendingThenable());
+    this.bindMethods();
+    this.setOptions(options);
+  }
+  bindMethods() {
+    this.refetch = this.refetch.bind(this);
+  }
+  onSubscribe() {
+    if (this.listeners.size === 1) {
+      __privateGet(this, _currentQuery).addObserver(this);
+      if (shouldFetchOnMount(__privateGet(this, _currentQuery), this.options)) {
+        __privateMethod(this, _QueryObserver_instances, executeFetch_fn).call(this);
+      } else {
+        this.updateResult();
+      }
+      __privateMethod(this, _QueryObserver_instances, updateTimers_fn).call(this);
+    }
+  }
+  onUnsubscribe() {
+    if (!this.hasListeners()) {
+      this.destroy();
+    }
+  }
+  shouldFetchOnReconnect() {
+    return shouldFetchOn(
+      __privateGet(this, _currentQuery),
+      this.options,
+      this.options.refetchOnReconnect
+    );
+  }
+  shouldFetchOnWindowFocus() {
+    return shouldFetchOn(
+      __privateGet(this, _currentQuery),
+      this.options,
+      this.options.refetchOnWindowFocus
+    );
+  }
+  destroy() {
+    this.listeners = /* @__PURE__ */ new Set();
+    __privateMethod(this, _QueryObserver_instances, clearStaleTimeout_fn).call(this);
+    __privateMethod(this, _QueryObserver_instances, clearRefetchInterval_fn).call(this);
+    __privateGet(this, _currentQuery).removeObserver(this);
+  }
+  setOptions(options) {
+    const prevOptions = this.options;
+    const prevQuery = __privateGet(this, _currentQuery);
+    this.options = __privateGet(this, _client2).defaultQueryOptions(options);
+    if (this.options.enabled !== void 0 && typeof this.options.enabled !== "boolean" && typeof this.options.enabled !== "function" && typeof resolveEnabled(this.options.enabled, __privateGet(this, _currentQuery)) !== "boolean") {
+      throw new Error(
+        "Expected enabled to be a boolean or a callback that returns a boolean"
+      );
+    }
+    __privateMethod(this, _QueryObserver_instances, updateQuery_fn).call(this);
+    __privateGet(this, _currentQuery).setOptions(this.options);
+    if (prevOptions._defaulted && !shallowEqualObjects(this.options, prevOptions)) {
+      __privateGet(this, _client2).getQueryCache().notify({
+        type: "observerOptionsUpdated",
+        query: __privateGet(this, _currentQuery),
+        observer: this
+      });
+    }
+    const mounted = this.hasListeners();
+    if (mounted && shouldFetchOptionally(
+      __privateGet(this, _currentQuery),
+      prevQuery,
+      this.options,
+      prevOptions
+    )) {
+      __privateMethod(this, _QueryObserver_instances, executeFetch_fn).call(this);
+    }
+    this.updateResult();
+    if (mounted && (__privateGet(this, _currentQuery) !== prevQuery || resolveEnabled(this.options.enabled, __privateGet(this, _currentQuery)) !== resolveEnabled(prevOptions.enabled, __privateGet(this, _currentQuery)) || resolveStaleTime(this.options.staleTime, __privateGet(this, _currentQuery)) !== resolveStaleTime(prevOptions.staleTime, __privateGet(this, _currentQuery)))) {
+      __privateMethod(this, _QueryObserver_instances, updateStaleTimeout_fn).call(this);
+    }
+    const nextRefetchInterval = __privateMethod(this, _QueryObserver_instances, computeRefetchInterval_fn).call(this);
+    if (mounted && (__privateGet(this, _currentQuery) !== prevQuery || resolveEnabled(this.options.enabled, __privateGet(this, _currentQuery)) !== resolveEnabled(prevOptions.enabled, __privateGet(this, _currentQuery)) || nextRefetchInterval !== __privateGet(this, _currentRefetchInterval))) {
+      __privateMethod(this, _QueryObserver_instances, updateRefetchInterval_fn).call(this, nextRefetchInterval);
+    }
+  }
+  getOptimisticResult(options) {
+    const query = __privateGet(this, _client2).getQueryCache().build(__privateGet(this, _client2), options);
+    const result = this.createResult(query, options);
+    if (shouldAssignObserverCurrentProperties(this, result)) {
+      __privateSet(this, _currentResult, result);
+      __privateSet(this, _currentResultOptions, this.options);
+      __privateSet(this, _currentResultState, __privateGet(this, _currentQuery).state);
+    }
+    return result;
+  }
+  getCurrentResult() {
+    return __privateGet(this, _currentResult);
+  }
+  trackResult(result, onPropTracked) {
+    return new Proxy(result, {
+      get: (target, key) => {
+        this.trackProp(key);
+        onPropTracked == null ? void 0 : onPropTracked(key);
+        if (key === "promise") {
+          this.trackProp("data");
+          if (!this.options.experimental_prefetchInRender && __privateGet(this, _currentThenable).status === "pending") {
+            __privateGet(this, _currentThenable).reject(
+              new Error(
+                "experimental_prefetchInRender feature flag is not enabled"
+              )
+            );
+          }
+        }
+        return Reflect.get(target, key);
+      }
+    });
+  }
+  trackProp(key) {
+    __privateGet(this, _trackedProps).add(key);
+  }
+  getCurrentQuery() {
+    return __privateGet(this, _currentQuery);
+  }
+  refetch({ ...options } = {}) {
+    return this.fetch({
+      ...options
+    });
+  }
+  fetchOptimistic(options) {
+    const defaultedOptions = __privateGet(this, _client2).defaultQueryOptions(options);
+    const query = __privateGet(this, _client2).getQueryCache().build(__privateGet(this, _client2), defaultedOptions);
+    return query.fetch().then(() => this.createResult(query, defaultedOptions));
+  }
+  fetch(fetchOptions) {
+    return __privateMethod(this, _QueryObserver_instances, executeFetch_fn).call(this, {
+      ...fetchOptions,
+      cancelRefetch: fetchOptions.cancelRefetch ?? true
+    }).then(() => {
+      this.updateResult();
+      return __privateGet(this, _currentResult);
+    });
+  }
+  createResult(query, options) {
+    var _a3;
+    const prevQuery = __privateGet(this, _currentQuery);
+    const prevOptions = this.options;
+    const prevResult = __privateGet(this, _currentResult);
+    const prevResultState = __privateGet(this, _currentResultState);
+    const prevResultOptions = __privateGet(this, _currentResultOptions);
+    const queryChange = query !== prevQuery;
+    const queryInitialState = queryChange ? query.state : __privateGet(this, _currentQueryInitialState);
+    const { state } = query;
+    let newState = { ...state };
+    let isPlaceholderData = false;
+    let data;
+    if (options._optimisticResults) {
+      const mounted = this.hasListeners();
+      const fetchOnMount = !mounted && shouldFetchOnMount(query, options);
+      const fetchOptionally = mounted && shouldFetchOptionally(query, prevQuery, options, prevOptions);
+      if (fetchOnMount || fetchOptionally) {
+        newState = {
+          ...newState,
+          ...fetchState(state.data, query.options)
+        };
+      }
+      if (options._optimisticResults === "isRestoring") {
+        newState.fetchStatus = "idle";
+      }
+    }
+    let { error, errorUpdatedAt, status } = newState;
+    data = newState.data;
+    let skipSelect = false;
+    if (options.placeholderData !== void 0 && data === void 0 && status === "pending") {
+      let placeholderData;
+      if ((prevResult == null ? void 0 : prevResult.isPlaceholderData) && options.placeholderData === (prevResultOptions == null ? void 0 : prevResultOptions.placeholderData)) {
+        placeholderData = prevResult.data;
+        skipSelect = true;
+      } else {
+        placeholderData = typeof options.placeholderData === "function" ? options.placeholderData(
+          (_a3 = __privateGet(this, _lastQueryWithDefinedData)) == null ? void 0 : _a3.state.data,
+          __privateGet(this, _lastQueryWithDefinedData)
+        ) : options.placeholderData;
+      }
+      if (placeholderData !== void 0) {
+        status = "success";
+        data = replaceData(
+          prevResult == null ? void 0 : prevResult.data,
+          placeholderData,
+          options
+        );
+        isPlaceholderData = true;
+      }
+    }
+    if (options.select && data !== void 0 && !skipSelect) {
+      if (prevResult && data === (prevResultState == null ? void 0 : prevResultState.data) && options.select === __privateGet(this, _selectFn)) {
+        data = __privateGet(this, _selectResult);
+      } else {
+        try {
+          __privateSet(this, _selectFn, options.select);
+          data = options.select(data);
+          data = replaceData(prevResult == null ? void 0 : prevResult.data, data, options);
+          __privateSet(this, _selectResult, data);
+          __privateSet(this, _selectError, null);
+        } catch (selectError) {
+          __privateSet(this, _selectError, selectError);
+        }
+      }
+    }
+    if (__privateGet(this, _selectError)) {
+      error = __privateGet(this, _selectError);
+      data = __privateGet(this, _selectResult);
+      errorUpdatedAt = Date.now();
+      status = "error";
+    }
+    const isFetching = newState.fetchStatus === "fetching";
+    const isPending = status === "pending";
+    const isError = status === "error";
+    const isLoading = isPending && isFetching;
+    const hasData = data !== void 0;
+    const result = {
+      status,
+      fetchStatus: newState.fetchStatus,
+      isPending,
+      isSuccess: status === "success",
+      isError,
+      isInitialLoading: isLoading,
+      isLoading,
+      data,
+      dataUpdatedAt: newState.dataUpdatedAt,
+      error,
+      errorUpdatedAt,
+      failureCount: newState.fetchFailureCount,
+      failureReason: newState.fetchFailureReason,
+      errorUpdateCount: newState.errorUpdateCount,
+      isFetched: query.isFetched(),
+      isFetchedAfterMount: newState.dataUpdateCount > queryInitialState.dataUpdateCount || newState.errorUpdateCount > queryInitialState.errorUpdateCount,
+      isFetching,
+      isRefetching: isFetching && !isPending,
+      isLoadingError: isError && !hasData,
+      isPaused: newState.fetchStatus === "paused",
+      isPlaceholderData,
+      isRefetchError: isError && hasData,
+      isStale: isStale(query, options),
+      refetch: this.refetch,
+      promise: __privateGet(this, _currentThenable),
+      isEnabled: resolveEnabled(options.enabled, query) !== false
+    };
+    const nextResult = result;
+    if (this.options.experimental_prefetchInRender) {
+      const hasResultData = nextResult.data !== void 0;
+      const isErrorWithoutData = nextResult.status === "error" && !hasResultData;
+      const finalizeThenableIfPossible = (thenable) => {
+        if (isErrorWithoutData) {
+          thenable.reject(nextResult.error);
+        } else if (hasResultData) {
+          thenable.resolve(nextResult.data);
+        }
+      };
+      const recreateThenable = () => {
+        const pending = __privateSet(this, _currentThenable, nextResult.promise = pendingThenable());
+        finalizeThenableIfPossible(pending);
+      };
+      const prevThenable = __privateGet(this, _currentThenable);
+      switch (prevThenable.status) {
+        case "pending":
+          if (query.queryHash === prevQuery.queryHash) {
+            finalizeThenableIfPossible(prevThenable);
+          }
+          break;
+        case "fulfilled":
+          if (isErrorWithoutData || nextResult.data !== prevThenable.value) {
+            recreateThenable();
+          }
+          break;
+        case "rejected":
+          if (!isErrorWithoutData || nextResult.error !== prevThenable.reason) {
+            recreateThenable();
+          }
+          break;
+      }
+    }
+    return nextResult;
+  }
+  updateResult() {
+    const prevResult = __privateGet(this, _currentResult);
+    const nextResult = this.createResult(__privateGet(this, _currentQuery), this.options);
+    __privateSet(this, _currentResultState, __privateGet(this, _currentQuery).state);
+    __privateSet(this, _currentResultOptions, this.options);
+    if (__privateGet(this, _currentResultState).data !== void 0) {
+      __privateSet(this, _lastQueryWithDefinedData, __privateGet(this, _currentQuery));
+    }
+    if (shallowEqualObjects(nextResult, prevResult)) {
+      return;
+    }
+    __privateSet(this, _currentResult, nextResult);
+    const shouldNotifyListeners = () => {
+      if (!prevResult) {
+        return true;
+      }
+      const { notifyOnChangeProps } = this.options;
+      const notifyOnChangePropsValue = typeof notifyOnChangeProps === "function" ? notifyOnChangeProps() : notifyOnChangeProps;
+      if (notifyOnChangePropsValue === "all" || !notifyOnChangePropsValue && !__privateGet(this, _trackedProps).size) {
+        return true;
+      }
+      const includedProps = new Set(
+        notifyOnChangePropsValue ?? __privateGet(this, _trackedProps)
+      );
+      if (this.options.throwOnError) {
+        includedProps.add("error");
+      }
+      return Object.keys(__privateGet(this, _currentResult)).some((key) => {
+        const typedKey = key;
+        const changed = __privateGet(this, _currentResult)[typedKey] !== prevResult[typedKey];
+        return changed && includedProps.has(typedKey);
+      });
+    };
+    __privateMethod(this, _QueryObserver_instances, notify_fn).call(this, { listeners: shouldNotifyListeners() });
+  }
+  onQueryUpdate() {
+    this.updateResult();
+    if (this.hasListeners()) {
+      __privateMethod(this, _QueryObserver_instances, updateTimers_fn).call(this);
+    }
+  }
+}, _client2 = new WeakMap(), _currentQuery = new WeakMap(), _currentQueryInitialState = new WeakMap(), _currentResult = new WeakMap(), _currentResultState = new WeakMap(), _currentResultOptions = new WeakMap(), _currentThenable = new WeakMap(), _selectError = new WeakMap(), _selectFn = new WeakMap(), _selectResult = new WeakMap(), _lastQueryWithDefinedData = new WeakMap(), _staleTimeoutId = new WeakMap(), _refetchIntervalId = new WeakMap(), _currentRefetchInterval = new WeakMap(), _trackedProps = new WeakMap(), _QueryObserver_instances = new WeakSet(), executeFetch_fn = function(fetchOptions) {
+  __privateMethod(this, _QueryObserver_instances, updateQuery_fn).call(this);
+  let promise = __privateGet(this, _currentQuery).fetch(
+    this.options,
+    fetchOptions
+  );
+  if (!(fetchOptions == null ? void 0 : fetchOptions.throwOnError)) {
+    promise = promise.catch(noop$7);
+  }
+  return promise;
+}, updateStaleTimeout_fn = function() {
+  __privateMethod(this, _QueryObserver_instances, clearStaleTimeout_fn).call(this);
+  const staleTime = resolveStaleTime(
+    this.options.staleTime,
+    __privateGet(this, _currentQuery)
+  );
+  if (environmentManager.isServer() || __privateGet(this, _currentResult).isStale || !isValidTimeout(staleTime)) {
+    return;
+  }
+  const time = timeUntilStale(__privateGet(this, _currentResult).dataUpdatedAt, staleTime);
+  const timeout2 = time + 1;
+  __privateSet(this, _staleTimeoutId, timeoutManager.setTimeout(() => {
+    if (!__privateGet(this, _currentResult).isStale) {
+      this.updateResult();
+    }
+  }, timeout2));
+}, computeRefetchInterval_fn = function() {
+  return (typeof this.options.refetchInterval === "function" ? this.options.refetchInterval(__privateGet(this, _currentQuery)) : this.options.refetchInterval) ?? false;
+}, updateRefetchInterval_fn = function(nextInterval) {
+  __privateMethod(this, _QueryObserver_instances, clearRefetchInterval_fn).call(this);
+  __privateSet(this, _currentRefetchInterval, nextInterval);
+  if (environmentManager.isServer() || resolveEnabled(this.options.enabled, __privateGet(this, _currentQuery)) === false || !isValidTimeout(__privateGet(this, _currentRefetchInterval)) || __privateGet(this, _currentRefetchInterval) === 0) {
+    return;
+  }
+  __privateSet(this, _refetchIntervalId, timeoutManager.setInterval(() => {
+    if (this.options.refetchIntervalInBackground || focusManager.isFocused()) {
+      __privateMethod(this, _QueryObserver_instances, executeFetch_fn).call(this);
+    }
+  }, __privateGet(this, _currentRefetchInterval)));
+}, updateTimers_fn = function() {
+  __privateMethod(this, _QueryObserver_instances, updateStaleTimeout_fn).call(this);
+  __privateMethod(this, _QueryObserver_instances, updateRefetchInterval_fn).call(this, __privateMethod(this, _QueryObserver_instances, computeRefetchInterval_fn).call(this));
+}, clearStaleTimeout_fn = function() {
+  if (__privateGet(this, _staleTimeoutId)) {
+    timeoutManager.clearTimeout(__privateGet(this, _staleTimeoutId));
+    __privateSet(this, _staleTimeoutId, void 0);
+  }
+}, clearRefetchInterval_fn = function() {
+  if (__privateGet(this, _refetchIntervalId)) {
+    timeoutManager.clearInterval(__privateGet(this, _refetchIntervalId));
+    __privateSet(this, _refetchIntervalId, void 0);
+  }
+}, updateQuery_fn = function() {
+  const query = __privateGet(this, _client2).getQueryCache().build(__privateGet(this, _client2), this.options);
+  if (query === __privateGet(this, _currentQuery)) {
+    return;
+  }
+  const prevQuery = __privateGet(this, _currentQuery);
+  __privateSet(this, _currentQuery, query);
+  __privateSet(this, _currentQueryInitialState, query.state);
+  if (this.hasListeners()) {
+    prevQuery == null ? void 0 : prevQuery.removeObserver(this);
+    query.addObserver(this);
+  }
+}, notify_fn = function(notifyOptions) {
+  notifyManager.batch(() => {
+    if (notifyOptions.listeners) {
+      this.listeners.forEach((listener) => {
+        listener(__privateGet(this, _currentResult));
+      });
+    }
+    __privateGet(this, _client2).getQueryCache().notify({
+      query: __privateGet(this, _currentQuery),
+      type: "observerResultsUpdated"
+    });
+  });
+}, _g);
+function shouldLoadOnMount(query, options) {
+  return resolveEnabled(options.enabled, query) !== false && query.state.data === void 0 && !(query.state.status === "error" && options.retryOnMount === false);
+}
+function shouldFetchOnMount(query, options) {
+  return shouldLoadOnMount(query, options) || query.state.data !== void 0 && shouldFetchOn(query, options, options.refetchOnMount);
+}
+function shouldFetchOn(query, options, field) {
+  if (resolveEnabled(options.enabled, query) !== false && resolveStaleTime(options.staleTime, query) !== "static") {
+    const value = typeof field === "function" ? field(query) : field;
+    return value === "always" || value !== false && isStale(query, options);
+  }
+  return false;
+}
+function shouldFetchOptionally(query, prevQuery, options, prevOptions) {
+  return (query !== prevQuery || resolveEnabled(prevOptions.enabled, query) === false) && (!options.suspense || query.state.status !== "error") && isStale(query, options);
+}
+function isStale(query, options) {
+  return resolveEnabled(options.enabled, query) !== false && query.isStaleByTime(resolveStaleTime(options.staleTime, query));
+}
+function shouldAssignObserverCurrentProperties(observer, optimisticResult) {
+  if (!shallowEqualObjects(observer.getCurrentResult(), optimisticResult)) {
+    return true;
+  }
+  return false;
+}
 function infiniteQueryBehavior(pages) {
   return {
     onFetch: (context, query) => {
-      var _a2, _b2, _c2, _d2, _e2;
+      var _a3, _b3, _c2, _d2, _e2;
       const options = context.options;
-      const direction = (_c2 = (_b2 = (_a2 = context.fetchOptions) == null ? void 0 : _a2.meta) == null ? void 0 : _b2.fetchMore) == null ? void 0 : _c2.direction;
+      const direction = (_c2 = (_b3 = (_a3 = context.fetchOptions) == null ? void 0 : _a3.meta) == null ? void 0 : _b3.fetchMore) == null ? void 0 : _c2.direction;
       const oldPages = ((_d2 = context.state.data) == null ? void 0 : _d2.pages) || [];
       const oldPageParams = ((_e2 = context.state.data) == null ? void 0 : _e2.pageParams) || [];
       let result = { pages: [], pageParams: [] };
@@ -4207,9 +12865,9 @@ function infiniteQueryBehavior(pages) {
       };
       if (context.options.persister) {
         context.fetchFn = () => {
-          var _a3, _b3;
-          return (_b3 = (_a3 = context.options).persister) == null ? void 0 : _b3.call(
-            _a3,
+          var _a4, _b4;
+          return (_b4 = (_a4 = context.options).persister) == null ? void 0 : _b4.call(
+            _a4,
             fetchFn,
             {
               client: context.client,
@@ -4236,18 +12894,18 @@ function getNextPageParam(options, { pages, pageParams }) {
   ) : void 0;
 }
 function getPreviousPageParam(options, { pages, pageParams }) {
-  var _a2;
-  return pages.length > 0 ? (_a2 = options.getPreviousPageParam) == null ? void 0 : _a2.call(options, pages[0], pages, pageParams[0], pageParams) : void 0;
+  var _a3;
+  return pages.length > 0 ? (_a3 = options.getPreviousPageParam) == null ? void 0 : _a3.call(options, pages[0], pages, pageParams[0], pageParams) : void 0;
 }
-var Mutation = (_f = class extends Removable {
+var Mutation = (_h = class extends Removable {
   constructor(config) {
     super();
     __privateAdd(this, _Mutation_instances);
-    __privateAdd(this, _client2);
+    __privateAdd(this, _client3);
     __privateAdd(this, _observers);
     __privateAdd(this, _mutationCache);
     __privateAdd(this, _retryer2);
-    __privateSet(this, _client2, config.client);
+    __privateSet(this, _client3, config.client);
     this.mutationId = config.mutationId;
     __privateSet(this, _mutationCache, config.mutationCache);
     __privateSet(this, _observers, []);
@@ -4274,7 +12932,7 @@ var Mutation = (_f = class extends Removable {
     }
   }
   removeObserver(observer) {
-    __privateSet(this, _observers, __privateGet(this, _observers).filter((x) => x !== observer));
+    __privateSet(this, _observers, __privateGet(this, _observers).filter((x2) => x2 !== observer));
     this.scheduleGc();
     __privateGet(this, _mutationCache).notify({
       type: "observerRemoved",
@@ -4292,17 +12950,17 @@ var Mutation = (_f = class extends Removable {
     }
   }
   continue() {
-    var _a2;
-    return ((_a2 = __privateGet(this, _retryer2)) == null ? void 0 : _a2.continue()) ?? // continuing a mutation assumes that variables are set, mutation must have been dehydrated before
+    var _a3;
+    return ((_a3 = __privateGet(this, _retryer2)) == null ? void 0 : _a3.continue()) ?? // continuing a mutation assumes that variables are set, mutation must have been dehydrated before
     this.execute(this.state.variables);
   }
   async execute(variables) {
-    var _a2, _b2, _c2, _d2, _e2, _f2, _g2, _h2, _i2, _j, _k, _l, _m, _n, _o, _p, _q, _r;
+    var _a3, _b3, _c2, _d2, _e2, _f2, _g2, _h2, _i2, _j2, _k2, _l2, _m, _n, _o, _p, _q, _r;
     const onContinue = () => {
       __privateMethod(this, _Mutation_instances, dispatch_fn2).call(this, { type: "continue" });
     };
     const mutationFnContext = {
-      client: __privateGet(this, _client2),
+      client: __privateGet(this, _client3),
       meta: this.options.meta,
       mutationKey: this.options.mutationKey
     };
@@ -4339,8 +12997,8 @@ var Mutation = (_f = class extends Removable {
             mutationFnContext
           );
         }
-        const context = await ((_b2 = (_a2 = this.options).onMutate) == null ? void 0 : _b2.call(
-          _a2,
+        const context = await ((_b3 = (_a3 = this.options).onMutate) == null ? void 0 : _b3.call(
+          _a3,
           variables,
           mutationFnContext
         ));
@@ -4378,7 +13036,7 @@ var Mutation = (_f = class extends Removable {
         this,
         mutationFnContext
       ));
-      await ((_j = (_i2 = this.options).onSettled) == null ? void 0 : _j.call(
+      await ((_j2 = (_i2 = this.options).onSettled) == null ? void 0 : _j2.call(
         _i2,
         data,
         null,
@@ -4390,8 +13048,8 @@ var Mutation = (_f = class extends Removable {
       return data;
     } catch (error) {
       try {
-        await ((_l = (_k = __privateGet(this, _mutationCache).config).onError) == null ? void 0 : _l.call(
-          _k,
+        await ((_l2 = (_k2 = __privateGet(this, _mutationCache).config).onError) == null ? void 0 : _l2.call(
+          _k2,
           error,
           variables,
           this.state.context,
@@ -4443,7 +13101,7 @@ var Mutation = (_f = class extends Removable {
       __privateGet(this, _mutationCache).runNext(this);
     }
   }
-}, _client2 = new WeakMap(), _observers = new WeakMap(), _mutationCache = new WeakMap(), _retryer2 = new WeakMap(), _Mutation_instances = new WeakSet(), dispatch_fn2 = function(action) {
+}, _client3 = new WeakMap(), _observers = new WeakMap(), _mutationCache = new WeakMap(), _retryer2 = new WeakMap(), _Mutation_instances = new WeakSet(), dispatch_fn2 = function(action) {
   const reducer = (state) => {
     switch (action.type) {
       case "failed":
@@ -4508,7 +13166,7 @@ var Mutation = (_f = class extends Removable {
       action
     });
   });
-}, _f);
+}, _h);
 function getDefaultState() {
   return {
     context: void 0,
@@ -4522,7 +13180,7 @@ function getDefaultState() {
     submittedAt: 0
   };
 }
-var MutationCache = (_g = class extends Subscribable {
+var MutationCache = (_i = class extends Subscribable {
   constructor(config = {}) {
     super();
     __privateAdd(this, _mutations);
@@ -4581,7 +13239,7 @@ var MutationCache = (_g = class extends Subscribable {
     if (typeof scope === "string") {
       const mutationsWithSameScope = __privateGet(this, _scopes).get(scope);
       const firstPendingMutation = mutationsWithSameScope == null ? void 0 : mutationsWithSameScope.find(
-        (m) => m.state.status === "pending"
+        (m2) => m2.state.status === "pending"
       );
       return !firstPendingMutation || firstPendingMutation === mutation;
     } else {
@@ -4589,10 +13247,10 @@ var MutationCache = (_g = class extends Subscribable {
     }
   }
   runNext(mutation) {
-    var _a2;
+    var _a3;
     const scope = scopeFor(mutation);
     if (typeof scope === "string") {
-      const foundMutation = (_a2 = __privateGet(this, _scopes).get(scope)) == null ? void 0 : _a2.find((m) => m !== mutation && m.state.isPaused);
+      const foundMutation = (_a3 = __privateGet(this, _scopes).get(scope)) == null ? void 0 : _a3.find((m2) => m2 !== mutation && m2.state.isPaused);
       return (foundMutation == null ? void 0 : foundMutation.continue()) ?? Promise.resolve();
     } else {
       return Promise.resolve();
@@ -4627,19 +13285,159 @@ var MutationCache = (_g = class extends Subscribable {
     });
   }
   resumePausedMutations() {
-    const pausedMutations = this.getAll().filter((x) => x.state.isPaused);
+    const pausedMutations = this.getAll().filter((x2) => x2.state.isPaused);
     return notifyManager.batch(
       () => Promise.all(
         pausedMutations.map((mutation) => mutation.continue().catch(noop$7))
       )
     );
   }
-}, _mutations = new WeakMap(), _scopes = new WeakMap(), _mutationId = new WeakMap(), _g);
+}, _mutations = new WeakMap(), _scopes = new WeakMap(), _mutationId = new WeakMap(), _i);
 function scopeFor(mutation) {
-  var _a2;
-  return (_a2 = mutation.options.scope) == null ? void 0 : _a2.id;
+  var _a3;
+  return (_a3 = mutation.options.scope) == null ? void 0 : _a3.id;
 }
-var QueryCache = (_h = class extends Subscribable {
+var MutationObserver$1 = (_j = class extends Subscribable {
+  constructor(client2, options) {
+    super();
+    __privateAdd(this, _MutationObserver_instances);
+    __privateAdd(this, _client4);
+    __privateAdd(this, _currentResult2);
+    __privateAdd(this, _currentMutation);
+    __privateAdd(this, _mutateOptions);
+    __privateSet(this, _client4, client2);
+    this.setOptions(options);
+    this.bindMethods();
+    __privateMethod(this, _MutationObserver_instances, updateResult_fn).call(this);
+  }
+  bindMethods() {
+    this.mutate = this.mutate.bind(this);
+    this.reset = this.reset.bind(this);
+  }
+  setOptions(options) {
+    var _a3;
+    const prevOptions = this.options;
+    this.options = __privateGet(this, _client4).defaultMutationOptions(options);
+    if (!shallowEqualObjects(this.options, prevOptions)) {
+      __privateGet(this, _client4).getMutationCache().notify({
+        type: "observerOptionsUpdated",
+        mutation: __privateGet(this, _currentMutation),
+        observer: this
+      });
+    }
+    if ((prevOptions == null ? void 0 : prevOptions.mutationKey) && this.options.mutationKey && hashKey(prevOptions.mutationKey) !== hashKey(this.options.mutationKey)) {
+      this.reset();
+    } else if (((_a3 = __privateGet(this, _currentMutation)) == null ? void 0 : _a3.state.status) === "pending") {
+      __privateGet(this, _currentMutation).setOptions(this.options);
+    }
+  }
+  onUnsubscribe() {
+    var _a3;
+    if (!this.hasListeners()) {
+      (_a3 = __privateGet(this, _currentMutation)) == null ? void 0 : _a3.removeObserver(this);
+    }
+  }
+  onMutationUpdate(action) {
+    __privateMethod(this, _MutationObserver_instances, updateResult_fn).call(this);
+    __privateMethod(this, _MutationObserver_instances, notify_fn2).call(this, action);
+  }
+  getCurrentResult() {
+    return __privateGet(this, _currentResult2);
+  }
+  reset() {
+    var _a3;
+    (_a3 = __privateGet(this, _currentMutation)) == null ? void 0 : _a3.removeObserver(this);
+    __privateSet(this, _currentMutation, void 0);
+    __privateMethod(this, _MutationObserver_instances, updateResult_fn).call(this);
+    __privateMethod(this, _MutationObserver_instances, notify_fn2).call(this);
+  }
+  mutate(variables, options) {
+    var _a3;
+    __privateSet(this, _mutateOptions, options);
+    (_a3 = __privateGet(this, _currentMutation)) == null ? void 0 : _a3.removeObserver(this);
+    __privateSet(this, _currentMutation, __privateGet(this, _client4).getMutationCache().build(__privateGet(this, _client4), this.options));
+    __privateGet(this, _currentMutation).addObserver(this);
+    return __privateGet(this, _currentMutation).execute(variables);
+  }
+}, _client4 = new WeakMap(), _currentResult2 = new WeakMap(), _currentMutation = new WeakMap(), _mutateOptions = new WeakMap(), _MutationObserver_instances = new WeakSet(), updateResult_fn = function() {
+  var _a3;
+  const state = ((_a3 = __privateGet(this, _currentMutation)) == null ? void 0 : _a3.state) ?? getDefaultState();
+  __privateSet(this, _currentResult2, {
+    ...state,
+    isPending: state.status === "pending",
+    isSuccess: state.status === "success",
+    isError: state.status === "error",
+    isIdle: state.status === "idle",
+    mutate: this.mutate,
+    reset: this.reset
+  });
+}, notify_fn2 = function(action) {
+  notifyManager.batch(() => {
+    var _a3, _b3, _c2, _d2, _e2, _f2, _g2, _h2;
+    if (__privateGet(this, _mutateOptions) && this.hasListeners()) {
+      const variables = __privateGet(this, _currentResult2).variables;
+      const onMutateResult = __privateGet(this, _currentResult2).context;
+      const context = {
+        client: __privateGet(this, _client4),
+        meta: this.options.meta,
+        mutationKey: this.options.mutationKey
+      };
+      if ((action == null ? void 0 : action.type) === "success") {
+        try {
+          (_b3 = (_a3 = __privateGet(this, _mutateOptions)).onSuccess) == null ? void 0 : _b3.call(
+            _a3,
+            action.data,
+            variables,
+            onMutateResult,
+            context
+          );
+        } catch (e) {
+          void Promise.reject(e);
+        }
+        try {
+          (_d2 = (_c2 = __privateGet(this, _mutateOptions)).onSettled) == null ? void 0 : _d2.call(
+            _c2,
+            action.data,
+            null,
+            variables,
+            onMutateResult,
+            context
+          );
+        } catch (e) {
+          void Promise.reject(e);
+        }
+      } else if ((action == null ? void 0 : action.type) === "error") {
+        try {
+          (_f2 = (_e2 = __privateGet(this, _mutateOptions)).onError) == null ? void 0 : _f2.call(
+            _e2,
+            action.error,
+            variables,
+            onMutateResult,
+            context
+          );
+        } catch (e) {
+          void Promise.reject(e);
+        }
+        try {
+          (_h2 = (_g2 = __privateGet(this, _mutateOptions)).onSettled) == null ? void 0 : _h2.call(
+            _g2,
+            void 0,
+            action.error,
+            variables,
+            onMutateResult,
+            context
+          );
+        } catch (e) {
+          void Promise.reject(e);
+        }
+      }
+    }
+    this.listeners.forEach((listener) => {
+      listener(__privateGet(this, _currentResult2));
+    });
+  });
+}, _j);
+var QueryCache = (_k = class extends Subscribable {
   constructor(config = {}) {
     super();
     __privateAdd(this, _queries);
@@ -4726,8 +13524,8 @@ var QueryCache = (_h = class extends Subscribable {
       });
     });
   }
-}, _queries = new WeakMap(), _h);
-var QueryClient = (_i = class {
+}, _queries = new WeakMap(), _k);
+var QueryClient = (_l = class {
   constructor(config = {}) {
     __privateAdd(this, _queryCache);
     __privateAdd(this, _mutationCache2);
@@ -4761,12 +13559,12 @@ var QueryClient = (_i = class {
     }));
   }
   unmount() {
-    var _a2, _b2;
+    var _a3, _b3;
     __privateWrapper(this, _mountCount)._--;
     if (__privateGet(this, _mountCount) !== 0) return;
-    (_a2 = __privateGet(this, _unsubscribeFocus)) == null ? void 0 : _a2.call(this);
+    (_a3 = __privateGet(this, _unsubscribeFocus)) == null ? void 0 : _a3.call(this);
     __privateSet(this, _unsubscribeFocus, void 0);
-    (_b2 = __privateGet(this, _unsubscribeOnline)) == null ? void 0 : _b2.call(this);
+    (_b3 = __privateGet(this, _unsubscribeOnline)) == null ? void 0 : _b3.call(this);
     __privateSet(this, _unsubscribeOnline, void 0);
   }
   isFetching(filters) {
@@ -4783,9 +13581,9 @@ var QueryClient = (_i = class {
    * Use `useQuery` to create a `QueryObserver` that subscribes to changes.
    */
   getQueryData(queryKey) {
-    var _a2;
+    var _a3;
     const options = this.defaultQueryOptions({ queryKey });
-    return (_a2 = __privateGet(this, _queryCache).get(options.queryHash)) == null ? void 0 : _a2.state.data;
+    return (_a3 = __privateGet(this, _queryCache).get(options.queryHash)) == null ? void 0 : _a3.state.data;
   }
   ensureQueryData(options) {
     const defaultedOptions = this.defaultQueryOptions(options);
@@ -4826,11 +13624,11 @@ var QueryClient = (_i = class {
     );
   }
   getQueryState(queryKey) {
-    var _a2;
+    var _a3;
     const options = this.defaultQueryOptions({ queryKey });
-    return (_a2 = __privateGet(this, _queryCache).get(
+    return (_a3 = __privateGet(this, _queryCache).get(
       options.queryHash
-    )) == null ? void 0 : _a2.state;
+    )) == null ? void 0 : _a3.state;
   }
   removeQueries(filters) {
     const queryCache = __privateGet(this, _queryCache);
@@ -5014,7 +13812,7 @@ var QueryClient = (_i = class {
     __privateGet(this, _queryCache).clear();
     __privateGet(this, _mutationCache2).clear();
   }
-}, _queryCache = new WeakMap(), _mutationCache2 = new WeakMap(), _defaultOptions2 = new WeakMap(), _queryDefaults = new WeakMap(), _mutationDefaults = new WeakMap(), _mountCount = new WeakMap(), _unsubscribeFocus = new WeakMap(), _unsubscribeOnline = new WeakMap(), _i);
+}, _queryCache = new WeakMap(), _mutationCache2 = new WeakMap(), _defaultOptions2 = new WeakMap(), _queryDefaults = new WeakMap(), _mutationDefaults = new WeakMap(), _mountCount = new WeakMap(), _unsubscribeFocus = new WeakMap(), _unsubscribeOnline = new WeakMap(), _l);
 var react = { exports: {} };
 var react_production = {};
 /**
@@ -5161,8 +13959,8 @@ function mapIntoArray(children, array, escapedPrefix, nameSoFar, callback) {
         }
     }
   if (invokeCallback)
-    return callback = callback(children), invokeCallback = "" === nameSoFar ? "." + getElementKey(children, 0) : nameSoFar, isArrayImpl$1(callback) ? (escapedPrefix = "", null != invokeCallback && (escapedPrefix = invokeCallback.replace(userProvidedKeyEscapeRegex, "$&/") + "/"), mapIntoArray(callback, array, escapedPrefix, "", function(c) {
-      return c;
+    return callback = callback(children), invokeCallback = "" === nameSoFar ? "." + getElementKey(children, 0) : nameSoFar, isArrayImpl$1(callback) ? (escapedPrefix = "", null != invokeCallback && (escapedPrefix = invokeCallback.replace(userProvidedKeyEscapeRegex, "$&/") + "/"), mapIntoArray(callback, array, escapedPrefix, "", function(c2) {
+      return c2;
     })) : null != callback && (isValidElement(callback) && (callback = cloneAndReplaceKey(
       callback,
       escapedPrefix + (null == callback.key || children && children.key === callback.key ? "" : ("" + callback.key).replace(
@@ -5462,6 +14260,13 @@ const React$2 = /* @__PURE__ */ _mergeNamespaces({
 var QueryClientContext = reactExports.createContext(
   void 0
 );
+var useQueryClient = (queryClient2) => {
+  const client2 = reactExports.useContext(QueryClientContext);
+  if (!client2) {
+    throw new Error("No QueryClient set, use QueryClientProvider to set one");
+  }
+  return client2;
+};
 var QueryClientProvider = ({
   client: client2,
   children
@@ -5474,19 +14279,182 @@ var QueryClientProvider = ({
   }, [client2]);
   return /* @__PURE__ */ jsxRuntimeExports.jsx(QueryClientContext.Provider, { value: client2, children });
 };
+var IsRestoringContext = reactExports.createContext(false);
+var useIsRestoring = () => reactExports.useContext(IsRestoringContext);
+IsRestoringContext.Provider;
+function createValue() {
+  let isReset = false;
+  return {
+    clearReset: () => {
+      isReset = false;
+    },
+    reset: () => {
+      isReset = true;
+    },
+    isReset: () => {
+      return isReset;
+    }
+  };
+}
+var QueryErrorResetBoundaryContext = reactExports.createContext(createValue());
+var useQueryErrorResetBoundary = () => reactExports.useContext(QueryErrorResetBoundaryContext);
+var ensurePreventErrorBoundaryRetry = (options, errorResetBoundary, query) => {
+  const throwOnError = (query == null ? void 0 : query.state.error) && typeof options.throwOnError === "function" ? shouldThrowError(options.throwOnError, [query.state.error, query]) : options.throwOnError;
+  if (options.suspense || options.experimental_prefetchInRender || throwOnError) {
+    if (!errorResetBoundary.isReset()) {
+      options.retryOnMount = false;
+    }
+  }
+};
+var useClearResetErrorBoundary = (errorResetBoundary) => {
+  reactExports.useEffect(() => {
+    errorResetBoundary.clearReset();
+  }, [errorResetBoundary]);
+};
+var getHasError = ({
+  result,
+  errorResetBoundary,
+  throwOnError,
+  query,
+  suspense
+}) => {
+  return result.isError && !errorResetBoundary.isReset() && !result.isFetching && query && (suspense && result.data === void 0 || shouldThrowError(throwOnError, [result.error, query]));
+};
+var ensureSuspenseTimers = (defaultedOptions) => {
+  if (defaultedOptions.suspense) {
+    const MIN_SUSPENSE_TIME_MS = 1e3;
+    const clamp2 = (value) => value === "static" ? value : Math.max(value ?? MIN_SUSPENSE_TIME_MS, MIN_SUSPENSE_TIME_MS);
+    const originalStaleTime = defaultedOptions.staleTime;
+    defaultedOptions.staleTime = typeof originalStaleTime === "function" ? (...args) => clamp2(originalStaleTime(...args)) : clamp2(originalStaleTime);
+    if (typeof defaultedOptions.gcTime === "number") {
+      defaultedOptions.gcTime = Math.max(
+        defaultedOptions.gcTime,
+        MIN_SUSPENSE_TIME_MS
+      );
+    }
+  }
+};
+var willFetch = (result, isRestoring) => result.isLoading && result.isFetching && !isRestoring;
+var shouldSuspend = (defaultedOptions, result) => (defaultedOptions == null ? void 0 : defaultedOptions.suspense) && result.isPending;
+var fetchOptimistic = (defaultedOptions, observer, errorResetBoundary) => observer.fetchOptimistic(defaultedOptions).catch(() => {
+  errorResetBoundary.clearReset();
+});
+function useBaseQuery(options, Observer, queryClient2) {
+  var _a3, _b3, _c2, _d2;
+  const isRestoring = useIsRestoring();
+  const errorResetBoundary = useQueryErrorResetBoundary();
+  const client2 = useQueryClient();
+  const defaultedOptions = client2.defaultQueryOptions(options);
+  (_b3 = (_a3 = client2.getDefaultOptions().queries) == null ? void 0 : _a3._experimental_beforeQuery) == null ? void 0 : _b3.call(
+    _a3,
+    defaultedOptions
+  );
+  const query = client2.getQueryCache().get(defaultedOptions.queryHash);
+  defaultedOptions._optimisticResults = isRestoring ? "isRestoring" : "optimistic";
+  ensureSuspenseTimers(defaultedOptions);
+  ensurePreventErrorBoundaryRetry(defaultedOptions, errorResetBoundary, query);
+  useClearResetErrorBoundary(errorResetBoundary);
+  const isNewCacheEntry = !client2.getQueryCache().get(defaultedOptions.queryHash);
+  const [observer] = reactExports.useState(
+    () => new Observer(
+      client2,
+      defaultedOptions
+    )
+  );
+  const result = observer.getOptimisticResult(defaultedOptions);
+  const shouldSubscribe = !isRestoring && options.subscribed !== false;
+  reactExports.useSyncExternalStore(
+    reactExports.useCallback(
+      (onStoreChange) => {
+        const unsubscribe = shouldSubscribe ? observer.subscribe(notifyManager.batchCalls(onStoreChange)) : noop$7;
+        observer.updateResult();
+        return unsubscribe;
+      },
+      [observer, shouldSubscribe]
+    ),
+    () => observer.getCurrentResult(),
+    () => observer.getCurrentResult()
+  );
+  reactExports.useEffect(() => {
+    observer.setOptions(defaultedOptions);
+  }, [defaultedOptions, observer]);
+  if (shouldSuspend(defaultedOptions, result)) {
+    throw fetchOptimistic(defaultedOptions, observer, errorResetBoundary);
+  }
+  if (getHasError({
+    result,
+    errorResetBoundary,
+    throwOnError: defaultedOptions.throwOnError,
+    query,
+    suspense: defaultedOptions.suspense
+  })) {
+    throw result.error;
+  }
+  (_d2 = (_c2 = client2.getDefaultOptions().queries) == null ? void 0 : _c2._experimental_afterQuery) == null ? void 0 : _d2.call(
+    _c2,
+    defaultedOptions,
+    result
+  );
+  if (defaultedOptions.experimental_prefetchInRender && !environmentManager.isServer() && willFetch(result, isRestoring)) {
+    const promise = isNewCacheEntry ? (
+      // Fetch immediately on render in order to ensure `.promise` is resolved even if the component is unmounted
+      fetchOptimistic(defaultedOptions, observer, errorResetBoundary)
+    ) : (
+      // subscribe to the "cache promise" so that we can finalize the currentThenable once data comes in
+      query == null ? void 0 : query.promise
+    );
+    promise == null ? void 0 : promise.catch(noop$7).finally(() => {
+      observer.updateResult();
+    });
+  }
+  return !defaultedOptions.notifyOnChangeProps ? observer.trackResult(result) : result;
+}
+function useQuery(options, queryClient2) {
+  return useBaseQuery(options, QueryObserver);
+}
+function useMutation(options, queryClient2) {
+  const client2 = useQueryClient();
+  const [observer] = reactExports.useState(
+    () => new MutationObserver$1(
+      client2,
+      options
+    )
+  );
+  reactExports.useEffect(() => {
+    observer.setOptions(options);
+  }, [observer, options]);
+  const result = reactExports.useSyncExternalStore(
+    reactExports.useCallback(
+      (onStoreChange) => observer.subscribe(notifyManager.batchCalls(onStoreChange)),
+      [observer]
+    ),
+    () => observer.getCurrentResult(),
+    () => observer.getCurrentResult()
+  );
+  const mutate = reactExports.useCallback(
+    (variables, mutateOptions) => {
+      observer.mutate(variables, mutateOptions).catch(noop$7);
+    },
+    [observer]
+  );
+  if (result.error && shouldThrowError(observer.options.throwOnError, [result.error])) {
+    throw result.error;
+  }
+  return { ...result, mutate, mutateAsync: result.mutate };
+}
 function isObject(value) {
   return value !== null && typeof value === "object";
 }
 const _Ed25519PublicKey = class _Ed25519PublicKey {
   // `fromRaw` and `fromDer` should be used for instantiation, not this constructor.
   constructor(key) {
-    __privateAdd(this, _rawKey);
-    __privateAdd(this, _derKey);
+    __privateAdd(this, _rawKey2);
+    __privateAdd(this, _derKey2);
     if (key.byteLength !== _Ed25519PublicKey.RAW_KEY_LENGTH) {
       throw new Error("An Ed25519 public key must be exactly 32bytes long");
     }
-    __privateSet(this, _rawKey, key);
-    __privateSet(this, _derKey, _Ed25519PublicKey.derEncode(key));
+    __privateSet(this, _rawKey2, key);
+    __privateSet(this, _derKey2, _Ed25519PublicKey.derEncode(key));
   }
   /**
    * Construct Ed25519PublicKey from an existing PublicKey
@@ -5535,10 +14503,10 @@ const _Ed25519PublicKey = class _Ed25519PublicKey {
     return unwrapped;
   }
   get rawKey() {
-    return __privateGet(this, _rawKey);
+    return __privateGet(this, _rawKey2);
   }
   get derKey() {
-    return __privateGet(this, _derKey);
+    return __privateGet(this, _derKey2);
   }
   toDer() {
     return this.derKey;
@@ -5547,8 +14515,8 @@ const _Ed25519PublicKey = class _Ed25519PublicKey {
     return this.rawKey;
   }
 };
-_rawKey = new WeakMap();
-_derKey = new WeakMap();
+_rawKey2 = new WeakMap();
+_derKey2 = new WeakMap();
 _Ed25519PublicKey.RAW_KEY_LENGTH = 32;
 let Ed25519PublicKey = _Ed25519PublicKey;
 const _Ed25519KeyIdentity = class _Ed25519KeyIdentity extends SignIdentity {
@@ -5644,11 +14612,11 @@ const _Ed25519KeyIdentity = class _Ed25519KeyIdentity extends SignIdentity {
    * @returns - true if the signature is valid, false otherwise
    */
   static verify(sig, msg, pk) {
-    const [signature, message, publicKey] = [sig, msg, pk].map((x) => {
-      if (typeof x === "string") {
-        x = hexToBytes(x);
+    const [signature, message, publicKey] = [sig, msg, pk].map((x2) => {
+      if (typeof x2 === "string") {
+        x2 = hexToBytes(x2);
       }
-      return uint8FromBufLike$1(x);
+      return uint8FromBufLike$1(x2);
     });
     return ed25519.verify(signature, message, publicKey);
   }
@@ -5756,41 +14724,41 @@ class ECDSAKeyIdentity extends SignIdentity {
 }
 class PartialIdentity {
   constructor(inner) {
-    __privateAdd(this, _inner);
-    __privateSet(this, _inner, inner);
+    __privateAdd(this, _inner2);
+    __privateSet(this, _inner2, inner);
   }
   /**
    * The raw public key of this identity.
    */
   get rawKey() {
-    return __privateGet(this, _inner).rawKey;
+    return __privateGet(this, _inner2).rawKey;
   }
   /**
    * The DER-encoded public key of this identity.
    */
   get derKey() {
-    return __privateGet(this, _inner).derKey;
+    return __privateGet(this, _inner2).derKey;
   }
   /**
    * The DER-encoded public key of this identity.
    */
   toDer() {
-    return __privateGet(this, _inner).toDer();
+    return __privateGet(this, _inner2).toDer();
   }
   /**
    * The inner {@link PublicKey} used by this identity.
    */
   getPublicKey() {
-    return __privateGet(this, _inner);
+    return __privateGet(this, _inner2);
   }
   /**
    * The {@link Principal} of this identity.
    */
   getPrincipal() {
-    if (!__privateGet(this, _inner).rawKey) {
+    if (!__privateGet(this, _inner2).rawKey) {
       throw new Error("Cannot get principal from a public key without a raw key.");
     }
-    return Principal.fromUint8Array(new Uint8Array(__privateGet(this, _inner).rawKey));
+    return Principal$1.fromUint8Array(new Uint8Array(__privateGet(this, _inner2).rawKey));
   }
   /**
    * Required for the Identity interface, but cannot implemented for just a public key.
@@ -5799,7 +14767,7 @@ class PartialIdentity {
     return Promise.reject("Not implemented. You are attempting to use a partial identity to sign calls, but this identity only has access to the public key.To sign calls, use a DelegationIdentity instead.");
   }
 }
-_inner = new WeakMap();
+_inner2 = new WeakMap();
 function safeBytesToHex(data) {
   if (data instanceof Uint8Array) {
     return bytesToHex(data);
@@ -5831,7 +14799,7 @@ class Delegation {
     return {
       expiration: this.expiration.toString(16),
       pubkey: safeBytesToHex(this.pubkey),
-      ...this.targets && { targets: this.targets.map((p) => p.toHex()) }
+      ...this.targets && { targets: this.targets.map((p2) => p2.toHex()) }
     };
   }
 }
@@ -5883,9 +14851,9 @@ class DelegationChain {
    * @param options.targets - targets that scope the delegation (e.g. Canister Principals)
    */
   static async create(from, to, expiration = new Date(Date.now() + 15 * 60 * 1e3), options = {}) {
-    var _a2, _b2;
+    var _a3, _b3;
     const delegation = await _createSingleDelegation(from, to, expiration, options.targets);
-    return new DelegationChain([...((_a2 = options.previous) == null ? void 0 : _a2.delegations) || [], delegation], ((_b2 = options.previous) == null ? void 0 : _b2.publicKey) || from.getPublicKey().toDer());
+    return new DelegationChain([...((_a3 = options.previous) == null ? void 0 : _a3.delegations) || [], delegation], ((_b3 = options.previous) == null ? void 0 : _b3.publicKey) || from.getPublicKey().toDer());
   }
   /**
    * Creates a DelegationChain object from a JSON string.
@@ -5911,7 +14879,7 @@ class DelegationChain {
             if (typeof t !== "string") {
               throw new Error("Invalid target.");
             }
-            return Principal.fromHex(t);
+            return Principal$1.fromHex(t);
           })
         ),
         signature: _parseBlob(signature)
@@ -5960,9 +14928,9 @@ class DelegationIdentity extends SignIdentity {
   static fromDelegation(key, delegation) {
     return new this(key, delegation);
   }
-  constructor(_inner2, _delegation2) {
+  constructor(_inner3, _delegation2) {
     super();
-    this._inner = _inner2;
+    this._inner = _inner3;
     this._delegation = _delegation2;
   }
   getDelegation() {
@@ -5977,8 +14945,8 @@ class DelegationIdentity extends SignIdentity {
   sign(blob) {
     return this._inner.sign(blob);
   }
-  async transformRequest(request) {
-    const { body, ...fields } = request;
+  async transformRequest(request2) {
+    const { body, ...fields } = request2;
     const requestId = await requestIdOf(body);
     return {
       ...fields,
@@ -6014,16 +14982,16 @@ const _PartialDelegationIdentity = class _PartialDelegationIdentity extends Part
 };
 _delegation = new WeakMap();
 let PartialDelegationIdentity = _PartialDelegationIdentity;
-function isDelegationValid(chain, checks) {
-  for (const { delegation } of chain.delegations) {
+function isDelegationValid(chain2, checks) {
+  for (const { delegation } of chain2.delegations) {
     if (+new Date(Number(delegation.expiration / BigInt(1e6))) <= +Date.now()) {
       return false;
     }
   }
   const scopes = [];
-  for (const s of scopes) {
-    const scope = s.toText();
-    for (const { delegation } of chain.delegations) {
+  for (const s2 of scopes) {
+    const scope = s2.toText();
+    for (const { delegation } of chain2.delegations) {
       if (delegation.targets === void 0) {
         continue;
       }
@@ -6060,15 +15028,15 @@ class IdleManager {
       document.addEventListener(name, _resetTimer, true);
     });
     const debounce = (func, wait) => {
-      let timeout;
+      let timeout2;
       return (...args) => {
         const context = this;
         const later = function() {
-          timeout = void 0;
+          timeout2 = void 0;
           func.apply(context, args);
         };
-        clearTimeout(timeout);
-        timeout = window.setTimeout(later, wait);
+        clearTimeout(timeout2);
+        timeout2 = window.setTimeout(later, wait);
       };
     };
     if (options == null ? void 0 : options.captureScroll) {
@@ -6116,7 +15084,7 @@ class IdleManager {
     this.timeoutID = window.setTimeout(exit, this.idleTimeout);
   }
 }
-const instanceOfAny = (object, constructors) => constructors.some((c) => object instanceof c);
+const instanceOfAny = (object, constructors) => constructors.some((c2) => object instanceof c2);
 let idbProxyableTypes;
 let cursorAdvanceMethods;
 function getIdbProxyableTypes() {
@@ -6140,30 +15108,30 @@ const transactionDoneMap = /* @__PURE__ */ new WeakMap();
 const transactionStoreNamesMap = /* @__PURE__ */ new WeakMap();
 const transformCache = /* @__PURE__ */ new WeakMap();
 const reverseTransformCache = /* @__PURE__ */ new WeakMap();
-function promisifyRequest(request) {
+function promisifyRequest(request2) {
   const promise = new Promise((resolve, reject) => {
     const unlisten = () => {
-      request.removeEventListener("success", success);
-      request.removeEventListener("error", error);
+      request2.removeEventListener("success", success);
+      request2.removeEventListener("error", error);
     };
     const success = () => {
-      resolve(wrap(request.result));
+      resolve(wrap(request2.result));
       unlisten();
     };
     const error = () => {
-      reject(request.error);
+      reject(request2.error);
       unlisten();
     };
-    request.addEventListener("success", success);
-    request.addEventListener("error", error);
+    request2.addEventListener("success", success);
+    request2.addEventListener("error", error);
   });
   promise.then((value) => {
     if (value instanceof IDBCursor) {
-      cursorRequestMap.set(value, request);
+      cursorRequestMap.set(value, request2);
     }
   }).catch(() => {
   });
-  reverseTransformCache.set(promise, request);
+  reverseTransformCache.set(promise, request2);
   return promise;
 }
 function cacheDonePromiseForTransaction(tx) {
@@ -6258,15 +15226,15 @@ function wrap(value) {
 }
 const unwrap = (value) => reverseTransformCache.get(value);
 function openDB(name, version, { blocked, upgrade, blocking, terminated } = {}) {
-  const request = indexedDB.open(name, version);
-  const openPromise = wrap(request);
+  const request2 = indexedDB.open(name, version);
+  const openPromise = wrap(request2);
   if (upgrade) {
-    request.addEventListener("upgradeneeded", (event) => {
-      upgrade(wrap(request.result), event.oldVersion, event.newVersion, wrap(request.transaction), event);
+    request2.addEventListener("upgradeneeded", (event) => {
+      upgrade(wrap(request2.result), event.oldVersion, event.newVersion, wrap(request2.transaction), event);
     });
   }
   if (blocked) {
-    request.addEventListener("blocked", (event) => blocked(
+    request2.addEventListener("blocked", (event) => blocked(
       // Casting due to https://github.com/microsoft/TypeScript-DOM-lib-generator/pull/1405
       event.oldVersion,
       event.newVersion,
@@ -6482,7 +15450,7 @@ const ED25519_KEY_LABEL = "Ed25519";
 const INTERRUPT_CHECK_INTERVAL = 500;
 const ERROR_USER_INTERRUPT = "UserInterrupt";
 class AuthClient {
-  constructor(_identity, _key, _chain, _storage, idleManager, _createOptions, _idpWindow, _eventHandler) {
+  constructor(_identity2, _key, _chain, _storage, idleManager, _createOptions, _idpWindow, _eventHandler) {
     __publicField(this, "_identity");
     __publicField(this, "_key");
     __publicField(this, "_chain");
@@ -6491,7 +15459,7 @@ class AuthClient {
     __publicField(this, "_createOptions");
     __publicField(this, "_idpWindow");
     __publicField(this, "_eventHandler");
-    this._identity = _identity;
+    this._identity = _identity2;
     this._key = _key;
     this._chain = _chain;
     this._storage = _storage;
@@ -6521,7 +15489,7 @@ class AuthClient {
    * })
    */
   static async create(options = {}) {
-    var _a2;
+    var _a3;
     const storage = options.storage ?? new IdbStorage();
     const keyType = options.keyType ?? ECDSA_KEY_LABEL;
     let key = null;
@@ -6562,7 +15530,7 @@ class AuthClient {
       }
     }
     let identity = new AnonymousIdentity();
-    let chain = null;
+    let chain2 = null;
     if (key) {
       try {
         const chainStorage = await storage.get(KEY_STORAGE_DELEGATION);
@@ -6572,15 +15540,15 @@ class AuthClient {
         if (options.identity) {
           identity = options.identity;
         } else if (chainStorage) {
-          chain = DelegationChain.fromJSON(chainStorage);
-          if (!isDelegationValid(chain)) {
+          chain2 = DelegationChain.fromJSON(chainStorage);
+          if (!isDelegationValid(chain2)) {
             await _deleteStorage(storage);
             key = null;
           } else {
             if ("toDer" in key) {
-              identity = PartialDelegationIdentity.fromDelegation(key, chain);
+              identity = PartialDelegationIdentity.fromDelegation(key, chain2);
             } else {
-              identity = DelegationIdentity.fromDelegation(key, chain);
+              identity = DelegationIdentity.fromDelegation(key, chain2);
             }
           }
         }
@@ -6591,9 +15559,9 @@ class AuthClient {
       }
     }
     let idleManager;
-    if ((_a2 = options.idleOptions) == null ? void 0 : _a2.disableIdle) {
+    if ((_a3 = options.idleOptions) == null ? void 0 : _a3.disableIdle) {
       idleManager = void 0;
-    } else if (chain || options.identity) {
+    } else if (chain2 || options.identity) {
       idleManager = IdleManager.create(options.idleOptions);
     }
     if (!key) {
@@ -6608,20 +15576,20 @@ class AuthClient {
         await storage.set(KEY_STORAGE_KEY, key.getKeyPair());
       }
     }
-    return new this(identity, key, chain, storage, idleManager, options);
+    return new this(identity, key, chain2, storage, idleManager, options);
   }
   _registerDefaultIdleCallback() {
-    var _a2, _b2;
-    const idleOptions = (_a2 = this._createOptions) == null ? void 0 : _a2.idleOptions;
+    var _a3, _b3;
+    const idleOptions = (_a3 = this._createOptions) == null ? void 0 : _a3.idleOptions;
     if (!(idleOptions == null ? void 0 : idleOptions.onIdle) && !(idleOptions == null ? void 0 : idleOptions.disableDefaultIdleCallback)) {
-      (_b2 = this.idleManager) == null ? void 0 : _b2.registerCallback(() => {
+      (_b3 = this.idleManager) == null ? void 0 : _b3.registerCallback(() => {
         this.logout();
         location.reload();
       });
     }
   }
   async _handleSuccess(message, onSuccess) {
-    var _a2, _b2;
+    var _a3, _b3;
     const delegations = message.delegations.map((signedDelegation) => {
       return {
         delegation: new Delegation(signedDelegation.delegation.pubkey, signedDelegation.delegation.expiration, signedDelegation.delegation.targets),
@@ -6639,8 +15607,8 @@ class AuthClient {
     } else {
       this._identity = DelegationIdentity.fromDelegation(key, this._chain);
     }
-    (_a2 = this._idpWindow) == null ? void 0 : _a2.close();
-    const idleOptions = (_b2 = this._createOptions) == null ? void 0 : _b2.idleOptions;
+    (_a3 = this._idpWindow) == null ? void 0 : _a3.close();
+    const idleOptions = (_b3 = this._createOptions) == null ? void 0 : _b3.idleOptions;
     if (!this.idleManager && !(idleOptions == null ? void 0 : idleOptions.disableIdle)) {
       this.idleManager = IdleManager.create(idleOptions);
       this._registerDefaultIdleCallback();
@@ -6684,10 +15652,10 @@ class AuthClient {
    * });
    */
   async login(options) {
-    var _a2, _b2, _c2;
-    const loginOptions = mergeLoginOptions((_a2 = this._createOptions) == null ? void 0 : _a2.loginOptions, options);
+    var _a3, _b3, _c2;
+    const loginOptions = mergeLoginOptions((_a3 = this._createOptions) == null ? void 0 : _a3.loginOptions, options);
     const maxTimeToLive = (loginOptions == null ? void 0 : loginOptions.maxTimeToLive) ?? DEFAULT_MAX_TIME_TO_LIVE;
-    const identityProviderUrl = new URL(((_b2 = loginOptions == null ? void 0 : loginOptions.identityProvider) == null ? void 0 : _b2.toString()) || IDENTITY_PROVIDER_DEFAULT);
+    const identityProviderUrl = new URL(((_b3 = loginOptions == null ? void 0 : loginOptions.identityProvider) == null ? void 0 : _b3.toString()) || IDENTITY_PROVIDER_DEFAULT);
     identityProviderUrl.hash = IDENTITY_PROVIDER_ENDPOINT;
     (_c2 = this._idpWindow) == null ? void 0 : _c2.close();
     this._removeEventListener();
@@ -6710,23 +15678,23 @@ class AuthClient {
   }
   _getEventHandler(identityProviderUrl, options) {
     return async (event) => {
-      var _a2, _b2, _c2;
+      var _a3, _b3, _c2;
       if (event.origin !== identityProviderUrl.origin) {
         return;
       }
       const message = event.data;
       switch (message.kind) {
         case "authorize-ready": {
-          const request = {
+          const request2 = {
             kind: "authorize-client",
-            sessionPublicKey: new Uint8Array((_a2 = this._key) == null ? void 0 : _a2.getPublicKey().toDer()),
+            sessionPublicKey: new Uint8Array((_a3 = this._key) == null ? void 0 : _a3.getPublicKey().toDer()),
             maxTimeToLive: options == null ? void 0 : options.maxTimeToLive,
             allowPinAuthentication: options == null ? void 0 : options.allowPinAuthentication,
-            derivationOrigin: (_b2 = options == null ? void 0 : options.derivationOrigin) == null ? void 0 : _b2.toString(),
+            derivationOrigin: (_b3 = options == null ? void 0 : options.derivationOrigin) == null ? void 0 : _b3.toString(),
             // Pass any custom values to the IDP.
             ...options == null ? void 0 : options.customValues
           };
-          (_c2 = this._idpWindow) == null ? void 0 : _c2.postMessage(request, identityProviderUrl.origin);
+          (_c2 = this._idpWindow) == null ? void 0 : _c2.postMessage(request2, identityProviderUrl.origin);
           break;
         }
         case "authorize-client-success":
@@ -6743,8 +15711,8 @@ class AuthClient {
     };
   }
   _handleFailure(errorMessage, onError) {
-    var _a2;
-    (_a2 = this._idpWindow) == null ? void 0 : _a2.close();
+    var _a3;
+    (_a3 = this._idpWindow) == null ? void 0 : _a3.close();
     onError == null ? void 0 : onError(errorMessage);
     this._removeEventListener();
     delete this._idpWindow;
@@ -6807,6 +15775,16 @@ async function createAuthClient(createOptions) {
   const authClient = await AuthClient.create(options);
   return authClient;
 }
+function assertProviderPresent(context) {
+  if (!context) {
+    throw new Error("InternetIdentityProvider is not present. Wrap your component tree with it.");
+  }
+}
+const useInternetIdentity = () => {
+  const context = reactExports.useContext(InternetIdentityReactContext);
+  assertProviderPresent(context);
+  return context;
+};
 function InternetIdentityProvider({ children, createOptions }) {
   const [authClient, setAuthClient] = reactExports.useState(void 0);
   const [identity, setIdentity] = reactExports.useState(void 0);
@@ -6916,6 +15894,54 @@ function InternetIdentityProvider({ children, createOptions }) {
     children
   });
 }
+function hasAccessControl(actor) {
+  return typeof actor === "object" && actor !== null && "_initializeAccessControl" in actor;
+}
+const ACTOR_QUERY_KEY = "actor";
+function useActor(createActor2) {
+  const { identity, isAuthenticated } = useInternetIdentity();
+  const queryClient2 = useQueryClient();
+  const actorQuery = useQuery({
+    queryKey: [ACTOR_QUERY_KEY, identity == null ? void 0 : identity.getPrincipal().toString()],
+    queryFn: async () => {
+      if (!isAuthenticated) {
+        return await createActorWithConfig(createActor2);
+      }
+      const actorOptions = {
+        agentOptions: {
+          identity
+        }
+      };
+      const actor = await createActorWithConfig(createActor2, actorOptions);
+      if (hasAccessControl(actor)) {
+        await actor._initializeAccessControl();
+      }
+      return actor;
+    },
+    // Only refetch when identity changes
+    staleTime: Number.POSITIVE_INFINITY,
+    // This will cause the actor to be recreated when the identity changes
+    enabled: true
+  });
+  reactExports.useEffect(() => {
+    if (actorQuery.data) {
+      queryClient2.invalidateQueries({
+        predicate: (query) => {
+          return !query.queryKey.includes(ACTOR_QUERY_KEY);
+        }
+      });
+      queryClient2.refetchQueries({
+        predicate: (query) => {
+          return !query.queryKey.includes(ACTOR_QUERY_KEY);
+        }
+      });
+    }
+  }, [actorQuery.data, queryClient2]);
+  return {
+    actor: actorQuery.data || null,
+    isFetching: actorQuery.isFetching
+  };
+}
 var client = { exports: {} };
 var reactDomClient_production = {};
 var scheduler = { exports: {} };
@@ -6959,9 +15985,9 @@ var scheduler_production = {};
     }
     return first;
   }
-  function compare2(a, b) {
-    var diff = a.sortIndex - b.sortIndex;
-    return 0 !== diff ? diff : a.id - b.id;
+  function compare2(a2, b2) {
+    var diff = a2.sortIndex - b2.sortIndex;
+    return 0 !== diff ? diff : a2.id - b2.id;
   }
   exports$1.unstable_now = void 0;
   if ("object" === typeof performance && "function" === typeof performance.now) {
@@ -7138,30 +16164,30 @@ var scheduler_production = {};
     "object" === typeof options && null !== options ? (options = options.delay, options = "number" === typeof options && 0 < options ? currentTime + options : currentTime) : options = currentTime;
     switch (priorityLevel) {
       case 1:
-        var timeout = -1;
+        var timeout2 = -1;
         break;
       case 2:
-        timeout = 250;
+        timeout2 = 250;
         break;
       case 5:
-        timeout = 1073741823;
+        timeout2 = 1073741823;
         break;
       case 4:
-        timeout = 1e4;
+        timeout2 = 1e4;
         break;
       default:
-        timeout = 5e3;
+        timeout2 = 5e3;
     }
-    timeout = options + timeout;
+    timeout2 = options + timeout2;
     priorityLevel = {
       id: taskIdCounter++,
       callback,
       priorityLevel,
       startTime: options,
-      expirationTime: timeout,
+      expirationTime: timeout2,
       sortIndex: -1
     };
-    options > currentTime ? (priorityLevel.sortIndex = options, push2(timerQueue, priorityLevel), null === peek(taskQueue) && priorityLevel === peek(timerQueue) && (isHostTimeoutScheduled ? (localClearTimeout(taskTimeoutID), taskTimeoutID = -1) : isHostTimeoutScheduled = true, requestHostTimeout(handleTimeout, options - currentTime))) : (priorityLevel.sortIndex = timeout, push2(taskQueue, priorityLevel), isHostCallbackScheduled || isPerformingWork || (isHostCallbackScheduled = true, isMessageLoopRunning || (isMessageLoopRunning = true, schedulePerformWorkUntilDeadline())));
+    options > currentTime ? (priorityLevel.sortIndex = options, push2(timerQueue, priorityLevel), null === peek(taskQueue) && priorityLevel === peek(timerQueue) && (isHostTimeoutScheduled ? (localClearTimeout(taskTimeoutID), taskTimeoutID = -1) : isHostTimeoutScheduled = true, requestHostTimeout(handleTimeout, options - currentTime))) : (priorityLevel.sortIndex = timeout2, push2(taskQueue, priorityLevel), isHostCallbackScheduled || isPerformingWork || (isHostCallbackScheduled = true, isMessageLoopRunning || (isMessageLoopRunning = true, schedulePerformWorkUntilDeadline())));
     return priorityLevel;
   };
   exports$1.unstable_shouldYield = shouldYieldToHost;
@@ -7324,8 +16350,8 @@ reactDom_production.preloadModule = function(href, options) {
 reactDom_production.requestFormReset = function(form) {
   Internals.d.r(form);
 };
-reactDom_production.unstable_batchedUpdates = function(fn, a) {
-  return fn(a);
+reactDom_production.unstable_batchedUpdates = function(fn, a2) {
+  return fn(a2);
 };
 reactDom_production.useFormState = function(action, initialState, permalink) {
   return ReactSharedInternals$1.H.useFormState(action, initialState, permalink);
@@ -7402,55 +16428,55 @@ function findCurrentFiberUsingSlowPath(fiber) {
     if (null === alternate) throw Error(formatProdErrorMessage(188));
     return alternate !== fiber ? null : fiber;
   }
-  for (var a = fiber, b = alternate; ; ) {
-    var parentA = a.return;
+  for (var a2 = fiber, b2 = alternate; ; ) {
+    var parentA = a2.return;
     if (null === parentA) break;
     var parentB = parentA.alternate;
     if (null === parentB) {
-      b = parentA.return;
-      if (null !== b) {
-        a = b;
+      b2 = parentA.return;
+      if (null !== b2) {
+        a2 = b2;
         continue;
       }
       break;
     }
     if (parentA.child === parentB.child) {
       for (parentB = parentA.child; parentB; ) {
-        if (parentB === a) return assertIsMounted(parentA), fiber;
-        if (parentB === b) return assertIsMounted(parentA), alternate;
+        if (parentB === a2) return assertIsMounted(parentA), fiber;
+        if (parentB === b2) return assertIsMounted(parentA), alternate;
         parentB = parentB.sibling;
       }
       throw Error(formatProdErrorMessage(188));
     }
-    if (a.return !== b.return) a = parentA, b = parentB;
+    if (a2.return !== b2.return) a2 = parentA, b2 = parentB;
     else {
       for (var didFindChild = false, child$0 = parentA.child; child$0; ) {
-        if (child$0 === a) {
+        if (child$0 === a2) {
           didFindChild = true;
-          a = parentA;
-          b = parentB;
+          a2 = parentA;
+          b2 = parentB;
           break;
         }
-        if (child$0 === b) {
+        if (child$0 === b2) {
           didFindChild = true;
-          b = parentA;
-          a = parentB;
+          b2 = parentA;
+          a2 = parentB;
           break;
         }
         child$0 = child$0.sibling;
       }
       if (!didFindChild) {
         for (child$0 = parentB.child; child$0; ) {
-          if (child$0 === a) {
+          if (child$0 === a2) {
             didFindChild = true;
-            a = parentB;
-            b = parentA;
+            a2 = parentB;
+            b2 = parentA;
             break;
           }
-          if (child$0 === b) {
+          if (child$0 === b2) {
             didFindChild = true;
-            b = parentB;
-            a = parentA;
+            b2 = parentB;
+            a2 = parentA;
             break;
           }
           child$0 = child$0.sibling;
@@ -7458,10 +16484,10 @@ function findCurrentFiberUsingSlowPath(fiber) {
         if (!didFindChild) throw Error(formatProdErrorMessage(189));
       }
     }
-    if (a.alternate !== b) throw Error(formatProdErrorMessage(190));
+    if (a2.alternate !== b2) throw Error(formatProdErrorMessage(190));
   }
-  if (3 !== a.tag) throw Error(formatProdErrorMessage(188));
-  return a.stateNode.current === a ? fiber : alternate;
+  if (3 !== a2.tag) throw Error(formatProdErrorMessage(188));
+  return a2.stateNode.current === a2 ? fiber : alternate;
 }
 function findCurrentHostFiberImpl(node) {
   var tag = node.tag;
@@ -7522,7 +16548,7 @@ function getComponentNameFromType(type) {
         type = type._init;
         try {
           return getComponentNameFromType(type(innerType));
-        } catch (x) {
+        } catch (x2) {
         }
     }
   return null;
@@ -7597,9 +16623,9 @@ function setIsStrictModeForDevtools(newIsStrictMode) {
     }
 }
 var clz32 = Math.clz32 ? Math.clz32 : clz32Fallback, log = Math.log, LN2 = Math.LN2;
-function clz32Fallback(x) {
-  x >>>= 0;
-  return 0 === x ? 32 : 31 - (log(x) / LN2 | 0) | 0;
+function clz32Fallback(x2) {
+  x2 >>>= 0;
+  return 0 === x2 ? 32 : 31 - (log(x2) / LN2 | 0) | 0;
 }
 var nextTransitionLane = 256, nextRetryLane = 4194304;
 function getHighestPriorityLanes(lanes) {
@@ -7949,10 +16975,10 @@ function describeBuiltInComponentFrame(name) {
   if (void 0 === prefix)
     try {
       throw Error();
-    } catch (x) {
-      var match = x.stack.trim().match(/\n( *(at )?)/);
+    } catch (x2) {
+      var match = x2.stack.trim().match(/\n( *(at )?)/);
       prefix = match && match[1] || "";
-      suffix = -1 < x.stack.indexOf("\n    at") ? " (<anonymous>)" : -1 < x.stack.indexOf("@") ? "@unknown:0:0" : "";
+      suffix = -1 < x2.stack.indexOf("\n    at") ? " (<anonymous>)" : -1 < x2.stack.indexOf("@") ? "@unknown:0:0" : "";
     }
   return "\n" + prefix + name + suffix;
 }
@@ -7978,8 +17004,8 @@ function describeNativeComponentFrame(fn, construct) {
             if ("object" === typeof Reflect && Reflect.construct) {
               try {
                 Reflect.construct(Fake, []);
-              } catch (x) {
-                var control = x;
+              } catch (x2) {
+                var control = x2;
               }
               Reflect.construct(fn, [], Fake);
             } else {
@@ -8079,8 +17105,8 @@ function getStackByFiberInDevAndProd(workInProgress2) {
       info += describeFiber(workInProgress2), workInProgress2 = workInProgress2.return;
     while (workInProgress2);
     return info;
-  } catch (x) {
-    return "\nError generating stack: " + x.message + "\n" + x.stack;
+  } catch (x2) {
+    return "\nError generating stack: " + x2.message + "\n" + x2.stack;
   }
 }
 function getToStringValue(value) {
@@ -8440,16 +17466,16 @@ function restoreStateOfTarget(target) {
   }
 }
 var isInsideEventHandler = false;
-function batchedUpdates$1(fn, a, b) {
-  if (isInsideEventHandler) return fn(a, b);
+function batchedUpdates$1(fn, a2, b2) {
+  if (isInsideEventHandler) return fn(a2, b2);
   isInsideEventHandler = true;
   try {
-    var JSCompiler_inline_result = fn(a);
+    var JSCompiler_inline_result = fn(a2);
     return JSCompiler_inline_result;
   } finally {
     if (isInsideEventHandler = false, null !== restoreTarget || null !== restoreQueue) {
-      if (flushSyncWork$1(), restoreTarget && (a = restoreTarget, fn = restoreQueue, restoreQueue = restoreTarget = null, restoreStateOfTarget(a), fn))
-        for (a = 0; a < fn.length; a++) restoreStateOfTarget(fn[a]);
+      if (flushSyncWork$1(), restoreTarget && (a2 = restoreTarget, fn = restoreQueue, restoreQueue = restoreTarget = null, restoreStateOfTarget(a2), fn))
+        for (a2 = 0; a2 < fn.length; a2++) restoreStateOfTarget(fn[a2]);
     }
   }
 }
@@ -8857,8 +17883,8 @@ function getTargetInstForInputOrChangeEvent(domEventName, targetInst) {
   if ("input" === domEventName || "change" === domEventName)
     return getInstIfValueChanged(targetInst);
 }
-function is(x, y) {
-  return x === y && (0 !== x || 1 / x === 1 / y) || x !== x && y !== y;
+function is(x2, y2) {
+  return x2 === y2 && (0 !== x2 || 1 / x2 === 1 / y2) || x2 !== x2 && y2 !== y2;
 }
 var objectIs = "function" === typeof Object.is ? Object.is : is;
 function shallowEqual(objA, objB) {
@@ -10380,9 +19406,9 @@ function updateActionStateImpl(stateHook, currentStateHook, action) {
   if ("object" === typeof currentStateHook && null !== currentStateHook && "function" === typeof currentStateHook.then)
     try {
       var state = useThenable(currentStateHook);
-    } catch (x) {
-      if (x === SuspenseException) throw SuspenseActionException;
-      throw x;
+    } catch (x2) {
+      if (x2 === SuspenseException) throw SuspenseActionException;
+      throw x2;
     }
   else state = currentStateHook;
   currentStateHook = updateWorkInProgressHook();
@@ -11470,9 +20496,9 @@ function createChildReconciler(shouldTrackSideEffects) {
       );
       thenableState = null;
       return firstChildFiber;
-    } catch (x) {
-      if (x === SuspenseException || x === SuspenseActionException) throw x;
-      var fiber = createFiberImplClass(29, x, null, returnFiber.mode);
+    } catch (x2) {
+      if (x2 === SuspenseException || x2 === SuspenseActionException) throw x2;
+      var fiber = createFiberImplClass(29, x2, null, returnFiber.mode);
       fiber.lanes = lanes;
       fiber.return = returnFiber;
       return fiber;
@@ -17836,8 +26862,8 @@ function updateContainerImpl(rootFiber, lane, element, container, parentComponen
 function markRetryLaneImpl(fiber, retryLane) {
   fiber = fiber.memoizedState;
   if (null !== fiber && null !== fiber.dehydrated) {
-    var a = fiber.retryLane;
-    fiber.retryLane = 0 !== a && a < retryLane ? a : retryLane;
+    var a2 = fiber.retryLane;
+    fiber.retryLane = 0 !== a2 && a2 < retryLane ? a2 : retryLane;
   }
 }
 function markRetryLaneIfNotHydrated(fiber, retryLane) {
@@ -18543,13 +27569,13 @@ function mergeProps$1(slotProps, childProps) {
   return { ...slotProps, ...overrideProps };
 }
 function getElementRef$1(element) {
-  var _a2, _b2;
-  let getter = (_a2 = Object.getOwnPropertyDescriptor(element.props, "ref")) == null ? void 0 : _a2.get;
+  var _a3, _b3;
+  let getter = (_a3 = Object.getOwnPropertyDescriptor(element.props, "ref")) == null ? void 0 : _a3.get;
   let mayWarn = getter && "isReactWarning" in getter && getter.isReactWarning;
   if (mayWarn) {
     return element.ref;
   }
-  getter = (_b2 = Object.getOwnPropertyDescriptor(element, "ref")) == null ? void 0 : _b2.get;
+  getter = (_b3 = Object.getOwnPropertyDescriptor(element, "ref")) == null ? void 0 : _b3.get;
   mayWarn = getter && "isReactWarning" in getter && getter.isReactWarning;
   if (mayWarn) {
     return element.props.ref;
@@ -18560,13 +27586,13 @@ function r(e) {
   var t, f, n = "";
   if ("string" == typeof e || "number" == typeof e) n += e;
   else if ("object" == typeof e) if (Array.isArray(e)) {
-    var o = e.length;
-    for (t = 0; t < o; t++) e[t] && (f = r(e[t])) && (n && (n += " "), n += f);
+    var o2 = e.length;
+    for (t = 0; t < o2; t++) e[t] && (f = r(e[t])) && (n && (n += " "), n += f);
   } else for (f in e) e[f] && (n && (n += " "), n += f);
   return n;
 }
 function clsx() {
-  for (var e, t, f = 0, n = "", o = arguments.length; f < o; f++) (e = arguments[f]) && (t = r(e)) && (n && (n += " "), n += t);
+  for (var e, t, f = 0, n = "", o2 = arguments.length; f < o2; f++) (e = arguments[f]) && (t = r(e)) && (n && (n += " "), n += t);
   return n;
 }
 const falsyToString = (value) => typeof value === "boolean" ? `${value}` : value === 0 ? "0" : value;
@@ -18636,7 +27662,7 @@ const createClassGroupUtils = (config) => {
   };
 };
 const getGroupRecursive = (classParts, classPartObject) => {
-  var _a2;
+  var _a3;
   if (classParts.length === 0) {
     return classPartObject.classGroupId;
   }
@@ -18650,9 +27676,9 @@ const getGroupRecursive = (classParts, classPartObject) => {
     return void 0;
   }
   const classRest = classParts.join(CLASS_PART_SEPARATOR);
-  return (_a2 = classPartObject.validators.find(({
+  return (_a3 = classPartObject.validators.find(({
     validator
-  }) => validator(classRest))) == null ? void 0 : _a2.classGroupId;
+  }) => validator(classRest))) == null ? void 0 : _a3.classGroupId;
 };
 const arbitraryPropertyRegex = /^\[(.+)\]$/;
 const getGroupIdForArbitraryProperty = (className) => {
@@ -18917,9 +27943,9 @@ const toValue = (mix) => {
   }
   let resolvedValue;
   let string = "";
-  for (let k = 0; k < mix.length; k++) {
-    if (mix[k]) {
-      if (resolvedValue = toValue(mix[k])) {
+  for (let k2 = 0; k2 < mix.length; k2++) {
+    if (mix[k2]) {
+      if (resolvedValue = toValue(mix[k2])) {
         string && (string += " ");
         string += resolvedValue;
       }
@@ -21247,10 +30273,10 @@ var Label$1 = reactExports.forwardRef((props, forwardedRef) => {
       ...props,
       ref: forwardedRef,
       onMouseDown: (event) => {
-        var _a2;
+        var _a3;
         const target = event.target;
         if (target.closest("button, input, select, textarea")) return;
-        (_a2 = props.onMouseDown) == null ? void 0 : _a2.call(props, event);
+        (_a3 = props.onMouseDown) == null ? void 0 : _a3.call(props, event);
         if (!event.defaultPrevented && event.detail > 1) event.preventDefault();
       }
     }
@@ -21292,16 +30318,16 @@ function createContextScope(scopeName, createContextScopeDeps = []) {
     const index2 = defaultContexts.length;
     defaultContexts = [...defaultContexts, defaultContext];
     const Provider = (props) => {
-      var _a2;
+      var _a3;
       const { scope, children, ...context } = props;
-      const Context = ((_a2 = scope == null ? void 0 : scope[scopeName]) == null ? void 0 : _a2[index2]) || BaseContext;
+      const Context = ((_a3 = scope == null ? void 0 : scope[scopeName]) == null ? void 0 : _a3[index2]) || BaseContext;
       const value = reactExports.useMemo(() => context, Object.values(context));
       return /* @__PURE__ */ jsxRuntimeExports.jsx(Context.Provider, { value, children });
     };
     Provider.displayName = rootComponentName + "Provider";
     function useContext2(consumerName, scope) {
-      var _a2;
-      const Context = ((_a2 = scope == null ? void 0 : scope[scopeName]) == null ? void 0 : _a2[index2]) || BaseContext;
+      var _a3;
+      const Context = ((_a3 = scope == null ? void 0 : scope[scopeName]) == null ? void 0 : _a3[index2]) || BaseContext;
       const context = reactExports.useContext(Context);
       if (context) return context;
       if (defaultContext !== void 0) return defaultContext;
@@ -21414,13 +30440,13 @@ function mergeProps(slotProps, childProps) {
   return { ...slotProps, ...overrideProps };
 }
 function getElementRef(element) {
-  var _a2, _b2;
-  let getter = (_a2 = Object.getOwnPropertyDescriptor(element.props, "ref")) == null ? void 0 : _a2.get;
+  var _a3, _b3;
+  let getter = (_a3 = Object.getOwnPropertyDescriptor(element.props, "ref")) == null ? void 0 : _a3.get;
   let mayWarn = getter && "isReactWarning" in getter && getter.isReactWarning;
   if (mayWarn) {
     return element.ref;
   }
-  getter = (_b2 = Object.getOwnPropertyDescriptor(element, "ref")) == null ? void 0 : _b2.get;
+  getter = (_b3 = Object.getOwnPropertyDescriptor(element, "ref")) == null ? void 0 : _b3.get;
   mayWarn = getter && "isReactWarning" in getter && getter.isReactWarning;
   if (mayWarn) {
     return element.props.ref;
@@ -21477,7 +30503,7 @@ function createCollection(name) {
       const orderedNodes = Array.from(collectionNode.querySelectorAll(`[${ITEM_DATA_ATTR}]`));
       const items = Array.from(context.itemMap.values());
       const orderedItems = items.sort(
-        (a, b) => orderedNodes.indexOf(a.ref.current) - orderedNodes.indexOf(b.ref.current)
+        (a2, b2) => orderedNodes.indexOf(a2.ref.current) - orderedNodes.indexOf(b2.ref.current)
       );
       return orderedItems;
     }, [context.collectionRef, context.itemMap]);
@@ -21535,8 +30561,8 @@ function useCallbackRef$1(callback) {
     callbackRef.current = callback;
   });
   return reactExports.useMemo(() => (...args) => {
-    var _a2;
-    return (_a2 = callbackRef.current) == null ? void 0 : _a2.call(callbackRef, ...args);
+    var _a3;
+    return (_a3 = callbackRef.current) == null ? void 0 : _a3.call(callbackRef, ...args);
   }, []);
 }
 function useEscapeKeydown(onEscapeKeyDownProp, ownerDocument = globalThis == null ? void 0 : globalThis.document) {
@@ -21960,9 +30986,9 @@ function createFocusScopesStack() {
       stack.unshift(focusScope);
     },
     remove(focusScope) {
-      var _a2;
+      var _a3;
       stack = arrayRemove(stack, focusScope);
-      (_a2 = stack[0]) == null ? void 0 : _a2.resume();
+      (_a3 = stack[0]) == null ? void 0 : _a3.resume();
     }
   };
 }
@@ -21993,9 +31019,9 @@ const min = Math.min;
 const max = Math.max;
 const round = Math.round;
 const floor = Math.floor;
-const createCoords = (v) => ({
-  x: v,
-  y: v
+const createCoords = (v2) => ({
+  x: v2,
+  y: v2
 });
 const oppositeSideMap = {
   left: "right",
@@ -22099,20 +31125,20 @@ function getPaddingObject(padding) {
 }
 function rectToClientRect(rect) {
   const {
-    x,
-    y,
+    x: x2,
+    y: y2,
     width,
     height
   } = rect;
   return {
     width,
     height,
-    top: y,
-    left: x,
-    right: x + width,
-    bottom: y + height,
-    x,
-    y
+    top: y2,
+    left: x2,
+    right: x2 + width,
+    bottom: y2 + height,
+    x: x2,
+    y: y2
   };
 }
 function computeCoordsFromPlacement(_ref, placement, rtl) {
@@ -22176,8 +31202,8 @@ async function detectOverflow(state, options) {
     options = {};
   }
   const {
-    x,
-    y,
+    x: x2,
+    y: y2,
     platform: platform2,
     rects,
     elements,
@@ -22200,8 +31226,8 @@ async function detectOverflow(state, options) {
     strategy
   }));
   const rect = elementContext === "floating" ? {
-    x,
-    y,
+    x: x2,
+    y: y2,
     width: rects.floating.width,
     height: rects.floating.height
   } : rects.reference;
@@ -22245,8 +31271,8 @@ const computePosition$1 = async (reference, floating, config) => {
     strategy
   });
   let {
-    x,
-    y
+    x: x2,
+    y: y2
   } = computeCoordsFromPlacement(rects, placement, rtl);
   let statefulPlacement = placement;
   let resetCount = 0;
@@ -22266,8 +31292,8 @@ const computePosition$1 = async (reference, floating, config) => {
       data,
       reset
     } = await fn({
-      x,
-      y,
+      x: x2,
+      y: y2,
       initialPlacement: placement,
       placement: statefulPlacement,
       strategy,
@@ -22279,8 +31305,8 @@ const computePosition$1 = async (reference, floating, config) => {
         floating
       }
     });
-    x = nextX != null ? nextX : x;
-    y = nextY != null ? nextY : y;
+    x2 = nextX != null ? nextX : x2;
+    y2 = nextY != null ? nextY : y2;
     middlewareData[name] = {
       ...middlewareData[name],
       ...data
@@ -22299,16 +31325,16 @@ const computePosition$1 = async (reference, floating, config) => {
           }) : reset.rects;
         }
         ({
-          x,
-          y
+          x: x2,
+          y: y2
         } = computeCoordsFromPlacement(rects, statefulPlacement, rtl));
       }
       i = -1;
     }
   }
   return {
-    x,
-    y,
+    x: x2,
+    y: y2,
     placement: statefulPlacement,
     strategy,
     middlewareData
@@ -22319,8 +31345,8 @@ const arrow$3 = (options) => ({
   options,
   async fn(state) {
     const {
-      x,
-      y,
+      x: x2,
+      y: y2,
       placement,
       rects,
       platform: platform2,
@@ -22336,8 +31362,8 @@ const arrow$3 = (options) => ({
     }
     const paddingObject = getPaddingObject(padding);
     const coords = {
-      x,
-      y
+      x: x2,
+      y: y2
     };
     const axis = getAlignmentAxis(placement);
     const length = getAxisLength(axis);
@@ -22437,7 +31463,7 @@ const flip$2 = function(options) {
           const ignoreCrossAxisOverflow = checkCrossAxis === "alignment" ? initialSideAxis !== getSideAxis(nextPlacement) : false;
           if (!ignoreCrossAxisOverflow || // We leave the current main axis only if every placement on that axis
           // overflows the main axis.
-          overflowsData.every((d) => getSideAxis(d.placement) === initialSideAxis ? d.overflows[0] > 0 : true)) {
+          overflowsData.every((d2) => getSideAxis(d2.placement) === initialSideAxis ? d2.overflows[0] > 0 : true)) {
             return {
               data: {
                 index: nextIndex,
@@ -22449,20 +31475,20 @@ const flip$2 = function(options) {
             };
           }
         }
-        let resetPlacement = (_overflowsData$filter = overflowsData.filter((d) => d.overflows[0] <= 0).sort((a, b) => a.overflows[1] - b.overflows[1])[0]) == null ? void 0 : _overflowsData$filter.placement;
+        let resetPlacement = (_overflowsData$filter = overflowsData.filter((d2) => d2.overflows[0] <= 0).sort((a2, b2) => a2.overflows[1] - b2.overflows[1])[0]) == null ? void 0 : _overflowsData$filter.placement;
         if (!resetPlacement) {
           switch (fallbackStrategy) {
             case "bestFit": {
               var _overflowsData$filter2;
-              const placement2 = (_overflowsData$filter2 = overflowsData.filter((d) => {
+              const placement2 = (_overflowsData$filter2 = overflowsData.filter((d2) => {
                 if (hasFallbackAxisSideDirection) {
-                  const currentSideAxis = getSideAxis(d.placement);
+                  const currentSideAxis = getSideAxis(d2.placement);
                   return currentSideAxis === initialSideAxis || // Create a bias to the `y` side axis due to horizontal
                   // reading directions favoring greater width.
                   currentSideAxis === "y";
                 }
                 return true;
-              }).map((d) => [d.placement, d.overflows.filter((overflow2) => overflow2 > 0).reduce((acc, overflow2) => acc + overflow2, 0)]).sort((a, b) => a[1] - b[1])[0]) == null ? void 0 : _overflowsData$filter2[0];
+              }).map((d2) => [d2.placement, d2.overflows.filter((overflow2) => overflow2 > 0).reduce((acc, overflow2) => acc + overflow2, 0)]).sort((a2, b2) => a2[1] - b2[1])[0]) == null ? void 0 : _overflowsData$filter2[0];
               if (placement2) {
                 resetPlacement = placement2;
               }
@@ -22594,8 +31620,8 @@ const offset$2 = function(options) {
     async fn(state) {
       var _middlewareData$offse, _middlewareData$arrow;
       const {
-        x,
-        y,
+        x: x2,
+        y: y2,
         placement,
         middlewareData
       } = state;
@@ -22604,8 +31630,8 @@ const offset$2 = function(options) {
         return {};
       }
       return {
-        x: x + diffCoords.x,
-        y: y + diffCoords.y,
+        x: x2 + diffCoords.x,
+        y: y2 + diffCoords.y,
         data: {
           ...diffCoords,
           placement
@@ -22623,8 +31649,8 @@ const shift$2 = function(options) {
     options,
     async fn(state) {
       const {
-        x,
-        y,
+        x: x2,
+        y: y2,
         placement,
         platform: platform2
       } = state;
@@ -22634,20 +31660,20 @@ const shift$2 = function(options) {
         limiter = {
           fn: (_ref) => {
             let {
-              x: x2,
-              y: y2
+              x: x3,
+              y: y3
             } = _ref;
             return {
-              x: x2,
-              y: y2
+              x: x3,
+              y: y3
             };
           }
         },
         ...detectOverflowOptions
       } = evaluate(options, state);
       const coords = {
-        x,
-        y
+        x: x2,
+        y: y2
       };
       const overflow = await platform2.detectOverflow(state, detectOverflowOptions);
       const crossAxis = getSideAxis(getSide(placement));
@@ -22676,8 +31702,8 @@ const shift$2 = function(options) {
       return {
         ...limitedCoords,
         data: {
-          x: limitedCoords.x - x,
-          y: limitedCoords.y - y,
+          x: limitedCoords.x - x2,
+          y: limitedCoords.y - y2,
           enabled: {
             [mainAxis]: checkMainAxis,
             [crossAxis]: checkCrossAxis
@@ -22695,8 +31721,8 @@ const limitShift$2 = function(options) {
     options,
     fn(state) {
       const {
-        x,
-        y,
+        x: x2,
+        y: y2,
         placement,
         rects,
         middlewareData
@@ -22707,8 +31733,8 @@ const limitShift$2 = function(options) {
         crossAxis: checkCrossAxis = true
       } = evaluate(options, state);
       const coords = {
-        x,
-        y
+        x: x2,
+        y: y2
       };
       const crossAxis = getSideAxis(placement);
       const mainAxis = getOppositeAxis(crossAxis);
@@ -23014,19 +32040,19 @@ function getScale(element) {
   const {
     width,
     height,
-    $
+    $: $2
   } = getCssDimensions(domElement);
-  let x = ($ ? round(rect.width) : rect.width) / width;
-  let y = ($ ? round(rect.height) : rect.height) / height;
-  if (!x || !Number.isFinite(x)) {
-    x = 1;
+  let x2 = ($2 ? round(rect.width) : rect.width) / width;
+  let y2 = ($2 ? round(rect.height) : rect.height) / height;
+  if (!x2 || !Number.isFinite(x2)) {
+    x2 = 1;
   }
-  if (!y || !Number.isFinite(y)) {
-    y = 1;
+  if (!y2 || !Number.isFinite(y2)) {
+    y2 = 1;
   }
   return {
-    x,
-    y
+    x: x2,
+    y: y2
   };
 }
 const noOffsets = /* @__PURE__ */ createCoords(0);
@@ -23069,8 +32095,8 @@ function getBoundingClientRect(element, includeScale, isFixedStrategy, offsetPar
     }
   }
   const visualOffsets = shouldAddVisualOffsets(domElement, isFixedStrategy, offsetParent) ? getVisualOffsets(domElement) : createCoords(0);
-  let x = (clientRect.left + visualOffsets.x) / scale.x;
-  let y = (clientRect.top + visualOffsets.y) / scale.y;
+  let x2 = (clientRect.left + visualOffsets.x) / scale.x;
+  let y2 = (clientRect.top + visualOffsets.y) / scale.y;
   let width = clientRect.width / scale.x;
   let height = clientRect.height / scale.y;
   if (domElement) {
@@ -23084,12 +32110,12 @@ function getBoundingClientRect(element, includeScale, isFixedStrategy, offsetPar
       const css = getComputedStyle$1(currentIFrame);
       const left = iframeRect.left + (currentIFrame.clientLeft + parseFloat(css.paddingLeft)) * iframeScale.x;
       const top = iframeRect.top + (currentIFrame.clientTop + parseFloat(css.paddingTop)) * iframeScale.y;
-      x *= iframeScale.x;
-      y *= iframeScale.y;
+      x2 *= iframeScale.x;
+      y2 *= iframeScale.y;
       width *= iframeScale.x;
       height *= iframeScale.y;
-      x += left;
-      y += top;
+      x2 += left;
+      y2 += top;
       currentWin = getWindow(currentIFrame);
       currentIFrame = getFrameElement(currentWin);
     }
@@ -23097,8 +32123,8 @@ function getBoundingClientRect(element, includeScale, isFixedStrategy, offsetPar
   return rectToClientRect({
     width,
     height,
-    x,
-    y
+    x: x2,
+    y: y2
   });
 }
 function getWindowScrollBarX(element, rect) {
@@ -23110,11 +32136,11 @@ function getWindowScrollBarX(element, rect) {
 }
 function getHTMLOffset(documentElement, scroll) {
   const htmlRect = documentElement.getBoundingClientRect();
-  const x = htmlRect.left + scroll.scrollLeft - getWindowScrollBarX(documentElement, htmlRect);
-  const y = htmlRect.top + scroll.scrollTop;
+  const x2 = htmlRect.left + scroll.scrollLeft - getWindowScrollBarX(documentElement, htmlRect);
+  const y2 = htmlRect.top + scroll.scrollTop;
   return {
-    x,
-    y
+    x: x2,
+    y: y2
   };
 }
 function convertOffsetParentRelativeRectToViewportRelativeRect(_ref) {
@@ -23165,16 +32191,16 @@ function getDocumentRect(element) {
   const body = element.ownerDocument.body;
   const width = max(html.scrollWidth, html.clientWidth, body.scrollWidth, body.clientWidth);
   const height = max(html.scrollHeight, html.clientHeight, body.scrollHeight, body.clientHeight);
-  let x = -scroll.scrollLeft + getWindowScrollBarX(element);
-  const y = -scroll.scrollTop;
+  let x2 = -scroll.scrollLeft + getWindowScrollBarX(element);
+  const y2 = -scroll.scrollTop;
   if (getComputedStyle$1(body).direction === "rtl") {
-    x += max(html.clientWidth, body.clientWidth) - width;
+    x2 += max(html.clientWidth, body.clientWidth) - width;
   }
   return {
     width,
     height,
-    x,
-    y
+    x: x2,
+    y: y2
   };
 }
 const SCROLLBAR_MAX = 25;
@@ -23184,15 +32210,15 @@ function getViewportRect(element, strategy) {
   const visualViewport = win.visualViewport;
   let width = html.clientWidth;
   let height = html.clientHeight;
-  let x = 0;
-  let y = 0;
+  let x2 = 0;
+  let y2 = 0;
   if (visualViewport) {
     width = visualViewport.width;
     height = visualViewport.height;
     const visualViewportBased = isWebKit();
     if (!visualViewportBased || visualViewportBased && strategy === "fixed") {
-      x = visualViewport.offsetLeft;
-      y = visualViewport.offsetTop;
+      x2 = visualViewport.offsetLeft;
+      y2 = visualViewport.offsetTop;
     }
   }
   const windowScrollbarX = getWindowScrollBarX(html);
@@ -23211,8 +32237,8 @@ function getViewportRect(element, strategy) {
   return {
     width,
     height,
-    x,
-    y
+    x: x2,
+    y: y2
   };
 }
 function getInnerBoundingClientRect(element, strategy) {
@@ -23222,13 +32248,13 @@ function getInnerBoundingClientRect(element, strategy) {
   const scale = isHTMLElement(element) ? getScale(element) : createCoords(1);
   const width = element.clientWidth * scale.x;
   const height = element.clientHeight * scale.y;
-  const x = left * scale.x;
-  const y = top * scale.y;
+  const x2 = left * scale.x;
+  const y2 = top * scale.y;
   return {
     width,
     height,
-    x,
-    y
+    x: x2,
+    y: y2
   };
 }
 function getClientRectFromClippingAncestor(element, clippingAncestor, strategy) {
@@ -23350,11 +32376,11 @@ function getRectRelativeToOffsetParent(element, offsetParent, strategy) {
     setLeftRTLScrollbarOffset();
   }
   const htmlOffset = documentElement && !isOffsetParentAnElement && !isFixed ? getHTMLOffset(documentElement, scroll) : createCoords(0);
-  const x = rect.left + scroll.scrollLeft - offsets.x - htmlOffset.x;
-  const y = rect.top + scroll.scrollTop - offsets.y - htmlOffset.y;
+  const x2 = rect.left + scroll.scrollLeft - offsets.x - htmlOffset.x;
+  const y2 = rect.top + scroll.scrollTop - offsets.y - htmlOffset.y;
   return {
-    x,
-    y,
+    x: x2,
+    y: y2,
     width: rect.width,
     height: rect.height
   };
@@ -23428,8 +32454,8 @@ const platform = {
   isElement,
   isRTL
 };
-function rectsAreEqual(a, b) {
-  return a.x === b.x && a.y === b.y && a.width === b.width && a.height === b.height;
+function rectsAreEqual(a2, b2) {
+  return a2.x === b2.x && a2.y === b2.y && a2.width === b2.width && a2.height === b2.height;
 }
 function observeMove(element, onMove) {
   let io = null;
@@ -23601,52 +32627,52 @@ var isClient = typeof document !== "undefined";
 var noop = function noop2() {
 };
 var index = isClient ? reactExports.useLayoutEffect : noop;
-function deepEqual(a, b) {
-  if (a === b) {
+function deepEqual(a2, b2) {
+  if (a2 === b2) {
     return true;
   }
-  if (typeof a !== typeof b) {
+  if (typeof a2 !== typeof b2) {
     return false;
   }
-  if (typeof a === "function" && a.toString() === b.toString()) {
+  if (typeof a2 === "function" && a2.toString() === b2.toString()) {
     return true;
   }
   let length;
   let i;
   let keys;
-  if (a && b && typeof a === "object") {
-    if (Array.isArray(a)) {
-      length = a.length;
-      if (length !== b.length) return false;
+  if (a2 && b2 && typeof a2 === "object") {
+    if (Array.isArray(a2)) {
+      length = a2.length;
+      if (length !== b2.length) return false;
       for (i = length; i-- !== 0; ) {
-        if (!deepEqual(a[i], b[i])) {
+        if (!deepEqual(a2[i], b2[i])) {
           return false;
         }
       }
       return true;
     }
-    keys = Object.keys(a);
+    keys = Object.keys(a2);
     length = keys.length;
-    if (length !== Object.keys(b).length) {
+    if (length !== Object.keys(b2).length) {
       return false;
     }
     for (i = length; i-- !== 0; ) {
-      if (!{}.hasOwnProperty.call(b, keys[i])) {
+      if (!{}.hasOwnProperty.call(b2, keys[i])) {
         return false;
       }
     }
     for (i = length; i-- !== 0; ) {
       const key = keys[i];
-      if (key === "_owner" && a.$$typeof) {
+      if (key === "_owner" && a2.$$typeof) {
         continue;
       }
-      if (!deepEqual(a[key], b[key])) {
+      if (!deepEqual(a2[key], b2[key])) {
         return false;
       }
     }
     return true;
   }
-  return a !== a && b !== b;
+  return a2 !== a2 && b2 !== b2;
 }
 function getDPR(element) {
   if (typeof window === "undefined") {
@@ -23792,12 +32818,12 @@ function useFloating(options) {
     if (!elements.floating) {
       return initialStyles;
     }
-    const x = roundByDPR(elements.floating, data.x);
-    const y = roundByDPR(elements.floating, data.y);
+    const x2 = roundByDPR(elements.floating, data.x);
+    const y2 = roundByDPR(elements.floating, data.y);
     if (transform) {
       return {
         ...initialStyles,
-        transform: "translate(" + x + "px, " + y + "px)",
+        transform: "translate(" + x2 + "px, " + y2 + "px)",
         ...getDPR(elements.floating) >= 1.5 && {
           willChange: "transform"
         }
@@ -23805,8 +32831,8 @@ function useFloating(options) {
     }
     return {
       position: strategy,
-      left: x,
-      top: y
+      left: x2,
+      top: y2
     };
   }, [strategy, transform, elements.floating, data.x, data.y]);
   return reactExports.useMemo(() => ({
@@ -23987,7 +33013,7 @@ var CONTENT_NAME$1 = "PopperContent";
 var [PopperContentProvider, useContentContext] = createPopperContext(CONTENT_NAME$1);
 var PopperContent = reactExports.forwardRef(
   (props, forwardedRef) => {
-    var _a2, _b2, _c2, _d2, _e2, _f2;
+    var _a3, _b3, _c2, _d2, _e2, _f2;
     const {
       __scopePopper,
       side = "bottom",
@@ -24066,8 +33092,8 @@ var PopperContent = reactExports.forwardRef(
         handlePlaced == null ? void 0 : handlePlaced();
       }
     }, [isPositioned, handlePlaced]);
-    const arrowX = (_a2 = middlewareData.arrow) == null ? void 0 : _a2.x;
-    const arrowY = (_b2 = middlewareData.arrow) == null ? void 0 : _b2.y;
+    const arrowX = (_a3 = middlewareData.arrow) == null ? void 0 : _a3.x;
+    const arrowY = (_b3 = middlewareData.arrow) == null ? void 0 : _b3.y;
     const cannotCenterArrow = ((_c2 = middlewareData.arrow) == null ? void 0 : _c2.centerOffset) !== 0;
     const [contentZIndex, setContentZIndex] = reactExports.useState();
     useLayoutEffect2(() => {
@@ -24190,32 +33216,32 @@ var transformOrigin = (options) => ({
   name: "transformOrigin",
   options,
   fn(data) {
-    var _a2, _b2, _c2;
+    var _a3, _b3, _c2;
     const { placement, rects, middlewareData } = data;
-    const cannotCenterArrow = ((_a2 = middlewareData.arrow) == null ? void 0 : _a2.centerOffset) !== 0;
+    const cannotCenterArrow = ((_a3 = middlewareData.arrow) == null ? void 0 : _a3.centerOffset) !== 0;
     const isArrowHidden = cannotCenterArrow;
     const arrowWidth = isArrowHidden ? 0 : options.arrowWidth;
     const arrowHeight = isArrowHidden ? 0 : options.arrowHeight;
     const [placedSide, placedAlign] = getSideAndAlignFromPlacement(placement);
     const noArrowAlign = { start: "0%", center: "50%", end: "100%" }[placedAlign];
-    const arrowXCenter = (((_b2 = middlewareData.arrow) == null ? void 0 : _b2.x) ?? 0) + arrowWidth / 2;
+    const arrowXCenter = (((_b3 = middlewareData.arrow) == null ? void 0 : _b3.x) ?? 0) + arrowWidth / 2;
     const arrowYCenter = (((_c2 = middlewareData.arrow) == null ? void 0 : _c2.y) ?? 0) + arrowHeight / 2;
-    let x = "";
-    let y = "";
+    let x2 = "";
+    let y2 = "";
     if (placedSide === "bottom") {
-      x = isArrowHidden ? noArrowAlign : `${arrowXCenter}px`;
-      y = `${-arrowHeight}px`;
+      x2 = isArrowHidden ? noArrowAlign : `${arrowXCenter}px`;
+      y2 = `${-arrowHeight}px`;
     } else if (placedSide === "top") {
-      x = isArrowHidden ? noArrowAlign : `${arrowXCenter}px`;
-      y = `${rects.floating.height + arrowHeight}px`;
+      x2 = isArrowHidden ? noArrowAlign : `${arrowXCenter}px`;
+      y2 = `${rects.floating.height + arrowHeight}px`;
     } else if (placedSide === "right") {
-      x = `${-arrowHeight}px`;
-      y = isArrowHidden ? noArrowAlign : `${arrowYCenter}px`;
+      x2 = `${-arrowHeight}px`;
+      y2 = isArrowHidden ? noArrowAlign : `${arrowYCenter}px`;
     } else if (placedSide === "left") {
-      x = `${rects.floating.width + arrowHeight}px`;
-      y = isArrowHidden ? noArrowAlign : `${arrowYCenter}px`;
+      x2 = `${rects.floating.width + arrowHeight}px`;
+      y2 = isArrowHidden ? noArrowAlign : `${arrowYCenter}px`;
     }
-    return { data: { x, y } };
+    return { data: { x: x2, y: y2 } };
   }
 });
 function getSideAndAlignFromPlacement(placement) {
@@ -24228,11 +33254,11 @@ var Content = PopperContent;
 var Arrow = PopperArrow;
 var PORTAL_NAME$1 = "Portal";
 var Portal$1 = reactExports.forwardRef((props, forwardedRef) => {
-  var _a2;
+  var _a3;
   const { container: containerProp, ...portalProps } = props;
   const [mounted, setMounted] = reactExports.useState(false);
   useLayoutEffect2(() => setMounted(true), []);
-  const container = containerProp || mounted && ((_a2 = globalThis == null ? void 0 : globalThis.document) == null ? void 0 : _a2.body);
+  const container = containerProp || mounted && ((_a3 = globalThis == null ? void 0 : globalThis.document) == null ? void 0 : _a3.body);
   return container ? ReactDOM$2.createPortal(/* @__PURE__ */ jsxRuntimeExports.jsx(Primitive.div, { ...portalProps, ref: forwardedRef }), container) : null;
 });
 Portal$1.displayName = PORTAL_NAME$1;
@@ -24266,11 +33292,11 @@ function useControllableState({
   }
   const setValue = reactExports.useCallback(
     (nextValue) => {
-      var _a2;
+      var _a3;
       if (isControlled) {
         const value2 = isFunction(nextValue) ? nextValue(prop) : nextValue;
         if (value2 !== prop) {
-          (_a2 = onChangeRef.current) == null ? void 0 : _a2.call(onChangeRef, value2);
+          (_a3 = onChangeRef.current) == null ? void 0 : _a3.call(onChangeRef, value2);
         }
       } else {
         setUncontrolledProp(nextValue);
@@ -24291,9 +33317,9 @@ function useUncontrolledState({
     onChangeRef.current = onChange;
   }, [onChange]);
   reactExports.useEffect(() => {
-    var _a2;
+    var _a3;
     if (prevValueRef.current !== value) {
-      (_a2 = onChangeRef.current) == null ? void 0 : _a2.call(onChangeRef, value);
+      (_a3 = onChangeRef.current) == null ? void 0 : _a3.call(onChangeRef, value);
       prevValueRef.current = value;
     }
   }, [value, prevValueRef]);
@@ -24364,8 +33390,8 @@ var correctTargets = function(parent, targets) {
     }
     console.error("aria-hidden", target, "in not contained inside", parent, ". Doing nothing");
     return null;
-  }).filter(function(x) {
-    return Boolean(x);
+  }).filter(function(x2) {
+    return Boolean(x2);
   });
 };
 var applyAttributeToOthers = function(originalTarget, parentNode, markerName, controlAttribute) {
@@ -24460,22 +33486,22 @@ var hideOthers = function(originalTarget, parentNode, markerName) {
 };
 var __assign = function() {
   __assign = Object.assign || function __assign2(t) {
-    for (var s, i = 1, n = arguments.length; i < n; i++) {
-      s = arguments[i];
-      for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+    for (var s2, i = 1, n = arguments.length; i < n; i++) {
+      s2 = arguments[i];
+      for (var p2 in s2) if (Object.prototype.hasOwnProperty.call(s2, p2)) t[p2] = s2[p2];
     }
     return t;
   };
   return __assign.apply(this, arguments);
 };
-function __rest(s, e) {
+function __rest(s2, e) {
   var t = {};
-  for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-    t[p] = s[p];
-  if (s != null && typeof Object.getOwnPropertySymbols === "function")
-    for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-      if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
-        t[p[i]] = s[p[i]];
+  for (var p2 in s2) if (Object.prototype.hasOwnProperty.call(s2, p2) && e.indexOf(p2) < 0)
+    t[p2] = s2[p2];
+  if (s2 != null && typeof Object.getOwnPropertySymbols === "function")
+    for (var i = 0, p2 = Object.getOwnPropertySymbols(s2); i < p2.length; i++) {
+      if (e.indexOf(p2[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s2, p2[i]))
+        t[p2[i]] = s2[p2[i]];
     }
   return t;
 }
@@ -24558,8 +33584,8 @@ function useMergeRefs(refs, defaultValue) {
   }, [refs]);
   return callbackRef;
 }
-function ItoI(a) {
-  return a;
+function ItoI(a2) {
+  return a2;
 }
 function innerCreateMedium(defaults, middleware) {
   if (middleware === void 0) {
@@ -24581,8 +33607,8 @@ function innerCreateMedium(defaults, middleware) {
       var item = middleware(data, assigned);
       buffer.push(item);
       return function() {
-        buffer = buffer.filter(function(x) {
-          return x !== item;
+        buffer = buffer.filter(function(x2) {
+          return x2 !== item;
         });
       };
     },
@@ -24594,8 +33620,8 @@ function innerCreateMedium(defaults, middleware) {
         cbs.forEach(cb);
       }
       buffer = {
-        push: function(x) {
-          return cb(x);
+        push: function(x2) {
+          return cb(x2);
         },
         filter: function() {
           return buffer;
@@ -24621,8 +33647,8 @@ function innerCreateMedium(defaults, middleware) {
       };
       cycle();
       buffer = {
-        push: function(x) {
-          pendingQueue.push(x);
+        push: function(x2) {
+          pendingQueue.push(x2);
           cycle();
         },
         filter: function(filter) {
@@ -24642,8 +33668,8 @@ function createSidecarMedium(options) {
   medium.options = __assign({ async: true, ssr: false }, options);
   return medium;
 }
-var SideCar$1 = function(_a2) {
-  var sideCar = _a2.sideCar, rest = __rest(_a2, ["sideCar"]);
+var SideCar$1 = function(_a3) {
+  var sideCar = _a3.sideCar, rest = __rest(_a3, ["sideCar"]);
   if (!sideCar) {
     throw new Error("Sidecar: please provide `sideCar` property to import the right car");
   }
@@ -24664,12 +33690,12 @@ var nothing = function() {
 };
 var RemoveScroll = reactExports.forwardRef(function(props, parentRef) {
   var ref = reactExports.useRef(null);
-  var _a2 = reactExports.useState({
+  var _a3 = reactExports.useState({
     onScrollCapture: nothing,
     onWheelCapture: nothing,
     onTouchMoveCapture: nothing
-  }), callbacks = _a2[0], setCallbacks = _a2[1];
-  var forwardProps = props.forwardProps, children = props.children, className = props.className, removeScrollBar = props.removeScrollBar, enabled = props.enabled, shards = props.shards, sideCar = props.sideCar, noRelative = props.noRelative, noIsolation = props.noIsolation, inert = props.inert, allowPinchZoom = props.allowPinchZoom, _b2 = props.as, Container = _b2 === void 0 ? "div" : _b2, gapMode = props.gapMode, rest = __rest(props, ["forwardProps", "children", "className", "removeScrollBar", "enabled", "shards", "sideCar", "noRelative", "noIsolation", "inert", "allowPinchZoom", "as", "gapMode"]);
+  }), callbacks = _a3[0], setCallbacks = _a3[1];
+  var forwardProps = props.forwardProps, children = props.children, className = props.className, removeScrollBar = props.removeScrollBar, enabled = props.enabled, shards = props.shards, sideCar = props.sideCar, noRelative = props.noRelative, noIsolation = props.noIsolation, inert = props.inert, allowPinchZoom = props.allowPinchZoom, _b3 = props.as, Container = _b3 === void 0 ? "div" : _b3, gapMode = props.gapMode, rest = __rest(props, ["forwardProps", "children", "className", "removeScrollBar", "enabled", "shards", "sideCar", "noRelative", "noIsolation", "inert", "allowPinchZoom", "as", "gapMode"]);
   var SideCar2 = sideCar;
   var containerRef = useMergeRefs([ref, parentRef]);
   var containerProps = __assign(__assign({}, rest), callbacks);
@@ -24752,8 +33778,8 @@ var styleHookSingleton = function() {
 };
 var styleSingleton = function() {
   var useStyle = styleHookSingleton();
-  var Sheet = function(_a2) {
-    var styles = _a2.styles, dynamic = _a2.dynamic;
+  var Sheet = function(_a3) {
+    var styles = _a3.styles, dynamic = _a3.dynamic;
     useStyle(styles, dynamic);
     return null;
   };
@@ -24765,8 +33791,8 @@ var zeroGap = {
   right: 0,
   gap: 0
 };
-var parse = function(x) {
-  return parseInt(x || "", 10) || 0;
+var parse = function(x2) {
+  return parseInt(x2 || "", 10) || 0;
 };
 var getOffset = function(gapMode) {
   var cs = window.getComputedStyle(document.body);
@@ -24794,8 +33820,8 @@ var getGapWidth = function(gapMode) {
 };
 var Style = styleSingleton();
 var lockAttribute = "data-scroll-locked";
-var getStyles = function(_a2, allowRelative, gapMode, important) {
-  var left = _a2.left, top = _a2.top, right = _a2.right, gap = _a2.gap;
+var getStyles = function(_a3, allowRelative, gapMode, important) {
+  var left = _a3.left, top = _a3.top, right = _a3.right, gap = _a3.gap;
   if (gapMode === void 0) {
     gapMode = "margin";
   }
@@ -24822,8 +33848,8 @@ var useLockAttribute = function() {
     };
   }, []);
 };
-var RemoveScrollBar = function(_a2) {
-  var noRelative = _a2.noRelative, noImportant = _a2.noImportant, _b2 = _a2.gapMode, gapMode = _b2 === void 0 ? "margin" : _b2;
+var RemoveScrollBar = function(_a3) {
+  var noRelative = _a3.noRelative, noImportant = _a3.noImportant, _b3 = _a3.gapMode, gapMode = _b3 === void 0 ? "margin" : _b3;
   useLockAttribute();
   var gap = reactExports.useMemo(function() {
     return getGapWidth(gapMode);
@@ -24875,7 +33901,7 @@ var locationCouldBeScrolled = function(axis, node) {
     }
     var isScrollable = elementCouldBeScrolled(axis, current);
     if (isScrollable) {
-      var _a2 = getScrollVariables(axis, current), scrollHeight = _a2[1], clientHeight = _a2[2];
+      var _a3 = getScrollVariables(axis, current), scrollHeight = _a3[1], clientHeight = _a3[2];
       if (scrollHeight > clientHeight) {
         return true;
       }
@@ -24884,16 +33910,16 @@ var locationCouldBeScrolled = function(axis, node) {
   } while (current && current !== ownerDocument.body);
   return false;
 };
-var getVScrollVariables = function(_a2) {
-  var scrollTop = _a2.scrollTop, scrollHeight = _a2.scrollHeight, clientHeight = _a2.clientHeight;
+var getVScrollVariables = function(_a3) {
+  var scrollTop = _a3.scrollTop, scrollHeight = _a3.scrollHeight, clientHeight = _a3.clientHeight;
   return [
     scrollTop,
     scrollHeight,
     clientHeight
   ];
 };
-var getHScrollVariables = function(_a2) {
-  var scrollLeft = _a2.scrollLeft, scrollWidth = _a2.scrollWidth, clientWidth = _a2.clientWidth;
+var getHScrollVariables = function(_a3) {
+  var scrollLeft = _a3.scrollLeft, scrollWidth = _a3.scrollWidth, clientWidth = _a3.clientWidth;
   return [
     scrollLeft,
     scrollWidth,
@@ -24922,7 +33948,7 @@ var handleScroll = function(axis, endTarget, event, sourceDelta, noOverscroll) {
     if (!target) {
       break;
     }
-    var _a2 = getScrollVariables(axis, target), position = _a2[0], scroll_1 = _a2[1], capacity = _a2[2];
+    var _a3 = getScrollVariables(axis, target), position = _a3[0], scroll_1 = _a3[1], capacity = _a3[2];
     var elementScroll = scroll_1 - capacity - directionFactor * position;
     if (position || elementScroll) {
       if (elementCouldBeScrolled(axis, target)) {
@@ -24953,8 +33979,8 @@ var getDeltaXY = function(event) {
 var extractRef = function(ref) {
   return ref && "current" in ref ? ref.current : ref;
 };
-var deltaCompare = function(x, y) {
-  return x[0] === y[0] && x[1] === y[1];
+var deltaCompare = function(x2, y2) {
+  return x2[0] === y2[0] && x2[1] === y2[1];
 };
 var generateStyle = function(id) {
   return "\n  .block-interactivity-".concat(id, " {pointer-events: none;}\n  .allow-interactivity-").concat(id, " {pointer-events: all;}\n");
@@ -25433,10 +34459,10 @@ var SelectContentImpl = reactExports.forwardRef(
       if (content) {
         let pointerMoveDelta = { x: 0, y: 0 };
         const handlePointerMove = (event) => {
-          var _a2, _b2;
+          var _a3, _b3;
           pointerMoveDelta = {
-            x: Math.abs(Math.round(event.pageX) - (((_a2 = triggerPointerDownPosRef.current) == null ? void 0 : _a2.x) ?? 0)),
-            y: Math.abs(Math.round(event.pageY) - (((_b2 = triggerPointerDownPosRef.current) == null ? void 0 : _b2.y) ?? 0))
+            x: Math.abs(Math.round(event.pageX) - (((_a3 = triggerPointerDownPosRef.current) == null ? void 0 : _a3.x) ?? 0)),
+            y: Math.abs(Math.round(event.pageY) - (((_b3 = triggerPointerDownPosRef.current) == null ? void 0 : _b3.y) ?? 0))
           };
         };
         const handlePointerUp = (event) => {
@@ -25537,8 +34563,8 @@ var SelectContentImpl = reactExports.forwardRef(
               event.preventDefault();
             },
             onUnmountAutoFocus: composeEventHandlers(onCloseAutoFocus, (event) => {
-              var _a2;
-              (_a2 = context.trigger) == null ? void 0 : _a2.focus({ preventScroll: true });
+              var _a3;
+              (_a3 = context.trigger) == null ? void 0 : _a3.focus({ preventScroll: true });
               event.preventDefault();
             }),
             children: /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -25905,8 +34931,8 @@ var SelectItem$1 = reactExports.forwardRef(
     const composedRefs = useComposedRefs(
       forwardedRef,
       (node) => {
-        var _a2;
-        return (_a2 = contentContext.itemRefCallback) == null ? void 0 : _a2.call(contentContext, node, value, disabled);
+        var _a3;
+        return (_a3 = contentContext.itemRefCallback) == null ? void 0 : _a3.call(contentContext, node, value, disabled);
       }
     );
     const textId = useId();
@@ -25965,23 +34991,23 @@ var SelectItem$1 = reactExports.forwardRef(
                   pointerTypeRef.current = event.pointerType;
                 }),
                 onPointerMove: composeEventHandlers(itemProps.onPointerMove, (event) => {
-                  var _a2;
+                  var _a3;
                   pointerTypeRef.current = event.pointerType;
                   if (disabled) {
-                    (_a2 = contentContext.onItemLeave) == null ? void 0 : _a2.call(contentContext);
+                    (_a3 = contentContext.onItemLeave) == null ? void 0 : _a3.call(contentContext);
                   } else if (pointerTypeRef.current === "mouse") {
                     event.currentTarget.focus({ preventScroll: true });
                   }
                 }),
                 onPointerLeave: composeEventHandlers(itemProps.onPointerLeave, (event) => {
-                  var _a2;
+                  var _a3;
                   if (event.currentTarget === document.activeElement) {
-                    (_a2 = contentContext.onItemLeave) == null ? void 0 : _a2.call(contentContext);
+                    (_a3 = contentContext.onItemLeave) == null ? void 0 : _a3.call(contentContext);
                   }
                 }),
                 onKeyDown: composeEventHandlers(itemProps.onKeyDown, (event) => {
-                  var _a2;
-                  const isTypingAhead = ((_a2 = contentContext.searchRef) == null ? void 0 : _a2.current) !== "";
+                  var _a3;
+                  const isTypingAhead = ((_a3 = contentContext.searchRef) == null ? void 0 : _a3.current) !== "";
                   if (isTypingAhead && event.key === " ") return;
                   if (SELECTION_KEYS.includes(event.key)) handleSelect();
                   if (event.key === " ") event.preventDefault();
@@ -26009,8 +35035,8 @@ var SelectItemText = reactExports.forwardRef(
       (node) => setItemTextNode(node),
       itemContext.onItemTextChange,
       (node) => {
-        var _a2;
-        return (_a2 = contentContext.itemTextRefCallback) == null ? void 0 : _a2.call(contentContext, node, itemContext.value, itemContext.disabled);
+        var _a3;
+        return (_a3 = contentContext.itemTextRefCallback) == null ? void 0 : _a3.call(contentContext, node, itemContext.value, itemContext.disabled);
       }
     );
     const textContent = itemTextNode == null ? void 0 : itemTextNode.textContent;
@@ -26121,9 +35147,9 @@ var SelectScrollButtonImpl = reactExports.forwardRef((props, forwardedRef) => {
     return () => clearAutoScrollTimer();
   }, [clearAutoScrollTimer]);
   useLayoutEffect2(() => {
-    var _a2;
+    var _a3;
     const activeItem = getItems().find((item) => item.ref.current === document.activeElement);
-    (_a2 = activeItem == null ? void 0 : activeItem.ref.current) == null ? void 0 : _a2.scrollIntoView({ block: "nearest" });
+    (_a3 = activeItem == null ? void 0 : activeItem.ref.current) == null ? void 0 : _a3.scrollIntoView({ block: "nearest" });
   }, [getItems]);
   return /* @__PURE__ */ jsxRuntimeExports.jsx(
     Primitive.div,
@@ -26138,8 +35164,8 @@ var SelectScrollButtonImpl = reactExports.forwardRef((props, forwardedRef) => {
         }
       }),
       onPointerMove: composeEventHandlers(scrollIndicatorProps.onPointerMove, () => {
-        var _a2;
-        (_a2 = contentContext.onItemLeave) == null ? void 0 : _a2.call(contentContext);
+        var _a3;
+        (_a3 = contentContext.onItemLeave) == null ? void 0 : _a3.call(contentContext);
         if (autoScrollTimerRef.current === null) {
           autoScrollTimerRef.current = window.setInterval(onAutoScroll, 50);
         }
@@ -26236,14 +35262,14 @@ function findNextItem(items, search, currentItem) {
   const currentItemIndex = currentItem ? items.indexOf(currentItem) : -1;
   let wrappedItems = wrapArray(items, Math.max(currentItemIndex, 0));
   const excludeCurrentItem = normalizedSearch.length === 1;
-  if (excludeCurrentItem) wrappedItems = wrappedItems.filter((v) => v !== currentItem);
+  if (excludeCurrentItem) wrappedItems = wrappedItems.filter((v2) => v2 !== currentItem);
   const nextItem = wrappedItems.find(
     (item) => item.textValue.toLowerCase().startsWith(normalizedSearch.toLowerCase())
   );
   return nextItem !== currentItem ? nextItem : void 0;
 }
 function wrapArray(array, startIndex) {
-  return array.map((_, index2) => array[(startIndex + index2) % array.length]);
+  return array.map((_2, index2) => array[(startIndex + index2) % array.length]);
 }
 var Root2 = Select$1;
 var Trigger = SelectTrigger$1;
@@ -26362,24 +35388,171 @@ const createLucideIcon = (iconName, iconNode) => {
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$6 = [["path", { d: "M20 6 9 17l-5-5", key: "1gmf2c" }]];
-const Check = createLucideIcon("check", __iconNode$6);
+const __iconNode$j = [
+  [
+    "path",
+    {
+      d: "M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2",
+      key: "169zse"
+    }
+  ]
+];
+const Activity = createLucideIcon("activity", __iconNode$j);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$5 = [["path", { d: "m6 9 6 6 6-6", key: "qrunsl" }]];
-const ChevronDown = createLucideIcon("chevron-down", __iconNode$5);
+const __iconNode$i = [
+  ["path", { d: "m12 19-7-7 7-7", key: "1l729n" }],
+  ["path", { d: "M19 12H5", key: "x3x0zl" }]
+];
+const ArrowLeft = createLucideIcon("arrow-left", __iconNode$i);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$4 = [["path", { d: "m18 15-6-6-6 6", key: "153udz" }]];
-const ChevronUp = createLucideIcon("chevron-up", __iconNode$4);
+const __iconNode$h = [["path", { d: "M20 6 9 17l-5-5", key: "1gmf2c" }]];
+const Check = createLucideIcon("check", __iconNode$h);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$g = [["path", { d: "m6 9 6 6 6-6", key: "qrunsl" }]];
+const ChevronDown = createLucideIcon("chevron-down", __iconNode$g);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$f = [["path", { d: "m15 18-6-6 6-6", key: "1wnfg3" }]];
+const ChevronLeft = createLucideIcon("chevron-left", __iconNode$f);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$e = [["path", { d: "m9 18 6-6-6-6", key: "mthhwq" }]];
+const ChevronRight = createLucideIcon("chevron-right", __iconNode$e);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$d = [["path", { d: "m18 15-6-6-6 6", key: "153udz" }]];
+const ChevronUp = createLucideIcon("chevron-up", __iconNode$d);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$c = [
+  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
+  ["path", { d: "m9 12 2 2 4-4", key: "dzmm74" }]
+];
+const CircleCheck = createLucideIcon("circle-check", __iconNode$c);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$b = [
+  ["path", { d: "M18 20a6 6 0 0 0-12 0", key: "1qehca" }],
+  ["circle", { cx: "12", cy: "10", r: "4", key: "1h16sb" }],
+  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }]
+];
+const CircleUserRound = createLucideIcon("circle-user-round", __iconNode$b);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$a = [
+  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
+  ["polyline", { points: "12 6 12 12 16 14", key: "68esgv" }]
+];
+const Clock = createLucideIcon("clock", __iconNode$a);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$9 = [
+  ["rect", { width: "7", height: "9", x: "3", y: "3", rx: "1", key: "10lvy0" }],
+  ["rect", { width: "7", height: "5", x: "14", y: "3", rx: "1", key: "16une8" }],
+  ["rect", { width: "7", height: "9", x: "14", y: "12", rx: "1", key: "1hutg5" }],
+  ["rect", { width: "7", height: "5", x: "3", y: "16", rx: "1", key: "ldoo1y" }]
+];
+const LayoutDashboard = createLucideIcon("layout-dashboard", __iconNode$9);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$8 = [["path", { d: "M5 12h14", key: "1ays0h" }]];
+const Minus = createLucideIcon("minus", __iconNode$8);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$7 = [
+  ["path", { d: "M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8", key: "v9h5vc" }],
+  ["path", { d: "M21 3v5h-5", key: "1q7to0" }],
+  ["path", { d: "M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16", key: "3uifl3" }],
+  ["path", { d: "M8 16H3v5", key: "1cv678" }]
+];
+const RefreshCw = createLucideIcon("refresh-cw", __iconNode$7);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$6 = [
+  ["path", { d: "M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", key: "1357e3" }],
+  ["path", { d: "M3 3v5h5", key: "1xhq8a" }]
+];
+const RotateCcw = createLucideIcon("rotate-ccw", __iconNode$6);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$5 = [
+  ["path", { d: "M11 2v2", key: "1539x4" }],
+  ["path", { d: "M5 2v2", key: "1yf1q8" }],
+  ["path", { d: "M5 3H4a2 2 0 0 0-2 2v4a6 6 0 0 0 12 0V5a2 2 0 0 0-2-2h-1", key: "rb5t3r" }],
+  ["path", { d: "M8 15a6 6 0 0 0 12 0v-3", key: "x18d4x" }],
+  ["circle", { cx: "20", cy: "10", r: "2", key: "ts1r5v" }]
+];
+const Stethoscope = createLucideIcon("stethoscope", __iconNode$5);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$4 = [
+  ["path", { d: "M16 17h6v-6", key: "t6n2it" }],
+  ["path", { d: "m22 17-8.5-8.5-5 5L2 7", key: "x473p" }]
+];
+const TrendingDown = createLucideIcon("trending-down", __iconNode$4);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -26387,10 +35560,10 @@ const ChevronUp = createLucideIcon("chevron-up", __iconNode$4);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$3 = [
-  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
-  ["path", { d: "m9 12 2 2 4-4", key: "dzmm74" }]
+  ["path", { d: "M16 7h6v6", key: "box55l" }],
+  ["path", { d: "m22 7-8.5 8.5-5-5L2 17", key: "1t1m79" }]
 ];
-const CircleCheck = createLucideIcon("circle-check", __iconNode$3);
+const TrendingUp = createLucideIcon("trending-up", __iconNode$3);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -26398,28 +35571,6 @@ const CircleCheck = createLucideIcon("circle-check", __iconNode$3);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$2 = [
-  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
-  ["polyline", { points: "12 6 12 12 16 14", key: "68esgv" }]
-];
-const Clock = createLucideIcon("clock", __iconNode$2);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$1 = [
-  ["path", { d: "M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", key: "1357e3" }],
-  ["path", { d: "M3 3v5h5", key: "1xhq8a" }]
-];
-const RotateCcw = createLucideIcon("rotate-ccw", __iconNode$1);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode = [
   [
     "path",
     {
@@ -26430,7 +35581,31 @@ const __iconNode = [
   ["path", { d: "M12 9v4", key: "juzpu7" }],
   ["path", { d: "M12 17h.01", key: "p32p05" }]
 ];
-const TriangleAlert = createLucideIcon("triangle-alert", __iconNode);
+const TriangleAlert = createLucideIcon("triangle-alert", __iconNode$2);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$1 = [
+  ["path", { d: "M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2", key: "975kel" }],
+  ["circle", { cx: "12", cy: "7", r: "4", key: "17ys0d" }]
+];
+const User = createLucideIcon("user", __iconNode$1);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode = [
+  ["path", { d: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2", key: "1yyitq" }],
+  ["path", { d: "M16 3.128a4 4 0 0 1 0 7.744", key: "16gr8j" }],
+  ["path", { d: "M22 21v-2a4 4 0 0 0-3-3.87", key: "kshegd" }],
+  ["circle", { cx: "9", cy: "7", r: "4", key: "nufk8" }]
+];
+const Users = createLucideIcon("users", __iconNode);
 function Select({
   ...props
 }) {
@@ -26596,6 +35771,446 @@ function Separator({
     }
   );
 }
+const Patient = Record({
+  "age": Nat,
+  "patientId": Text,
+  "name": Text,
+  "language": Text,
+  "highestEducation": Text,
+  "gender": Text,
+  "doctorName": Text
+});
+const GridSnapshot = Record({
+  "markedIds": Vec(Text),
+  "rows": Vec(Vec(Text))
+});
+const TestResult = Record({
+  "completedAt": Int,
+  "totalTargets": Nat,
+  "correctStrikes": Nat,
+  "omissions": Nat,
+  "elapsedSeconds": Nat,
+  "commissions": Nat,
+  "classification": Text
+});
+const TrialResult = Record({
+  "totalTargets": Nat,
+  "correctStrikes": Nat,
+  "omissions": Nat,
+  "attemptedAt": Int,
+  "commissions": Nat
+});
+const TestSession = Record({
+  "startTime": Nat,
+  "gridSnapshot": Opt(GridSnapshot),
+  "testResult": Opt(TestResult),
+  "endTime": Nat,
+  "languageSelected": Text,
+  "patientId": Text,
+  "patientName": Text,
+  "doctorName": Text,
+  "trialResult": Opt(TrialResult)
+});
+Service({
+  "getAllPatients": Func([], [Vec(Patient)], ["query"]),
+  "getAllTestSessions": Func([], [Vec(TestSession)], ["query"]),
+  "getDoctors": Func([], [Vec(Text)], ["query"]),
+  "getPatient": Func([Text], [Opt(Patient)], ["query"]),
+  "getPatientFullRecord": Func(
+    [Text],
+    [
+      Opt(
+        Record({ "patient": Patient, "sessions": Vec(TestSession) })
+      )
+    ],
+    ["query"]
+  ),
+  "getSessionsByDoctor": Func(
+    [Text],
+    [Vec(TestSession)],
+    ["query"]
+  ),
+  "getSessionsByPatientId": Func(
+    [Text],
+    [Vec(TestSession)],
+    ["query"]
+  ),
+  "saveDoctor": Func([Text], [], []),
+  "savePatient": Func([Patient], [], []),
+  "saveTestSession": Func([TestSession], [], [])
+});
+const idlFactory = ({ IDL: IDL2 }) => {
+  const Patient2 = IDL2.Record({
+    "age": IDL2.Nat,
+    "patientId": IDL2.Text,
+    "name": IDL2.Text,
+    "language": IDL2.Text,
+    "highestEducation": IDL2.Text,
+    "gender": IDL2.Text,
+    "doctorName": IDL2.Text
+  });
+  const GridSnapshot2 = IDL2.Record({
+    "markedIds": IDL2.Vec(IDL2.Text),
+    "rows": IDL2.Vec(IDL2.Vec(IDL2.Text))
+  });
+  const TestResult2 = IDL2.Record({
+    "completedAt": IDL2.Int,
+    "totalTargets": IDL2.Nat,
+    "correctStrikes": IDL2.Nat,
+    "omissions": IDL2.Nat,
+    "elapsedSeconds": IDL2.Nat,
+    "commissions": IDL2.Nat,
+    "classification": IDL2.Text
+  });
+  const TrialResult2 = IDL2.Record({
+    "totalTargets": IDL2.Nat,
+    "correctStrikes": IDL2.Nat,
+    "omissions": IDL2.Nat,
+    "attemptedAt": IDL2.Int,
+    "commissions": IDL2.Nat
+  });
+  const TestSession2 = IDL2.Record({
+    "startTime": IDL2.Nat,
+    "gridSnapshot": IDL2.Opt(GridSnapshot2),
+    "testResult": IDL2.Opt(TestResult2),
+    "endTime": IDL2.Nat,
+    "languageSelected": IDL2.Text,
+    "patientId": IDL2.Text,
+    "patientName": IDL2.Text,
+    "doctorName": IDL2.Text,
+    "trialResult": IDL2.Opt(TrialResult2)
+  });
+  return IDL2.Service({
+    "getAllPatients": IDL2.Func([], [IDL2.Vec(Patient2)], ["query"]),
+    "getAllTestSessions": IDL2.Func([], [IDL2.Vec(TestSession2)], ["query"]),
+    "getDoctors": IDL2.Func([], [IDL2.Vec(IDL2.Text)], ["query"]),
+    "getPatient": IDL2.Func([IDL2.Text], [IDL2.Opt(Patient2)], ["query"]),
+    "getPatientFullRecord": IDL2.Func(
+      [IDL2.Text],
+      [
+        IDL2.Opt(
+          IDL2.Record({
+            "patient": Patient2,
+            "sessions": IDL2.Vec(TestSession2)
+          })
+        )
+      ],
+      ["query"]
+    ),
+    "getSessionsByDoctor": IDL2.Func(
+      [IDL2.Text],
+      [IDL2.Vec(TestSession2)],
+      ["query"]
+    ),
+    "getSessionsByPatientId": IDL2.Func(
+      [IDL2.Text],
+      [IDL2.Vec(TestSession2)],
+      ["query"]
+    ),
+    "saveDoctor": IDL2.Func([IDL2.Text], [], []),
+    "savePatient": IDL2.Func([Patient2], [], []),
+    "saveTestSession": IDL2.Func([TestSession2], [], [])
+  });
+};
+function candid_some(value) {
+  return [
+    value
+  ];
+}
+function candid_none() {
+  return [];
+}
+function record_opt_to_undefined(arg) {
+  return arg == null ? void 0 : arg;
+}
+class Backend {
+  constructor(actor, _uploadFile, _downloadFile, processError2) {
+    this.actor = actor;
+    this._uploadFile = _uploadFile;
+    this._downloadFile = _downloadFile;
+    this.processError = processError2;
+  }
+  async getAllPatients() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.getAllPatients();
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.getAllPatients();
+      return result;
+    }
+  }
+  async getAllTestSessions() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.getAllTestSessions();
+        return from_candid_vec_n1(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.getAllTestSessions();
+      return from_candid_vec_n1(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async getDoctors() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.getDoctors();
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.getDoctors();
+      return result;
+    }
+  }
+  async getPatient(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.getPatient(arg0);
+        return from_candid_opt_n7(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.getPatient(arg0);
+      return from_candid_opt_n7(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async getPatientFullRecord(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.getPatientFullRecord(arg0);
+        return from_candid_opt_n8(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.getPatientFullRecord(arg0);
+      return from_candid_opt_n8(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async getSessionsByDoctor(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.getSessionsByDoctor(arg0);
+        return from_candid_vec_n1(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.getSessionsByDoctor(arg0);
+      return from_candid_vec_n1(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async getSessionsByPatientId(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.getSessionsByPatientId(arg0);
+        return from_candid_vec_n1(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.getSessionsByPatientId(arg0);
+      return from_candid_vec_n1(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async saveDoctor(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.saveDoctor(arg0);
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.saveDoctor(arg0);
+      return result;
+    }
+  }
+  async savePatient(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.savePatient(arg0);
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.savePatient(arg0);
+      return result;
+    }
+  }
+  async saveTestSession(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.saveTestSession(to_candid_TestSession_n10(this._uploadFile, this._downloadFile, arg0));
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.saveTestSession(to_candid_TestSession_n10(this._uploadFile, this._downloadFile, arg0));
+      return result;
+    }
+  }
+}
+function from_candid_TestSession_n2(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n3(_uploadFile, _downloadFile, value);
+}
+function from_candid_opt_n4(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : value[0];
+}
+function from_candid_opt_n5(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : value[0];
+}
+function from_candid_opt_n6(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : value[0];
+}
+function from_candid_opt_n7(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : value[0];
+}
+function from_candid_opt_n8(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_record_n9(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_record_n3(_uploadFile, _downloadFile, value) {
+  return {
+    startTime: value.startTime,
+    gridSnapshot: record_opt_to_undefined(from_candid_opt_n4(_uploadFile, _downloadFile, value.gridSnapshot)),
+    testResult: record_opt_to_undefined(from_candid_opt_n5(_uploadFile, _downloadFile, value.testResult)),
+    endTime: value.endTime,
+    languageSelected: value.languageSelected,
+    patientId: value.patientId,
+    patientName: value.patientName,
+    doctorName: value.doctorName,
+    trialResult: record_opt_to_undefined(from_candid_opt_n6(_uploadFile, _downloadFile, value.trialResult))
+  };
+}
+function from_candid_record_n9(_uploadFile, _downloadFile, value) {
+  return {
+    patient: value.patient,
+    sessions: from_candid_vec_n1(_uploadFile, _downloadFile, value.sessions)
+  };
+}
+function from_candid_vec_n1(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_TestSession_n2(_uploadFile, _downloadFile, x2));
+}
+function to_candid_TestSession_n10(_uploadFile, _downloadFile, value) {
+  return to_candid_record_n11(_uploadFile, _downloadFile, value);
+}
+function to_candid_record_n11(_uploadFile, _downloadFile, value) {
+  return {
+    startTime: value.startTime,
+    gridSnapshot: value.gridSnapshot ? candid_some(value.gridSnapshot) : candid_none(),
+    testResult: value.testResult ? candid_some(value.testResult) : candid_none(),
+    endTime: value.endTime,
+    languageSelected: value.languageSelected,
+    patientId: value.patientId,
+    patientName: value.patientName,
+    doctorName: value.doctorName,
+    trialResult: value.trialResult ? candid_some(value.trialResult) : candid_none()
+  };
+}
+function createActor(canisterId, _uploadFile, _downloadFile, options = {}) {
+  const agent = options.agent || HttpAgent.createSync({
+    ...options.agentOptions
+  });
+  if (options.agent && options.agentOptions) {
+    console.warn("Detected both agent and agentOptions passed to createActor. Ignoring agentOptions and proceeding with the provided agent.");
+  }
+  const actor = Actor.createActor(idlFactory, {
+    agent,
+    canisterId,
+    ...options.actorOptions
+  });
+  return new Backend(actor, _uploadFile, _downloadFile, options.processError);
+}
+function useSessionsByDoctor(doctorName) {
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["sessionsByDoctor", doctorName],
+    queryFn: async () => {
+      if (!actor || !doctorName) return [];
+      const sessions = await actor.getSessionsByDoctor(doctorName);
+      const byPatientId = /* @__PURE__ */ new Map();
+      for (const s2 of sessions) {
+        const arr = byPatientId.get(s2.patientId) ?? [];
+        arr.push(s2);
+        byPatientId.set(s2.patientId, arr);
+      }
+      const records = await Promise.all(
+        Array.from(byPatientId.entries()).map(
+          async ([patientId, patientSessions]) => {
+            var _a3, _b3;
+            const patient = await actor.getPatient(patientId);
+            const fallbackPatient = {
+              patientId,
+              name: ((_a3 = patientSessions[0]) == null ? void 0 : _a3.patientName) ?? patientId,
+              age: 0n,
+              gender: "",
+              highestEducation: "",
+              language: ((_b3 = patientSessions[0]) == null ? void 0 : _b3.languageSelected) ?? "en",
+              doctorName
+            };
+            return {
+              patient: patient ?? fallbackPatient,
+              sessions: patientSessions
+            };
+          }
+        )
+      );
+      return records;
+    },
+    enabled: !!actor && !isFetching && !!doctorName
+  });
+}
+function useSavePatient() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (patient) => {
+      if (!actor) throw new Error("Actor not ready");
+      await actor.savePatient(patient);
+    },
+    onSuccess: () => {
+      queryClient2.invalidateQueries({ queryKey: ["patients"] });
+      queryClient2.invalidateQueries({ queryKey: ["patientsWithSessions"] });
+    }
+  });
+}
+function useSaveTestSession() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (session) => {
+      if (!actor) throw new Error("Actor not ready");
+      await actor.saveTestSession(session);
+    },
+    onSuccess: (_data, variables) => {
+      queryClient2.invalidateQueries({ queryKey: ["testSessions"] });
+      queryClient2.invalidateQueries({ queryKey: ["patientsWithSessions"] });
+      queryClient2.invalidateQueries({
+        queryKey: ["sessionsByDoctor", variables.doctorName]
+      });
+    }
+  });
+}
 const TARGET_POSITIONS = [
   [1, 4, 7, 11, 15, 18, 22, 25, 28, 31, 35, 38, 42, 45, 48, 51, 3, 17],
   [2, 5, 9, 12, 16, 19, 23, 26, 29, 32, 36, 39, 43, 46, 49, 0, 8, 24],
@@ -26611,9 +36226,9 @@ function buildGrid() {
     const row = [];
     const targetSet = new Set(TARGET_POSITIONS[r2]);
     let ntIdx = r2 * 13 % NON_TARGETS.length;
-    for (let c = 0; c < 52; c++) {
-      if (targetSet.has(c)) {
-        row.push(c % 2 === 0 ? "C" : "E");
+    for (let c2 = 0; c2 < 52; c2++) {
+      if (targetSet.has(c2)) {
+        row.push(c2 % 2 === 0 ? "C" : "E");
       } else {
         row.push(NON_TARGETS[ntIdx % NON_TARGETS.length]);
         ntIdx++;
@@ -26643,16 +36258,756 @@ const THERAPIST_SCRIPTS = {
   hi: "रोगी से कहें: 'मैं आपको अक्षरों की एक शीट दिखाऊँगा। आपको हर C और E अक्षर को काटना है। ऊपर बाईं ओर से शुरू करें और पंक्ति दर पंक्ति काम करें।'",
   kn: "ರೋಗಿಗೆ ಹೇಳಿ: 'ನಾನು ನಿಮಗೆ ಅಕ್ಷರಗಳ ಒಂದು ಶೀಟ್ ತೋರಿಸುತ್ತೇನೆ. ನೀವು ಪ್ರತಿ C ಮತ್ತು E ಅಕ್ಷರವನ್ನು ಅಡ್ಡಗೆರೆ ಎಳೆಯಬೇಕು.'"
 };
+const AGE_NORMS = [
+  { minAge: 18, maxAge: 19, mean: 70.3, aboveMin: 81, avgMin: 60 },
+  { minAge: 20, maxAge: 29, mean: 71.8, aboveMin: 83, avgMin: 61 },
+  { minAge: 30, maxAge: 39, mean: 65.6, aboveMin: 73, avgMin: 58 },
+  { minAge: 40, maxAge: 49, mean: 60.2, aboveMin: 71, avgMin: 50 },
+  { minAge: 50, maxAge: 59, mean: 56.6, aboveMin: 68, avgMin: 45 },
+  { minAge: 60, maxAge: 69, mean: 52.7, aboveMin: 63, avgMin: 43 },
+  { minAge: 70, maxAge: 79, mean: 46.2, aboveMin: 55, avgMin: 37 },
+  { minAge: 80, maxAge: 999, mean: 39.7, aboveMin: 48, avgMin: 31 }
+];
+function classifyScore(score, age) {
+  const norm = AGE_NORMS.find((n) => age >= n.minAge && age <= n.maxAge) ?? AGE_NORMS[3];
+  let label;
+  if (score >= norm.aboveMin) label = "Above Average";
+  else if (score >= norm.avgMin) label = "Average";
+  else label = "Below Average";
+  return { label, mean: norm.mean };
+}
+function GridSnapshotView({
+  snapshotKey,
+  gridSnapshot
+}) {
+  let rows = null;
+  let markedSet = /* @__PURE__ */ new Set();
+  if (gridSnapshot && Array.isArray(gridSnapshot.rows) && gridSnapshot.rows.length > 0) {
+    rows = gridSnapshot.rows;
+    markedSet = new Set(gridSnapshot.markedIds);
+  } else {
+    const raw = localStorage.getItem(snapshotKey);
+    if (raw) {
+      try {
+        const data = JSON.parse(raw);
+        rows = data.rows;
+        markedSet = new Set(data.marked);
+      } catch {
+      }
+    }
+  }
+  if (!rows) {
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "text-xs text-muted-foreground italic py-2", children: "No test sheet available for this session." });
+  }
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "border border-border rounded-lg bg-muted/20 p-3 mt-3", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "text-xs font-semibold text-foreground mb-1 uppercase tracking-wide", children: "Test Sheet Snapshot" }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "text-[10px] italic text-muted-foreground mb-2 font-serif", children: "Strike only C and E" }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "space-y-[2px]", children: rows.map((row, ri) => (
+      // biome-ignore lint/suspicious/noArrayIndexKey: static grid rows, order never changes
+      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex flex-wrap gap-[1px]", children: row.map((letter, ci) => {
+        const isMarked = markedSet.has(`${ri}-${ci}`);
+        return /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "span",
+          {
+            className: `text-[7px] font-mono leading-none px-[1px] ${isMarked ? "line-through text-red-600 font-bold" : "text-foreground/70"}`,
+            children: letter
+          },
+          ci
+        );
+      }) }, ri)
+    )) })
+  ] });
+}
+function LandingStep({
+  onPatientLogin,
+  onDoctorLogin
+}) {
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-h-screen bg-background flex flex-col", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx("header", { className: "bg-card border-b border-border px-6 py-4 shadow-sm", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "max-w-5xl mx-auto flex items-center gap-3", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "w-9 h-9 bg-primary/10 rounded-full flex items-center justify-center", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Activity, { className: "w-5 h-5 text-primary" }) }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "text-base font-bold text-foreground leading-tight", children: "Double Alphabet Test" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-muted-foreground", children: "Clinical Assessment Platform" })
+      ] })
+    ] }) }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("main", { className: "flex-1 flex items-center justify-center px-4 py-16", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "w-full max-w-2xl", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "text-center mb-12", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-6", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "w-2 h-2 rounded-full bg-primary inline-block" }),
+          "Cognitive Attention Assessment"
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("h2", { className: "text-4xl font-bold text-foreground mb-3 leading-tight", children: [
+          "Welcome to the",
+          /* @__PURE__ */ jsxRuntimeExports.jsx("br", {}),
+          "Assessment Portal"
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-muted-foreground text-base max-w-md mx-auto", children: "Please select your role to continue. Patients proceed to the test workflow; doctors access the clinical dashboard." })
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-1 sm:grid-cols-2 gap-6", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "button",
+          {
+            type: "button",
+            "data-ocid": "landing.patient_button",
+            onClick: onPatientLogin,
+            className: "group relative bg-card border-2 border-border rounded-2xl p-8 text-left hover:border-primary hover:shadow-lg transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center mb-5 group-hover:bg-primary/15 transition-colors", children: /* @__PURE__ */ jsxRuntimeExports.jsx(User, { className: "w-7 h-7 text-primary" }) }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "text-xl font-bold text-foreground mb-2", children: "Patient Login" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-muted-foreground leading-relaxed", children: "Begin your cognitive assessment. Enter your details and follow the guided test workflow." }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-6 flex items-center gap-2 text-primary text-sm font-semibold", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "Start assessment" }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "group-hover:translate-x-1 transition-transform duration-200", children: "→" })
+              ] })
+            ]
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "button",
+          {
+            type: "button",
+            "data-ocid": "landing.doctor_button",
+            onClick: onDoctorLogin,
+            className: "group relative bg-card border-2 border-border rounded-2xl p-8 text-left hover:border-primary hover:shadow-lg transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center mb-5 group-hover:bg-primary/15 transition-colors", children: /* @__PURE__ */ jsxRuntimeExports.jsx(LayoutDashboard, { className: "w-7 h-7 text-primary" }) }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "text-xl font-bold text-foreground mb-2", children: "Doctor Login" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-muted-foreground leading-relaxed", children: "Access the clinical dashboard to review patient results, scores, and classifications." }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-6 flex items-center gap-2 text-primary text-sm font-semibold", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "View dashboard" }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "group-hover:translate-x-1 transition-transform duration-200", children: "→" })
+              ] })
+            ]
+          }
+        )
+      ] })
+    ] }) }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("footer", { className: "bg-muted/40 border-t border-border py-4 px-6", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-center text-xs text-muted-foreground", children: [
+      "© ",
+      (/* @__PURE__ */ new Date()).getFullYear(),
+      ". Built with love using",
+      " ",
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "a",
+        {
+          href: `https://caffeine.ai?utm_source=caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(window.location.hostname)}`,
+          className: "underline hover:text-foreground transition-colors",
+          target: "_blank",
+          rel: "noreferrer",
+          children: "caffeine.ai"
+        }
+      )
+    ] }) })
+  ] });
+}
+function DoctorDashboardStep({
+  onBack,
+  loggedDoctorName
+}) {
+  const {
+    data: records = [],
+    isLoading,
+    refetch,
+    isRefetching
+  } = useSessionsByDoctor(loggedDoctorName);
+  const [expandedIds, setExpandedIds] = reactExports.useState(/* @__PURE__ */ new Set());
+  const toggleExpand = (id) => {
+    setExpandedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+  const classificationBadge = (c2) => {
+    if (c2 === "Above Average")
+      return /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-800", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(TrendingUp, { className: "w-3 h-3" }),
+        " Above Average"
+      ] });
+    if (c2 === "Average")
+      return /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-300", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(Minus, { className: "w-3 h-3" }),
+        " Average"
+      ] });
+    if (c2 === "Below Average")
+      return /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-800", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(TrendingDown, { className: "w-3 h-3" }),
+        " Below Average"
+      ] });
+    return null;
+  };
+  const formatTime = (s2) => {
+    if (s2 <= 0) return "—";
+    const m2 = Math.floor(s2 / 60).toString().padStart(2, "0");
+    const sec = (s2 % 60).toString().padStart(2, "0");
+    return `${m2}:${sec}`;
+  };
+  const formatDateTime = (ns) => {
+    if (ns === 0n) return "—";
+    try {
+      return new Date(Number(ns) / 1e6).toLocaleString();
+    } catch {
+      return "—";
+    }
+  };
+  const totalSessions = records.reduce((sum, r2) => sum + r2.sessions.length, 0);
+  const aboveAvgCount = records.reduce(
+    (sum, r2) => sum + r2.sessions.filter((s2) => {
+      var _a3;
+      return ((_a3 = s2.testResult) == null ? void 0 : _a3.classification) === "Above Average";
+    }).length,
+    0
+  );
+  const LANG_LABELS_FULL = {
+    en: "English",
+    hi: "Hindi",
+    kn: "Kannada"
+  };
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-h-screen bg-background flex flex-col", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx("header", { className: "bg-card border-b border-border px-6 py-4 shadow-sm", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "max-w-5xl mx-auto flex items-center justify-between", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-3", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "w-9 h-9 bg-primary/10 rounded-full flex items-center justify-center", children: /* @__PURE__ */ jsxRuntimeExports.jsx(LayoutDashboard, { className: "w-5 h-5 text-primary" }) }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("h1", { className: "text-base font-bold text-foreground leading-tight", children: [
+            "Results for Dr. ",
+            loggedDoctorName
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-xs text-muted-foreground", children: [
+            records.length,
+            " patient",
+            records.length !== 1 ? "s" : "",
+            " ",
+            "· ",
+            totalSessions,
+            " test",
+            totalSessions !== 1 ? "s" : "",
+            " ",
+            "completed"
+          ] })
+        ] })
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "button",
+          {
+            type: "button",
+            "data-ocid": "dashboard.refresh_button",
+            onClick: () => refetch(),
+            disabled: isRefetching,
+            className: "flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5 rounded-lg hover:bg-muted/50 disabled:opacity-50",
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                RefreshCw,
+                {
+                  className: `w-4 h-4 ${isRefetching ? "animate-spin" : ""}`
+                }
+              ),
+              "Refresh"
+            ]
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "button",
+          {
+            type: "button",
+            "data-ocid": "dashboard.back_button",
+            onClick: onBack,
+            className: "flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5 rounded-lg hover:bg-muted/50",
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(ArrowLeft, { className: "w-4 h-4" }),
+              "Back"
+            ]
+          }
+        )
+      ] })
+    ] }) }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("main", { className: "flex-1 max-w-5xl w-full mx-auto px-4 py-8", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "bg-card border border-border rounded-xl px-5 py-4", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-1", children: "Total Patients" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-3xl font-bold text-foreground", children: records.length })
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "bg-card border border-border rounded-xl px-5 py-4", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-1", children: "Test Sessions" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-3xl font-bold text-foreground", children: totalSessions })
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "bg-card border border-border rounded-xl px-5 py-4 col-span-2 sm:col-span-1", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-1", children: "Above Average" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-3xl font-bold text-green-600", children: aboveAvgCount })
+        ] })
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "bg-card border border-border rounded-xl overflow-hidden shadow-sm", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "px-6 py-4 border-b border-border flex items-center justify-between", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(Users, { className: "w-4 h-4 text-muted-foreground" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "text-sm font-semibold text-foreground", children: "Patient Records" })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "text-xs text-muted-foreground", children: [
+            records.length,
+            " patient(s)"
+          ] })
+        ] }),
+        isLoading ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "div",
+          {
+            className: "flex items-center justify-center py-16",
+            "data-ocid": "dashboard.loading_state",
+            children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "text-center", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin mx-auto mb-3" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-muted-foreground", children: "Loading patient data…" })
+            ] })
+          }
+        ) : records.length === 0 ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "div",
+          {
+            className: "flex flex-col items-center justify-center py-16 text-center",
+            "data-ocid": "dashboard.empty_state",
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(Users, { className: "w-10 h-10 text-muted-foreground/40 mb-3" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm font-semibold text-foreground mb-1", children: "No patient records yet" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-xs text-muted-foreground", children: [
+                "Patient results will appear here once tests are completed under Dr. ",
+                loggedDoctorName,
+                "."
+              ] })
+            ]
+          }
+        ) : /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "bg-muted/30 border-b border-border grid grid-cols-[2fr_1.2fr_0.7fr_0.8fr_1.5fr_0.8fr_2rem] gap-3 px-5 py-3", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-xs font-semibold uppercase tracking-wider text-muted-foreground", children: "Patient" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-xs font-semibold uppercase tracking-wider text-muted-foreground", children: "Patient ID" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-xs font-semibold uppercase tracking-wider text-muted-foreground", children: "Age" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-xs font-semibold uppercase tracking-wider text-muted-foreground", children: "Gender" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-xs font-semibold uppercase tracking-wider text-muted-foreground", children: "Education" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-xs font-semibold uppercase tracking-wider text-muted-foreground text-right", children: "Sessions" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", {})
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "divide-y divide-border", children: records.map((record, i) => {
+            const p2 = record.patient;
+            const isExpanded = expandedIds.has(p2.patientId);
+            return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "div",
+              {
+                "data-ocid": `dashboard.item.${i + 1}`,
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                    "button",
+                    {
+                      type: "button",
+                      className: "w-full grid grid-cols-[2fr_1.2fr_0.7fr_0.8fr_1.5fr_0.8fr_2rem] gap-3 px-5 py-4 hover:bg-muted/20 transition-colors text-left items-center",
+                      onClick: () => toggleExpand(p2.patientId),
+                      "data-ocid": `dashboard.item.${i + 1}.toggle`,
+                      children: [
+                        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-medium text-foreground text-sm truncate", children: p2.name }),
+                        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-mono text-xs text-muted-foreground truncate", children: p2.patientId }),
+                        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-sm text-foreground tabular-nums", children: Number(p2.age) > 0 ? Number(p2.age) : "—" }),
+                        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-sm text-muted-foreground truncate", children: p2.gender }),
+                        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-sm text-muted-foreground truncate", children: p2.highestEducation }),
+                        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-sm text-foreground text-right tabular-nums", children: record.sessions.length }),
+                        isExpanded ? /* @__PURE__ */ jsxRuntimeExports.jsx(ChevronUp, { className: "w-4 h-4 text-muted-foreground" }) : /* @__PURE__ */ jsxRuntimeExports.jsx(ChevronDown, { className: "w-4 h-4 text-muted-foreground" })
+                      ]
+                    }
+                  ),
+                  isExpanded && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "bg-muted/10 border-t border-border px-5 py-5 space-y-5", children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "rounded-xl border border-primary/30 bg-primary/5 px-5 py-4", children: [
+                      /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "text-xs font-bold uppercase tracking-widest text-primary mb-3", children: "Patient Details" }),
+                      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-2 text-sm", children: [
+                        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+                          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-muted-foreground text-xs", children: "Full Name" }),
+                          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-medium text-foreground", children: p2.name })
+                        ] }),
+                        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+                          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-muted-foreground text-xs", children: "Patient ID" }),
+                          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-mono text-foreground", children: p2.patientId })
+                        ] }),
+                        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+                          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-muted-foreground text-xs", children: "Age" }),
+                          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-medium text-foreground", children: Number(p2.age) > 0 ? Number(p2.age) : "—" })
+                        ] }),
+                        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+                          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-muted-foreground text-xs", children: "Gender" }),
+                          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-medium text-foreground", children: p2.gender || "—" })
+                        ] }),
+                        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+                          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-muted-foreground text-xs", children: "Education" }),
+                          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-medium text-foreground", children: p2.highestEducation || "—" })
+                        ] }),
+                        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+                          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-muted-foreground text-xs", children: "Doctor" }),
+                          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-medium text-foreground", children: p2.doctorName })
+                        ] }),
+                        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+                          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-muted-foreground text-xs", children: "Language" }),
+                          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-medium text-foreground", children: LANG_LABELS_FULL[p2.language] ?? p2.language })
+                        ] })
+                      ] })
+                    ] }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+                      /* @__PURE__ */ jsxRuntimeExports.jsxs("h3", { className: "text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3", children: [
+                        "Test Sessions (",
+                        record.sessions.length,
+                        ")"
+                      ] }),
+                      record.sessions.length === 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+                        "p",
+                        {
+                          className: "text-sm text-muted-foreground italic",
+                          "data-ocid": `dashboard.item.${i + 1}.empty_state`,
+                          children: "No test sessions recorded yet."
+                        }
+                      ) : /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "space-y-3", children: record.sessions.map(
+                        (session, si) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                          "div",
+                          {
+                            className: "rounded-lg border border-border bg-card p-4",
+                            "data-ocid": `dashboard.item.${i + 1}.session.${si + 1}`,
+                            children: [
+                              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center justify-between mb-3", children: [
+                                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
+                                  /* @__PURE__ */ jsxRuntimeExports.jsx(Clock, { className: "w-4 h-4 text-muted-foreground" }),
+                                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-xs font-semibold text-muted-foreground", children: formatDateTime(session.startTime) })
+                                ] }),
+                                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-xs bg-muted/50 text-muted-foreground rounded-full px-2 py-0.5", children: LANG_LABELS_FULL[session.languageSelected] ?? session.languageSelected })
+                              ] }),
+                              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-1 sm:grid-cols-2 gap-3", children: [
+                                session.trialResult && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "rounded-lg bg-muted/30 border border-border p-3", children: [
+                                  /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-2", children: "Practice Trial" }),
+                                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-2 gap-1 text-xs", children: [
+                                    /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-muted-foreground", children: "Total Targets" }),
+                                    /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-mono tabular-nums text-right", children: Number(
+                                      session.trialResult.totalTargets
+                                    ) }),
+                                    /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-muted-foreground", children: "Correct Strikes" }),
+                                    /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-mono tabular-nums text-right text-green-700", children: Number(
+                                      session.trialResult.correctStrikes
+                                    ) }),
+                                    /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-muted-foreground", children: "Omissions" }),
+                                    /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-mono tabular-nums text-right text-amber-700", children: Number(
+                                      session.trialResult.omissions
+                                    ) }),
+                                    /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-muted-foreground", children: "Commissions" }),
+                                    /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-mono tabular-nums text-right text-red-700", children: Number(
+                                      session.trialResult.commissions
+                                    ) })
+                                  ] })
+                                ] }),
+                                session.testResult && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "rounded-lg bg-muted/30 border border-border p-3", children: [
+                                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center justify-between mb-2", children: [
+                                    /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-[10px] font-bold uppercase tracking-widest text-muted-foreground", children: "Real Test" }),
+                                    classificationBadge(
+                                      session.testResult.classification
+                                    )
+                                  ] }),
+                                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "text-xs text-muted-foreground mt-1", children: [
+                                    "Age group norm:",
+                                    " ",
+                                    classifyScore(
+                                      Number(
+                                        session.testResult.correctStrikes
+                                      ),
+                                      Number(p2.age) || 0
+                                    ).mean,
+                                    " ",
+                                    "correct"
+                                  ] }),
+                                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-2 gap-1 text-xs", children: [
+                                    /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-muted-foreground", children: "Total Targets" }),
+                                    /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-mono tabular-nums text-right", children: Number(
+                                      session.testResult.totalTargets
+                                    ) }),
+                                    /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-muted-foreground", children: "Correct Strikes" }),
+                                    /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-mono tabular-nums text-right text-green-700", children: Number(
+                                      session.testResult.correctStrikes
+                                    ) }),
+                                    /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-muted-foreground", children: "Omissions" }),
+                                    /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-mono tabular-nums text-right text-amber-700", children: Number(
+                                      session.testResult.omissions
+                                    ) }),
+                                    /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-muted-foreground", children: "Commissions" }),
+                                    /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-mono tabular-nums text-right text-red-700", children: Number(
+                                      session.testResult.commissions
+                                    ) }),
+                                    /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-muted-foreground", children: "Time Taken" }),
+                                    /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-mono tabular-nums text-right", children: formatTime(
+                                      Number(
+                                        session.testResult.elapsedSeconds
+                                      )
+                                    ) })
+                                  ] }),
+                                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                                    GridSnapshotView,
+                                    {
+                                      snapshotKey: `dlct_snapshot_${p2.patientId}_${String(session.startTime)}`,
+                                      gridSnapshot: session.gridSnapshot ? {
+                                        rows: session.gridSnapshot.rows,
+                                        markedIds: session.gridSnapshot.markedIds
+                                      } : void 0
+                                    }
+                                  )
+                                ] })
+                              ] })
+                            ]
+                          },
+                          `${session.patientId}-${si}`
+                        )
+                      ) })
+                    ] })
+                  ] })
+                ]
+              },
+              p2.patientId
+            );
+          }) })
+        ] })
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-muted-foreground mt-4 text-center", children: "Classification based on Digit Symbol norms by age group. Click a row to expand patient details." })
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("footer", { className: "bg-muted/40 border-t border-border py-4 px-6", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-center text-xs text-muted-foreground", children: [
+      "© ",
+      (/* @__PURE__ */ new Date()).getFullYear(),
+      ". Built with love using",
+      " ",
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "a",
+        {
+          href: `https://caffeine.ai?utm_source=caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(window.location.hostname)}`,
+          className: "underline hover:text-foreground transition-colors",
+          target: "_blank",
+          rel: "noreferrer",
+          children: "caffeine.ai"
+        }
+      )
+    ] }) })
+  ] });
+}
+const DOCTORS_KEY = "dlct_saved_doctors";
+function getSavedDoctors() {
+  try {
+    const raw = localStorage.getItem(DOCTORS_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+function persistDoctors(names) {
+  try {
+    localStorage.setItem(DOCTORS_KEY, JSON.stringify(names));
+  } catch {
+  }
+}
+function DoctorLoginStep({
+  onNext,
+  isDashboardLogin = false
+}) {
+  const [inputName, setInputName] = reactExports.useState("");
+  const [savedDoctors, setSavedDoctors] = reactExports.useState(
+    () => getSavedDoctors()
+  );
+  const [carouselIndex, setCarouselIndex] = reactExports.useState(0);
+  const [error, setError] = reactExports.useState("");
+  const [selectedFromCarousel, setSelectedFromCarousel] = reactExports.useState(null);
+  const VISIBLE_COUNT = 3;
+  const handleSelectDoctor = (name) => {
+    setSelectedFromCarousel(name);
+    setInputName(name);
+    setError("");
+  };
+  const handlePrev = () => {
+    setCarouselIndex((i) => Math.max(0, i - 1));
+  };
+  const handleNext = () => {
+    setCarouselIndex(
+      (i) => Math.min(savedDoctors.length - VISIBLE_COUNT, i + 1)
+    );
+  };
+  const handleContinue = () => {
+    const trimmed = inputName.trim();
+    if (!trimmed) {
+      setError("Please enter or select a doctor name.");
+      return;
+    }
+    if (!savedDoctors.includes(trimmed)) {
+      const updated = [trimmed, ...savedDoctors].slice(0, 12);
+      setSavedDoctors(updated);
+      persistDoctors(updated);
+    }
+    onNext(trimmed);
+  };
+  const visibleDoctors = savedDoctors.slice(
+    carouselIndex,
+    carouselIndex + VISIBLE_COUNT
+  );
+  const canGoPrev = carouselIndex > 0;
+  const canGoNext = carouselIndex + VISIBLE_COUNT < savedDoctors.length;
+  return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "min-h-screen bg-background flex items-center justify-center px-4 py-10", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "w-full max-w-md", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "text-center mb-8", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Stethoscope, { className: "w-8 h-8 text-primary" }) }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "text-3xl font-bold text-foreground mb-1", children: "Doctor Login" }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-muted-foreground text-sm", children: isDashboardLogin ? "Double Alphabet Test — Doctor Dashboard" : "Double Alphabet Test — Clinical Assessment Platform" })
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(Card, { className: "shadow-md border-border", children: /* @__PURE__ */ jsxRuntimeExports.jsxs(CardContent, { className: "p-8 space-y-6", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-1.5", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          Label,
+          {
+            htmlFor: "doctorLogin",
+            className: "text-sm font-semibold text-foreground",
+            children: [
+              "Doctor's Name ",
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-destructive", children: "*" })
+            ]
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(CircleUserRound, { className: "absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            Input,
+            {
+              id: "doctorLogin",
+              "data-ocid": "doctor-login.input",
+              value: inputName,
+              onChange: (e) => {
+                setInputName(e.target.value);
+                setSelectedFromCarousel(null);
+                setError("");
+              },
+              onKeyDown: (e) => {
+                if (e.key === "Enter") handleContinue();
+              },
+              placeholder: "Enter your name",
+              className: "h-11 pl-9 text-base border-input focus:border-primary",
+              autoFocus: true
+            }
+          )
+        ] }),
+        error && /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "p",
+          {
+            className: "text-xs text-destructive font-medium",
+            "data-ocid": "doctor-login.error_state",
+            children: error
+          }
+        )
+      ] }),
+      savedDoctors.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-2", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center justify-between", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { className: "text-xs font-semibold uppercase tracking-widest text-muted-foreground", children: "Recent Doctors" }),
+          savedDoctors.length > VISIBLE_COUNT && /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "text-xs text-muted-foreground", children: [
+            carouselIndex + 1,
+            "–",
+            Math.min(
+              carouselIndex + VISIBLE_COUNT,
+              savedDoctors.length
+            ),
+            " ",
+            "of ",
+            savedDoctors.length
+          ] })
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "button",
+            {
+              type: "button",
+              "data-ocid": "doctor-login.pagination_prev",
+              onClick: handlePrev,
+              disabled: !canGoPrev,
+              className: "flex-shrink-0 w-8 h-8 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-primary hover:bg-primary/5 disabled:opacity-30 disabled:cursor-not-allowed transition-all",
+              "aria-label": "Previous doctors",
+              children: /* @__PURE__ */ jsxRuntimeExports.jsx(ChevronLeft, { className: "w-4 h-4" })
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex-1 flex gap-2 min-w-0", children: [
+            visibleDoctors.map((name, idx) => {
+              const isSelected = selectedFromCarousel === name || inputName === name;
+              return /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "button",
+                {
+                  type: "button",
+                  "data-ocid": `doctor-login.item.${carouselIndex + idx + 1}`,
+                  onClick: () => handleSelectDoctor(name),
+                  className: [
+                    "flex-1 min-w-0 px-3 py-2.5 rounded-lg border-2 text-left transition-all duration-150 group",
+                    isSelected ? "border-primary bg-primary/10 text-primary" : "border-border bg-card text-foreground hover:border-primary/60 hover:bg-primary/5"
+                  ].join(" "),
+                  children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-1.5", children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      CircleUserRound,
+                      {
+                        className: `w-3.5 h-3.5 shrink-0 ${isSelected ? "text-primary" : "text-muted-foreground group-hover:text-primary/70"}`
+                      }
+                    ),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-xs font-semibold truncate", children: name })
+                  ] })
+                },
+                name
+              );
+            }),
+            visibleDoctors.length < VISIBLE_COUNT && Array.from({
+              length: VISIBLE_COUNT - visibleDoctors.length
+            }).map((_2, i) => {
+              return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex-1" }, `pad-${i}`);
+            })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "button",
+            {
+              type: "button",
+              "data-ocid": "doctor-login.pagination_next",
+              onClick: handleNext,
+              disabled: !canGoNext,
+              className: "flex-shrink-0 w-8 h-8 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-primary hover:bg-primary/5 disabled:opacity-30 disabled:cursor-not-allowed transition-all",
+              "aria-label": "Next doctors",
+              children: /* @__PURE__ */ jsxRuntimeExports.jsx(ChevronRight, { className: "w-4 h-4" })
+            }
+          )
+        ] })
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(Separator, {}),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        Button,
+        {
+          type: "button",
+          "data-ocid": "doctor-login.submit_button",
+          onClick: handleContinue,
+          className: "w-full h-12 text-base font-semibold",
+          children: "Continue →"
+        }
+      )
+    ] }) }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-center text-xs text-muted-foreground mt-6", children: [
+      "© ",
+      (/* @__PURE__ */ new Date()).getFullYear(),
+      ". Built with love using",
+      " ",
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "a",
+        {
+          href: `https://caffeine.ai?utm_source=caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(window.location.hostname)}`,
+          className: "underline hover:text-foreground transition-colors",
+          target: "_blank",
+          rel: "noreferrer",
+          children: "caffeine.ai"
+        }
+      )
+    ] })
+  ] }) });
+}
 function PatientDetailsStep({
-  onNext
+  onNext,
+  prefillDoctorName
 }) {
   const [name, setName] = reactExports.useState("");
   const [age, setAge] = reactExports.useState("");
   const [gender, setGender] = reactExports.useState("");
   const [highestEducation, setHighestEducation] = reactExports.useState("");
   const [patientId, setPatientId] = reactExports.useState("");
-  const [doctorName, setDoctorName] = reactExports.useState("");
+  const [doctorName, setDoctorName] = reactExports.useState(prefillDoctorName ?? "");
   const [errors, setErrors] = reactExports.useState({});
+  const savePatient = useSavePatient();
   const handleSave = () => {
     const newErrors = {};
     if (!patientId.trim()) newErrors.patientId = "Patient ID is required";
@@ -26664,7 +37019,24 @@ function PatientDetailsStep({
       newErrors.highestEducation = "Highest Education is required";
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
-    onNext({ name, age, gender, highestEducation, patientId, doctorName });
+    const details = {
+      name,
+      age,
+      gender,
+      highestEducation,
+      patientId,
+      doctorName
+    };
+    savePatient.mutate({
+      name,
+      age: BigInt(Number.parseInt(age, 10)),
+      gender,
+      highestEducation,
+      patientId,
+      doctorName,
+      language: "en"
+    });
+    onNext(details);
   };
   return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "min-h-screen bg-background flex items-start justify-center py-10 px-4", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "w-full max-w-2xl", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mb-8 text-center", children: [
@@ -27011,6 +37383,16 @@ function TrialStep({
     setMarked(/* @__PURE__ */ new Set());
     setSubmitted(false);
   };
+  const handleProceed = () => {
+    const trialResult = {
+      totalTargets: BigInt(total),
+      correctStrikes: BigInt(correctCount),
+      omissions: BigInt(total - correctCount),
+      commissions: BigInt(commissions),
+      attemptedAt: BigInt(Date.now()) * 1000000n
+    };
+    onNext(trialResult);
+  };
   const renderRow = (items, rowLabel) => /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mb-2", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2 mb-1", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-[10px] font-semibold uppercase tracking-widest text-muted-foreground w-10 text-right shrink-0", children: rowLabel }),
     /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -27174,7 +37556,7 @@ function TrialStep({
         {
           type: "button",
           "data-ocid": "trial.primary_button",
-          onClick: onNext,
+          onClick: handleProceed,
           className: "flex-1 h-12 text-base font-semibold",
           children: t.proceed
         }
@@ -27208,6 +37590,7 @@ function TestStep({
   const [marked, setMarked] = reactExports.useState(/* @__PURE__ */ new Set());
   const [elapsed, setElapsed] = reactExports.useState(0);
   const intervalRef = reactExports.useRef(null);
+  const startTimeRef = reactExports.useRef(BigInt(Date.now()) * 1000000n);
   reactExports.useEffect(() => {
     const ZOOM_LOCKED = "width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no";
     const meta = document.querySelector("meta[name=viewport]");
@@ -27257,10 +37640,10 @@ function TestStep({
       document.body.classList.remove("test-zoom-locked");
     };
   }, []);
-  const formatTime = (s) => {
-    const m = Math.floor(s / 60).toString().padStart(2, "0");
-    const sec = (s % 60).toString().padStart(2, "0");
-    return `${m}:${sec}`;
+  const formatTime = (s2) => {
+    const m2 = Math.floor(s2 / 60).toString().padStart(2, "0");
+    const sec = (s2 % 60).toString().padStart(2, "0");
+    return `${m2}:${sec}`;
   };
   const toggleCell = reactExports.useCallback((key) => {
     setMarked((prev) => {
@@ -27272,7 +37655,7 @@ function TestStep({
   }, []);
   const handleStop = () => {
     if (intervalRef.current) clearInterval(intervalRef.current);
-    onStop(marked, elapsed);
+    onStop(marked, elapsed, startTimeRef.current);
   };
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(
     "div",
@@ -27454,35 +37837,135 @@ function ThankYouStep({ onNewTest }) {
   );
 }
 function App() {
-  const [step, setStep] = reactExports.useState(1);
-  const [, setPatient] = reactExports.useState(null);
+  const [step, setStep] = reactExports.useState("landing");
+  const [patient, setPatient] = reactExports.useState(null);
   const [language, setLanguage] = reactExports.useState("en");
-  const handlePatient = (d) => {
-    setPatient(d);
-    setStep(2);
+  const [loggedDoctorName, setLoggedDoctorName] = reactExports.useState("");
+  const [trialResult, setTrialResult] = reactExports.useState(null);
+  const saveTestSession = useSaveTestSession();
+  const handleDoctorLoginForDashboard = (name) => {
+    setLoggedDoctorName(name);
+    setStep("dashboard");
+  };
+  const handlePatient = (d2) => {
+    setPatient(d2);
+    setStep("language");
   };
   const handleLanguage = (l) => {
     setLanguage(l);
-    setStep(3);
+    setStep("instructions");
   };
-  const handleStop = (marked, elapsed) => {
-    setStep(7);
+  const handleTrialComplete = (result) => {
+    setTrialResult(result);
+    setStep("ready");
+  };
+  const handleStop = (markedSet, elapsed, startTime) => {
+    if (patient) {
+      const age = Number.parseInt(patient.age, 10);
+      let correctStrikes = 0;
+      let commissions = 0;
+      for (const cellId of markedSet) {
+        const [riStr, ciStr] = cellId.split("-");
+        const ri = Number.parseInt(riStr, 10);
+        const ci = Number.parseInt(ciStr, 10);
+        const targetSet = new Set(TARGET_POSITIONS[ri]);
+        if (targetSet.has(ci)) {
+          correctStrikes++;
+        } else {
+          commissions++;
+        }
+      }
+      const omissions = 105 - correctStrikes;
+      const classifyResult = classifyScore(correctStrikes, age);
+      const classification = classifyResult.label;
+      const snapshotKey = `dlct_snapshot_${patient.patientId}_${String(startTime)}`;
+      const gridRows = GRID.map((r2) => r2.cells.map((c2) => c2.letter));
+      const markedIds = Array.from(markedSet);
+      localStorage.setItem(
+        snapshotKey,
+        JSON.stringify({ rows: gridRows, marked: markedIds })
+      );
+      const endTime = BigInt(Date.now()) * 1000000n;
+      const session = {
+        patientId: patient.patientId,
+        patientName: patient.name,
+        doctorName: patient.doctorName,
+        languageSelected: language,
+        startTime,
+        endTime,
+        trialResult: trialResult ?? void 0,
+        gridSnapshot: { rows: gridRows, markedIds },
+        testResult: {
+          totalTargets: 105n,
+          correctStrikes: BigInt(correctStrikes),
+          omissions: BigInt(omissions),
+          commissions: BigInt(commissions),
+          elapsedSeconds: BigInt(elapsed),
+          classification,
+          completedAt: endTime
+        }
+      };
+      saveTestSession.mutate(session);
+    }
+    setStep("thankyou");
   };
   const handleNewTest = () => {
-    setStep(1);
+    setStep("landing");
     setPatient(null);
     setLanguage("en");
+    setLoggedDoctorName("");
+    setTrialResult(null);
   };
-  if (step === 1) return /* @__PURE__ */ jsxRuntimeExports.jsx(PatientDetailsStep, { onNext: handlePatient });
-  if (step === 2) return /* @__PURE__ */ jsxRuntimeExports.jsx(LanguageStep, { onNext: handleLanguage });
-  if (step === 3)
-    return /* @__PURE__ */ jsxRuntimeExports.jsx(InstructionsStep, { language, onNext: () => setStep(4) });
-  if (step === 4) return /* @__PURE__ */ jsxRuntimeExports.jsx(ConfirmationStep, { onNext: () => setStep(5) });
-  if (step === 5)
-    return /* @__PURE__ */ jsxRuntimeExports.jsx(TrialStep, { language, onNext: () => setStep(5.5) });
-  if (step === 5.5) return /* @__PURE__ */ jsxRuntimeExports.jsx(ReadyStep, { onStart: () => setStep(6) });
-  if (step === 6) return /* @__PURE__ */ jsxRuntimeExports.jsx(TestStep, { onStop: handleStop });
-  if (step === 7) return /* @__PURE__ */ jsxRuntimeExports.jsx(ThankYouStep, { onNewTest: handleNewTest });
+  if (step === "landing")
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(
+      LandingStep,
+      {
+        onPatientLogin: () => setStep("patient-details"),
+        onDoctorLogin: () => setStep("doctor-dashboard-login")
+      }
+    );
+  if (step === "doctor-dashboard-login")
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(
+      DoctorLoginStep,
+      {
+        onNext: handleDoctorLoginForDashboard,
+        isDashboardLogin: true
+      }
+    );
+  if (step === "dashboard") {
+    if (step === "dashboard")
+      return /* @__PURE__ */ jsxRuntimeExports.jsx(
+        DoctorDashboardStep,
+        {
+          onBack: () => setStep("landing"),
+          loggedDoctorName
+        }
+      );
+  }
+  if (step === "patient-details")
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(
+      PatientDetailsStep,
+      {
+        onNext: handlePatient,
+        prefillDoctorName: loggedDoctorName
+      }
+    );
+  if (step === "language") return /* @__PURE__ */ jsxRuntimeExports.jsx(LanguageStep, { onNext: handleLanguage });
+  if (step === "instructions")
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(
+      InstructionsStep,
+      {
+        language,
+        onNext: () => setStep("confirmation")
+      }
+    );
+  if (step === "confirmation")
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(ConfirmationStep, { onNext: () => setStep("trial") });
+  if (step === "trial")
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(TrialStep, { language, onNext: handleTrialComplete });
+  if (step === "ready") return /* @__PURE__ */ jsxRuntimeExports.jsx(ReadyStep, { onStart: () => setStep("test") });
+  if (step === "test") return /* @__PURE__ */ jsxRuntimeExports.jsx(TestStep, { onStop: handleStop });
+  if (step === "thankyou") return /* @__PURE__ */ jsxRuntimeExports.jsx(ThankYouStep, { onNewTest: handleNewTest });
   return null;
 }
 BigInt.prototype.toJSON = function() {

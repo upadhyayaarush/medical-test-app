@@ -1,3 +1,4 @@
+import type { TestSession, TrialResult } from "@/backend";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,7 +12,34 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { AlertTriangle, CheckCircle2, Clock, RotateCcw } from "lucide-react";
+import {
+  useAllPatientsWithSessions,
+  useSavePatient,
+  useSaveTestSession,
+  useSessionsByDoctor,
+} from "@/hooks/useQueries";
+import type { PatientFullRecord } from "@/hooks/useQueries";
+import {
+  Activity,
+  AlertTriangle,
+  ArrowLeft,
+  CheckCircle2,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  ChevronUp,
+  Clock,
+  LayoutDashboard,
+  Minus,
+  RefreshCw,
+  RotateCcw,
+  Stethoscope,
+  TrendingDown,
+  TrendingUp,
+  User,
+  UserCircle2,
+  Users,
+} from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 // ─── Grid definition ────────────────────────────────────────────────────────
@@ -80,17 +108,1027 @@ const THERAPIST_SCRIPTS = {
   kn: "ರೋಗಿಗೆ ಹೇಳಿ: 'ನಾನು ನಿಮಗೆ ಅಕ್ಷರಗಳ ಒಂದು ಶೀಟ್ ತೋರಿಸುತ್ತೇನೆ. ನೀವು ಪ್ರತಿ C ಮತ್ತು E ಅಕ್ಷರವನ್ನು ಅಡ್ಡಗೆರೆ ಎಳೆಯಬೇಕು.'",
 };
 
+// ─── Age-based classification norms (DLCT letter cancellation) ──────────────
+const AGE_NORMS: {
+  minAge: number;
+  maxAge: number;
+  mean: number;
+  aboveMin: number;
+  avgMin: number;
+}[] = [
+  { minAge: 18, maxAge: 19, mean: 70.3, aboveMin: 81, avgMin: 60 },
+  { minAge: 20, maxAge: 29, mean: 71.8, aboveMin: 83, avgMin: 61 },
+  { minAge: 30, maxAge: 39, mean: 65.6, aboveMin: 73, avgMin: 58 },
+  { minAge: 40, maxAge: 49, mean: 60.2, aboveMin: 71, avgMin: 50 },
+  { minAge: 50, maxAge: 59, mean: 56.6, aboveMin: 68, avgMin: 45 },
+  { minAge: 60, maxAge: 69, mean: 52.7, aboveMin: 63, avgMin: 43 },
+  { minAge: 70, maxAge: 79, mean: 46.2, aboveMin: 55, avgMin: 37 },
+  { minAge: 80, maxAge: 999, mean: 39.7, aboveMin: 48, avgMin: 31 },
+];
+
+type Classification = "Above Average" | "Average" | "Below Average";
+
+function classifyScore(
+  score: number,
+  age: number,
+): { label: Classification; mean: number } {
+  const norm =
+    AGE_NORMS.find((n) => age >= n.minAge && age <= n.maxAge) ?? AGE_NORMS[3];
+  let label: Classification;
+  if (score >= norm.aboveMin) label = "Above Average";
+  else if (score >= norm.avgMin) label = "Average";
+  else label = "Below Average";
+  return { label, mean: norm.mean };
+}
+
+// ─── Landing Page ─────────────────────────────────────────────────────────────
+function GridSnapshotView({
+  snapshotKey,
+  gridSnapshot,
+}: {
+  snapshotKey: string;
+  gridSnapshot?: { rows: string[][]; markedIds: string[] };
+}) {
+  // Prefer canister-stored snapshot; fall back to localStorage
+  let rows: string[][] | null = null;
+  let markedSet: Set<string> = new Set();
+
+  if (
+    gridSnapshot &&
+    Array.isArray(gridSnapshot.rows) &&
+    gridSnapshot.rows.length > 0
+  ) {
+    rows = gridSnapshot.rows;
+    markedSet = new Set(gridSnapshot.markedIds);
+  } else {
+    const raw = localStorage.getItem(snapshotKey);
+    if (raw) {
+      try {
+        const data = JSON.parse(raw) as { rows: string[][]; marked: string[] };
+        rows = data.rows;
+        markedSet = new Set(data.marked);
+      } catch {
+        /* ignore */
+      }
+    }
+  }
+
+  if (!rows) {
+    return (
+      <div className="text-xs text-muted-foreground italic py-2">
+        No test sheet available for this session.
+      </div>
+    );
+  }
+
+  return (
+    <div className="border border-border rounded-lg bg-muted/20 p-3 mt-3">
+      <div className="text-xs font-semibold text-foreground mb-1 uppercase tracking-wide">
+        Test Sheet Snapshot
+      </div>
+      <div className="text-[10px] italic text-muted-foreground mb-2 font-serif">
+        Strike only C and E
+      </div>
+      <div className="space-y-[2px]">
+        {rows.map((row, ri) => (
+          // biome-ignore lint/suspicious/noArrayIndexKey: static grid rows, order never changes
+          <div key={ri} className="flex flex-wrap gap-[1px]">
+            {row.map((letter, ci) => {
+              const isMarked = markedSet.has(`${ri}-${ci}`);
+              return (
+                <span
+                  // biome-ignore lint/suspicious/noArrayIndexKey: static letter positions, order never changes
+                  key={ci}
+                  className={`text-[7px] font-mono leading-none px-[1px] ${
+                    isMarked
+                      ? "line-through text-red-600 font-bold"
+                      : "text-foreground/70"
+                  }`}
+                >
+                  {letter}
+                </span>
+              );
+            })}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function LandingStep({
+  onPatientLogin,
+  onDoctorLogin,
+}: { onPatientLogin: () => void; onDoctorLogin: () => void }) {
+  return (
+    <div className="min-h-screen bg-background flex flex-col">
+      {/* Header */}
+      <header className="bg-card border-b border-border px-6 py-4 shadow-sm">
+        <div className="max-w-5xl mx-auto flex items-center gap-3">
+          <div className="w-9 h-9 bg-primary/10 rounded-full flex items-center justify-center">
+            <Activity className="w-5 h-5 text-primary" />
+          </div>
+          <div>
+            <h1 className="text-base font-bold text-foreground leading-tight">
+              Double Alphabet Test
+            </h1>
+            <p className="text-xs text-muted-foreground">
+              Clinical Assessment Platform
+            </p>
+          </div>
+        </div>
+      </header>
+
+      {/* Main content */}
+      <main className="flex-1 flex items-center justify-center px-4 py-16">
+        <div className="w-full max-w-2xl">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-6">
+              <span className="w-2 h-2 rounded-full bg-primary inline-block" />
+              Cognitive Attention Assessment
+            </div>
+            <h2 className="text-4xl font-bold text-foreground mb-3 leading-tight">
+              Welcome to the
+              <br />
+              Assessment Portal
+            </h2>
+            <p className="text-muted-foreground text-base max-w-md mx-auto">
+              Please select your role to continue. Patients proceed to the test
+              workflow; doctors access the clinical dashboard.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {/* Patient Login Card */}
+            <button
+              type="button"
+              data-ocid="landing.patient_button"
+              onClick={onPatientLogin}
+              className="group relative bg-card border-2 border-border rounded-2xl p-8 text-left hover:border-primary hover:shadow-lg transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center mb-5 group-hover:bg-primary/15 transition-colors">
+                <User className="w-7 h-7 text-primary" />
+              </div>
+              <h3 className="text-xl font-bold text-foreground mb-2">
+                Patient Login
+              </h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Begin your cognitive assessment. Enter your details and follow
+                the guided test workflow.
+              </p>
+              <div className="mt-6 flex items-center gap-2 text-primary text-sm font-semibold">
+                <span>Start assessment</span>
+                <span className="group-hover:translate-x-1 transition-transform duration-200">
+                  →
+                </span>
+              </div>
+            </button>
+
+            {/* Doctor Login Card */}
+            <button
+              type="button"
+              data-ocid="landing.doctor_button"
+              onClick={onDoctorLogin}
+              className="group relative bg-card border-2 border-border rounded-2xl p-8 text-left hover:border-primary hover:shadow-lg transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center mb-5 group-hover:bg-primary/15 transition-colors">
+                <LayoutDashboard className="w-7 h-7 text-primary" />
+              </div>
+              <h3 className="text-xl font-bold text-foreground mb-2">
+                Doctor Login
+              </h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Access the clinical dashboard to review patient results, scores,
+                and classifications.
+              </p>
+              <div className="mt-6 flex items-center gap-2 text-primary text-sm font-semibold">
+                <span>View dashboard</span>
+                <span className="group-hover:translate-x-1 transition-transform duration-200">
+                  →
+                </span>
+              </div>
+            </button>
+          </div>
+        </div>
+      </main>
+
+      {/* Footer */}
+      <footer className="bg-muted/40 border-t border-border py-4 px-6">
+        <p className="text-center text-xs text-muted-foreground">
+          © {new Date().getFullYear()}. Built with love using{" "}
+          <a
+            href={`https://caffeine.ai?utm_source=caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(window.location.hostname)}`}
+            className="underline hover:text-foreground transition-colors"
+            target="_blank"
+            rel="noreferrer"
+          >
+            caffeine.ai
+          </a>
+        </p>
+      </footer>
+    </div>
+  );
+}
+
+// ─── Doctor Dashboard ─────────────────────────────────────────────────────────
+function DoctorDashboardStep({
+  onBack,
+  loggedDoctorName,
+}: {
+  onBack: () => void;
+  loggedDoctorName: string;
+}) {
+  const {
+    data: records = [],
+    isLoading,
+    refetch,
+    isRefetching,
+  } = useSessionsByDoctor(loggedDoctorName);
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+
+  const toggleExpand = (id: string) => {
+    setExpandedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const classificationBadge = (c: string) => {
+    if (c === "Above Average")
+      return (
+        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+          <TrendingUp className="w-3 h-3" /> Above Average
+        </span>
+      );
+    if (c === "Average")
+      return (
+        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-300">
+          <Minus className="w-3 h-3" /> Average
+        </span>
+      );
+    if (c === "Below Average")
+      return (
+        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-800">
+          <TrendingDown className="w-3 h-3" /> Below Average
+        </span>
+      );
+    return null;
+  };
+
+  const formatTime = (s: number) => {
+    if (s <= 0) return "—";
+    const m = Math.floor(s / 60)
+      .toString()
+      .padStart(2, "0");
+    const sec = (s % 60).toString().padStart(2, "0");
+    return `${m}:${sec}`;
+  };
+
+  const formatDateTime = (ns: bigint) => {
+    if (ns === 0n) return "—";
+    try {
+      return new Date(Number(ns) / 1_000_000).toLocaleString();
+    } catch {
+      return "—";
+    }
+  };
+
+  const totalSessions = records.reduce((sum, r) => sum + r.sessions.length, 0);
+  const aboveAvgCount = records.reduce(
+    (sum, r) =>
+      sum +
+      r.sessions.filter((s) => s.testResult?.classification === "Above Average")
+        .length,
+    0,
+  );
+
+  const LANG_LABELS_FULL: Record<string, string> = {
+    en: "English",
+    hi: "Hindi",
+    kn: "Kannada",
+  };
+
+  return (
+    <div className="min-h-screen bg-background flex flex-col">
+      {/* Header */}
+      <header className="bg-card border-b border-border px-6 py-4 shadow-sm">
+        <div className="max-w-5xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 bg-primary/10 rounded-full flex items-center justify-center">
+              <LayoutDashboard className="w-5 h-5 text-primary" />
+            </div>
+            <div>
+              <h1 className="text-base font-bold text-foreground leading-tight">
+                Results for Dr. {loggedDoctorName}
+              </h1>
+              <p className="text-xs text-muted-foreground">
+                {records.length} patient{records.length !== 1 ? "s" : ""}{" "}
+                &middot; {totalSessions} test{totalSessions !== 1 ? "s" : ""}{" "}
+                completed
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              data-ocid="dashboard.refresh_button"
+              onClick={() => refetch()}
+              disabled={isRefetching}
+              className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5 rounded-lg hover:bg-muted/50 disabled:opacity-50"
+            >
+              <RefreshCw
+                className={`w-4 h-4 ${isRefetching ? "animate-spin" : ""}`}
+              />
+              Refresh
+            </button>
+            <button
+              type="button"
+              data-ocid="dashboard.back_button"
+              onClick={onBack}
+              className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5 rounded-lg hover:bg-muted/50"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Back
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <main className="flex-1 max-w-5xl w-full mx-auto px-4 py-8">
+        {/* Stats row */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
+          <div className="bg-card border border-border rounded-xl px-5 py-4">
+            <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-1">
+              Total Patients
+            </p>
+            <p className="text-3xl font-bold text-foreground">
+              {records.length}
+            </p>
+          </div>
+          <div className="bg-card border border-border rounded-xl px-5 py-4">
+            <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-1">
+              Test Sessions
+            </p>
+            <p className="text-3xl font-bold text-foreground">
+              {totalSessions}
+            </p>
+          </div>
+          <div className="bg-card border border-border rounded-xl px-5 py-4 col-span-2 sm:col-span-1">
+            <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-1">
+              Above Average
+            </p>
+            <p className="text-3xl font-bold text-green-600">{aboveAvgCount}</p>
+          </div>
+        </div>
+
+        {/* Patient Table */}
+        <div className="bg-card border border-border rounded-xl overflow-hidden shadow-sm">
+          <div className="px-6 py-4 border-b border-border flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Users className="w-4 h-4 text-muted-foreground" />
+              <h2 className="text-sm font-semibold text-foreground">
+                Patient Records
+              </h2>
+            </div>
+            <span className="text-xs text-muted-foreground">
+              {records.length} patient(s)
+            </span>
+          </div>
+
+          {isLoading ? (
+            <div
+              className="flex items-center justify-center py-16"
+              data-ocid="dashboard.loading_state"
+            >
+              <div className="text-center">
+                <div className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin mx-auto mb-3" />
+                <p className="text-sm text-muted-foreground">
+                  Loading patient data…
+                </p>
+              </div>
+            </div>
+          ) : records.length === 0 ? (
+            <div
+              className="flex flex-col items-center justify-center py-16 text-center"
+              data-ocid="dashboard.empty_state"
+            >
+              <Users className="w-10 h-10 text-muted-foreground/40 mb-3" />
+              <p className="text-sm font-semibold text-foreground mb-1">
+                No patient records yet
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Patient results will appear here once tests are completed under
+                Dr. {loggedDoctorName}.
+              </p>
+            </div>
+          ) : (
+            <div>
+              {/* Table header */}
+              <div className="bg-muted/30 border-b border-border grid grid-cols-[2fr_1.2fr_0.7fr_0.8fr_1.5fr_0.8fr_2rem] gap-3 px-5 py-3">
+                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Patient
+                </span>
+                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Patient ID
+                </span>
+                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Age
+                </span>
+                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Gender
+                </span>
+                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Education
+                </span>
+                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground text-right">
+                  Sessions
+                </span>
+                <span />
+              </div>
+
+              <div className="divide-y divide-border">
+                {records.map((record: PatientFullRecord, i: number) => {
+                  const p = record.patient;
+                  const isExpanded = expandedIds.has(p.patientId);
+                  return (
+                    <div
+                      key={p.patientId}
+                      data-ocid={`dashboard.item.${i + 1}`}
+                    >
+                      {/* Row */}
+                      <button
+                        type="button"
+                        className="w-full grid grid-cols-[2fr_1.2fr_0.7fr_0.8fr_1.5fr_0.8fr_2rem] gap-3 px-5 py-4 hover:bg-muted/20 transition-colors text-left items-center"
+                        onClick={() => toggleExpand(p.patientId)}
+                        data-ocid={`dashboard.item.${i + 1}.toggle`}
+                      >
+                        <span className="font-medium text-foreground text-sm truncate">
+                          {p.name}
+                        </span>
+                        <span className="font-mono text-xs text-muted-foreground truncate">
+                          {p.patientId}
+                        </span>
+                        <span className="text-sm text-foreground tabular-nums">
+                          {Number(p.age) > 0 ? Number(p.age) : "—"}
+                        </span>
+                        <span className="text-sm text-muted-foreground truncate">
+                          {p.gender}
+                        </span>
+                        <span className="text-sm text-muted-foreground truncate">
+                          {p.highestEducation}
+                        </span>
+                        <span className="text-sm text-foreground text-right tabular-nums">
+                          {record.sessions.length}
+                        </span>
+                        {isExpanded ? (
+                          <ChevronUp className="w-4 h-4 text-muted-foreground" />
+                        ) : (
+                          <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                        )}
+                      </button>
+
+                      {/* Expanded Detail */}
+                      {isExpanded && (
+                        <div className="bg-muted/10 border-t border-border px-5 py-5 space-y-5">
+                          {/* Patient Details Card */}
+                          <div className="rounded-xl border border-primary/30 bg-primary/5 px-5 py-4">
+                            <h3 className="text-xs font-bold uppercase tracking-widest text-primary mb-3">
+                              Patient Details
+                            </h3>
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-2 text-sm">
+                              <div>
+                                <span className="text-muted-foreground text-xs">
+                                  Full Name
+                                </span>
+                                <p className="font-medium text-foreground">
+                                  {p.name}
+                                </p>
+                              </div>
+                              <div>
+                                <span className="text-muted-foreground text-xs">
+                                  Patient ID
+                                </span>
+                                <p className="font-mono text-foreground">
+                                  {p.patientId}
+                                </p>
+                              </div>
+                              <div>
+                                <span className="text-muted-foreground text-xs">
+                                  Age
+                                </span>
+                                <p className="font-medium text-foreground">
+                                  {Number(p.age) > 0 ? Number(p.age) : "—"}
+                                </p>
+                              </div>
+                              <div>
+                                <span className="text-muted-foreground text-xs">
+                                  Gender
+                                </span>
+                                <p className="font-medium text-foreground">
+                                  {p.gender || "—"}
+                                </p>
+                              </div>
+                              <div>
+                                <span className="text-muted-foreground text-xs">
+                                  Education
+                                </span>
+                                <p className="font-medium text-foreground">
+                                  {p.highestEducation || "—"}
+                                </p>
+                              </div>
+                              <div>
+                                <span className="text-muted-foreground text-xs">
+                                  Doctor
+                                </span>
+                                <p className="font-medium text-foreground">
+                                  {p.doctorName}
+                                </p>
+                              </div>
+                              <div>
+                                <span className="text-muted-foreground text-xs">
+                                  Language
+                                </span>
+                                <p className="font-medium text-foreground">
+                                  {LANG_LABELS_FULL[p.language] ?? p.language}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Sessions */}
+                          <div>
+                            <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">
+                              Test Sessions ({record.sessions.length})
+                            </h3>
+                            {record.sessions.length === 0 ? (
+                              <p
+                                className="text-sm text-muted-foreground italic"
+                                data-ocid={`dashboard.item.${i + 1}.empty_state`}
+                              >
+                                No test sessions recorded yet.
+                              </p>
+                            ) : (
+                              <div className="space-y-3">
+                                {record.sessions.map(
+                                  (session: TestSession, si: number) => (
+                                    <div
+                                      key={`${session.patientId}-${si}`}
+                                      className="rounded-lg border border-border bg-card p-4"
+                                      data-ocid={`dashboard.item.${i + 1}.session.${si + 1}`}
+                                    >
+                                      <div className="flex items-center justify-between mb-3">
+                                        <div className="flex items-center gap-2">
+                                          <Clock className="w-4 h-4 text-muted-foreground" />
+                                          <span className="text-xs font-semibold text-muted-foreground">
+                                            {formatDateTime(session.startTime)}
+                                          </span>
+                                        </div>
+                                        <span className="text-xs bg-muted/50 text-muted-foreground rounded-full px-2 py-0.5">
+                                          {LANG_LABELS_FULL[
+                                            session.languageSelected
+                                          ] ?? session.languageSelected}
+                                        </span>
+                                      </div>
+
+                                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        {/* Practice Trial */}
+                                        {session.trialResult && (
+                                          <div className="rounded-lg bg-muted/30 border border-border p-3">
+                                            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-2">
+                                              Practice Trial
+                                            </p>
+                                            <div className="grid grid-cols-2 gap-1 text-xs">
+                                              <span className="text-muted-foreground">
+                                                Total Targets
+                                              </span>
+                                              <span className="font-mono tabular-nums text-right">
+                                                {Number(
+                                                  session.trialResult
+                                                    .totalTargets,
+                                                )}
+                                              </span>
+                                              <span className="text-muted-foreground">
+                                                Correct Strikes
+                                              </span>
+                                              <span className="font-mono tabular-nums text-right text-green-700">
+                                                {Number(
+                                                  session.trialResult
+                                                    .correctStrikes,
+                                                )}
+                                              </span>
+                                              <span className="text-muted-foreground">
+                                                Omissions
+                                              </span>
+                                              <span className="font-mono tabular-nums text-right text-amber-700">
+                                                {Number(
+                                                  session.trialResult.omissions,
+                                                )}
+                                              </span>
+                                              <span className="text-muted-foreground">
+                                                Commissions
+                                              </span>
+                                              <span className="font-mono tabular-nums text-right text-red-700">
+                                                {Number(
+                                                  session.trialResult
+                                                    .commissions,
+                                                )}
+                                              </span>
+                                            </div>
+                                          </div>
+                                        )}
+
+                                        {/* Real Test */}
+                                        {session.testResult && (
+                                          <div className="rounded-lg bg-muted/30 border border-border p-3">
+                                            <div className="flex items-center justify-between mb-2">
+                                              <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                                                Real Test
+                                              </p>
+                                              {classificationBadge(
+                                                session.testResult
+                                                  .classification,
+                                              )}
+                                            </div>
+                                            <div className="text-xs text-muted-foreground mt-1">
+                                              Age group norm:{" "}
+                                              {
+                                                classifyScore(
+                                                  Number(
+                                                    session.testResult
+                                                      .correctStrikes,
+                                                  ),
+                                                  Number(p.age) || 0,
+                                                ).mean
+                                              }{" "}
+                                              correct
+                                            </div>
+                                            <div className="grid grid-cols-2 gap-1 text-xs">
+                                              <span className="text-muted-foreground">
+                                                Total Targets
+                                              </span>
+                                              <span className="font-mono tabular-nums text-right">
+                                                {Number(
+                                                  session.testResult
+                                                    .totalTargets,
+                                                )}
+                                              </span>
+                                              <span className="text-muted-foreground">
+                                                Correct Strikes
+                                              </span>
+                                              <span className="font-mono tabular-nums text-right text-green-700">
+                                                {Number(
+                                                  session.testResult
+                                                    .correctStrikes,
+                                                )}
+                                              </span>
+                                              <span className="text-muted-foreground">
+                                                Omissions
+                                              </span>
+                                              <span className="font-mono tabular-nums text-right text-amber-700">
+                                                {Number(
+                                                  session.testResult.omissions,
+                                                )}
+                                              </span>
+                                              <span className="text-muted-foreground">
+                                                Commissions
+                                              </span>
+                                              <span className="font-mono tabular-nums text-right text-red-700">
+                                                {Number(
+                                                  session.testResult
+                                                    .commissions,
+                                                )}
+                                              </span>
+                                              <span className="text-muted-foreground">
+                                                Time Taken
+                                              </span>
+                                              <span className="font-mono tabular-nums text-right">
+                                                {formatTime(
+                                                  Number(
+                                                    session.testResult
+                                                      .elapsedSeconds,
+                                                  ),
+                                                )}
+                                              </span>
+                                            </div>
+                                            <GridSnapshotView
+                                              snapshotKey={`dlct_snapshot_${p.patientId}_${String(session.startTime)}`}
+                                              gridSnapshot={
+                                                session.gridSnapshot
+                                                  ? {
+                                                      rows: session.gridSnapshot
+                                                        .rows,
+                                                      markedIds:
+                                                        session.gridSnapshot
+                                                          .markedIds,
+                                                    }
+                                                  : undefined
+                                              }
+                                            />
+                                          </div>
+                                        )}
+                                      </div>
+                                    </div>
+                                  ),
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
+
+        <p className="text-xs text-muted-foreground mt-4 text-center">
+          Classification based on Digit Symbol norms by age group. Click a row
+          to expand patient details.
+        </p>
+      </main>
+
+      <footer className="bg-muted/40 border-t border-border py-4 px-6">
+        <p className="text-center text-xs text-muted-foreground">
+          © {new Date().getFullYear()}. Built with love using{" "}
+          <a
+            href={`https://caffeine.ai?utm_source=caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(window.location.hostname)}`}
+            className="underline hover:text-foreground transition-colors"
+            target="_blank"
+            rel="noreferrer"
+          >
+            caffeine.ai
+          </a>
+        </p>
+      </footer>
+    </div>
+  );
+}
+
+// ─── Step 0: Doctor Login ────────────────────────────────────────────────────
+const DOCTORS_KEY = "dlct_saved_doctors";
+
+function getSavedDoctors(): string[] {
+  try {
+    const raw = localStorage.getItem(DOCTORS_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function persistDoctors(names: string[]) {
+  try {
+    localStorage.setItem(DOCTORS_KEY, JSON.stringify(names));
+  } catch {
+    /* ignore */
+  }
+}
+
+function DoctorLoginStep({
+  onNext,
+  isDashboardLogin = false,
+}: { onNext: (name: string) => void; isDashboardLogin?: boolean }) {
+  const [inputName, setInputName] = useState("");
+  const [savedDoctors, setSavedDoctors] = useState<string[]>(() =>
+    getSavedDoctors(),
+  );
+  const [carouselIndex, setCarouselIndex] = useState(0);
+  const [error, setError] = useState("");
+  const [selectedFromCarousel, setSelectedFromCarousel] = useState<
+    string | null
+  >(null);
+
+  const VISIBLE_COUNT = 3;
+
+  const handleSelectDoctor = (name: string) => {
+    setSelectedFromCarousel(name);
+    setInputName(name);
+    setError("");
+  };
+
+  const handlePrev = () => {
+    setCarouselIndex((i) => Math.max(0, i - 1));
+  };
+
+  const handleNext = () => {
+    setCarouselIndex((i) =>
+      Math.min(savedDoctors.length - VISIBLE_COUNT, i + 1),
+    );
+  };
+
+  const handleContinue = () => {
+    const trimmed = inputName.trim();
+    if (!trimmed) {
+      setError("Please enter or select a doctor name.");
+      return;
+    }
+    // Save to localStorage if not already present
+    if (!savedDoctors.includes(trimmed)) {
+      const updated = [trimmed, ...savedDoctors].slice(0, 12);
+      setSavedDoctors(updated);
+      persistDoctors(updated);
+    }
+    onNext(trimmed);
+  };
+
+  const visibleDoctors = savedDoctors.slice(
+    carouselIndex,
+    carouselIndex + VISIBLE_COUNT,
+  );
+  const canGoPrev = carouselIndex > 0;
+  const canGoNext = carouselIndex + VISIBLE_COUNT < savedDoctors.length;
+
+  return (
+    <div className="min-h-screen bg-background flex items-center justify-center px-4 py-10">
+      <div className="w-full max-w-md">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Stethoscope className="w-8 h-8 text-primary" />
+          </div>
+          <h1 className="text-3xl font-bold text-foreground mb-1">
+            Doctor Login
+          </h1>
+          <p className="text-muted-foreground text-sm">
+            {isDashboardLogin
+              ? "Double Alphabet Test — Doctor Dashboard"
+              : "Double Alphabet Test — Clinical Assessment Platform"}
+          </p>
+        </div>
+
+        <Card className="shadow-md border-border">
+          <CardContent className="p-8 space-y-6">
+            {/* Name input */}
+            <div className="space-y-1.5">
+              <Label
+                htmlFor="doctorLogin"
+                className="text-sm font-semibold text-foreground"
+              >
+                Doctor's Name <span className="text-destructive">*</span>
+              </Label>
+              <div className="relative">
+                <UserCircle2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input
+                  id="doctorLogin"
+                  data-ocid="doctor-login.input"
+                  value={inputName}
+                  onChange={(e) => {
+                    setInputName(e.target.value);
+                    setSelectedFromCarousel(null);
+                    setError("");
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") handleContinue();
+                  }}
+                  placeholder="Enter your name"
+                  className="h-11 pl-9 text-base border-input focus:border-primary"
+                  autoFocus
+                />
+              </div>
+              {error && (
+                <p
+                  className="text-xs text-destructive font-medium"
+                  data-ocid="doctor-login.error_state"
+                >
+                  {error}
+                </p>
+              )}
+            </div>
+
+            {/* Saved doctors carousel */}
+            {savedDoctors.length > 0 && (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                    Recent Doctors
+                  </Label>
+                  {savedDoctors.length > VISIBLE_COUNT && (
+                    <span className="text-xs text-muted-foreground">
+                      {carouselIndex + 1}–
+                      {Math.min(
+                        carouselIndex + VISIBLE_COUNT,
+                        savedDoctors.length,
+                      )}{" "}
+                      of {savedDoctors.length}
+                    </span>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-2">
+                  {/* Left arrow */}
+                  <button
+                    type="button"
+                    data-ocid="doctor-login.pagination_prev"
+                    onClick={handlePrev}
+                    disabled={!canGoPrev}
+                    className="flex-shrink-0 w-8 h-8 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-primary hover:bg-primary/5 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                    aria-label="Previous doctors"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </button>
+
+                  {/* Doctor name cards */}
+                  <div className="flex-1 flex gap-2 min-w-0">
+                    {visibleDoctors.map((name, idx) => {
+                      const isSelected =
+                        selectedFromCarousel === name || inputName === name;
+                      return (
+                        <button
+                          key={name}
+                          type="button"
+                          data-ocid={`doctor-login.item.${carouselIndex + idx + 1}`}
+                          onClick={() => handleSelectDoctor(name)}
+                          className={[
+                            "flex-1 min-w-0 px-3 py-2.5 rounded-lg border-2 text-left transition-all duration-150 group",
+                            isSelected
+                              ? "border-primary bg-primary/10 text-primary"
+                              : "border-border bg-card text-foreground hover:border-primary/60 hover:bg-primary/5",
+                          ].join(" ")}
+                        >
+                          <div className="flex items-center gap-1.5">
+                            <UserCircle2
+                              className={`w-3.5 h-3.5 shrink-0 ${isSelected ? "text-primary" : "text-muted-foreground group-hover:text-primary/70"}`}
+                            />
+                            <span className="text-xs font-semibold truncate">
+                              {name}
+                            </span>
+                          </div>
+                        </button>
+                      );
+                    })}
+                    {/* Pad with empty slots if fewer than VISIBLE_COUNT */}
+                    {visibleDoctors.length < VISIBLE_COUNT &&
+                      Array.from({
+                        length: VISIBLE_COUNT - visibleDoctors.length,
+                      }).map((_, i) => {
+                        // biome-ignore lint/suspicious/noArrayIndexKey: static padding slots, order never changes
+                        return <div key={`pad-${i}`} className="flex-1" />;
+                      })}
+                  </div>
+
+                  {/* Right arrow */}
+                  <button
+                    type="button"
+                    data-ocid="doctor-login.pagination_next"
+                    onClick={handleNext}
+                    disabled={!canGoNext}
+                    className="flex-shrink-0 w-8 h-8 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-primary hover:bg-primary/5 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                    aria-label="Next doctors"
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            )}
+
+            <Separator />
+
+            <Button
+              type="button"
+              data-ocid="doctor-login.submit_button"
+              onClick={handleContinue}
+              className="w-full h-12 text-base font-semibold"
+            >
+              Continue →
+            </Button>
+          </CardContent>
+        </Card>
+
+        <p className="text-center text-xs text-muted-foreground mt-6">
+          © {new Date().getFullYear()}. Built with love using{" "}
+          <a
+            href={`https://caffeine.ai?utm_source=caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(window.location.hostname)}`}
+            className="underline hover:text-foreground transition-colors"
+            target="_blank"
+            rel="noreferrer"
+          >
+            caffeine.ai
+          </a>
+        </p>
+      </div>
+    </div>
+  );
+}
+
 // ─── Step 1: Patient Details ─────────────────────────────────────────────────
 function PatientDetailsStep({
   onNext,
-}: { onNext: (d: PatientDetails) => void }) {
+  prefillDoctorName,
+}: { onNext: (d: PatientDetails) => void; prefillDoctorName?: string }) {
   const [name, setName] = useState("");
   const [age, setAge] = useState("");
   const [gender, setGender] = useState("");
   const [highestEducation, setHighestEducation] = useState("");
   const [patientId, setPatientId] = useState("");
-  const [doctorName, setDoctorName] = useState("");
+  const [doctorName, setDoctorName] = useState(prefillDoctorName ?? "");
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const savePatient = useSavePatient();
 
   const handleSave = () => {
     const newErrors: Record<string, string> = {};
@@ -103,7 +1141,25 @@ function PatientDetailsStep({
       newErrors.highestEducation = "Highest Education is required";
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
-    onNext({ name, age, gender, highestEducation, patientId, doctorName });
+    const details: PatientDetails = {
+      name,
+      age,
+      gender,
+      highestEducation,
+      patientId,
+      doctorName,
+    };
+    // Save patient to backend (fire-and-forget, don't block navigation)
+    savePatient.mutate({
+      name,
+      age: BigInt(Number.parseInt(age, 10)),
+      gender,
+      highestEducation,
+      patientId,
+      doctorName,
+      language: "en",
+    });
+    onNext(details);
   };
 
   return (
@@ -505,7 +1561,7 @@ const TRIAL_FEEDBACK: Record<
 function TrialStep({
   language,
   onNext,
-}: { language: Language; onNext: () => void }) {
+}: { language: Language; onNext: (trialResult: TrialResult) => void }) {
   const [marked, setMarked] = useState<Set<string>>(new Set());
   const [submitted, setSubmitted] = useState(false);
 
@@ -535,6 +1591,17 @@ function TrialStep({
   const handleReset = () => {
     setMarked(new Set());
     setSubmitted(false);
+  };
+
+  const handleProceed = () => {
+    const trialResult: TrialResult = {
+      totalTargets: BigInt(total),
+      correctStrikes: BigInt(correctCount),
+      omissions: BigInt(total - correctCount),
+      commissions: BigInt(commissions),
+      attemptedAt: BigInt(Date.now()) * 1_000_000n,
+    };
+    onNext(trialResult);
   };
 
   const renderRow = (items: typeof TRIAL_ROW_1, rowLabel: string) => (
@@ -736,7 +1803,7 @@ function TrialStep({
             <Button
               type="button"
               data-ocid="trial.primary_button"
-              onClick={onNext}
+              onClick={handleProceed}
               className="flex-1 h-12 text-base font-semibold"
             >
               {t.proceed}
@@ -787,11 +1854,12 @@ function ReadyStep({ onStart }: { onStart: () => void }) {
 function TestStep({
   onStop,
 }: {
-  onStop: (marked: Set<string>, elapsed: number) => void;
+  onStop: (marked: Set<string>, elapsed: number, startTime: bigint) => void;
 }) {
   const [marked, setMarked] = useState<Set<string>>(new Set());
   const [elapsed, setElapsed] = useState(0);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const startTimeRef = useRef<bigint>(BigInt(Date.now()) * 1_000_000n);
 
   useEffect(() => {
     const ZOOM_LOCKED =
@@ -878,7 +1946,7 @@ function TestStep({
 
   const handleStop = () => {
     if (intervalRef.current) clearInterval(intervalRef.current);
-    onStop(marked, elapsed);
+    onStop(marked, elapsed, startTimeRef.current);
   };
 
   return (
@@ -1058,44 +2126,159 @@ function ThankYouStep({ onNewTest }: { onNewTest: () => void }) {
 // ═══════════════════════════════════════════════════════════════════════════════
 // ROOT APP — DLCT State Machine
 // ═══════════════════════════════════════════════════════════════════════════════
+type AppStep =
+  | "landing"
+  | "dashboard"
+  | "doctor-dashboard-login"
+  | "patient-details"
+  | "language"
+  | "instructions"
+  | "confirmation"
+  | "trial"
+  | "ready"
+  | "test"
+  | "thankyou";
+
 export default function App() {
-  const [step, setStep] = useState(1);
-  const [, setPatient] = useState<PatientDetails | null>(null);
+  const [step, setStep] = useState<AppStep>("landing");
+  const [patient, setPatient] = useState<PatientDetails | null>(null);
   const [language, setLanguage] = useState<Language>("en");
+  const [loggedDoctorName, setLoggedDoctorName] = useState("");
+  const [trialResult, setTrialResult] = useState<TrialResult | null>(null);
+  const saveTestSession = useSaveTestSession();
+
+  const handleDoctorLoginForDashboard = (name: string) => {
+    setLoggedDoctorName(name);
+    setStep("dashboard");
+  };
 
   const handlePatient = (d: PatientDetails) => {
     setPatient(d);
-    setStep(2);
+    setStep("language");
   };
 
   const handleLanguage = (l: Language) => {
     setLanguage(l);
-    setStep(3);
+    setStep("instructions");
   };
 
-  const handleStop = (marked: Set<string>, elapsed: number) => {
-    // Test complete — record for future use if needed
-    void marked;
-    void elapsed;
-    setStep(7);
+  const handleTrialComplete = (result: TrialResult) => {
+    setTrialResult(result);
+    setStep("ready");
+  };
+
+  const handleStop = (
+    markedSet: Set<string>,
+    elapsed: number,
+    startTime: bigint,
+  ) => {
+    if (patient) {
+      const age = Number.parseInt(patient.age, 10);
+      // Count correct strikes from the grid
+      let correctStrikes = 0;
+      let commissions = 0;
+      for (const cellId of markedSet) {
+        const [riStr, ciStr] = cellId.split("-");
+        const ri = Number.parseInt(riStr, 10);
+        const ci = Number.parseInt(ciStr, 10);
+        const targetSet = new Set(TARGET_POSITIONS[ri]);
+        if (targetSet.has(ci)) {
+          correctStrikes++;
+        } else {
+          commissions++;
+        }
+      }
+      const omissions = 105 - correctStrikes;
+      const classifyResult = classifyScore(correctStrikes, age);
+      const classification = classifyResult.label;
+      const classifyMean = classifyResult.mean; // used in dashboard via classifyScore call
+      const snapshotKey = `dlct_snapshot_${patient.patientId}_${String(startTime)}`;
+      const gridRows = GRID.map((r) => r.cells.map((c) => c.letter));
+      const markedIds = Array.from(markedSet);
+      // Save to localStorage as offline fallback
+      localStorage.setItem(
+        snapshotKey,
+        JSON.stringify({ rows: gridRows, marked: markedIds }),
+      );
+      void classifyMean; // used in dashboard
+      const endTime = BigInt(Date.now()) * 1_000_000n;
+
+      const session: TestSession = {
+        patientId: patient.patientId,
+        patientName: patient.name,
+        doctorName: patient.doctorName,
+        languageSelected: language,
+        startTime,
+        endTime,
+        trialResult: trialResult ?? undefined,
+        gridSnapshot: { rows: gridRows, markedIds },
+        testResult: {
+          totalTargets: 105n,
+          correctStrikes: BigInt(correctStrikes),
+          omissions: BigInt(omissions),
+          commissions: BigInt(commissions),
+          elapsedSeconds: BigInt(elapsed),
+          classification,
+          completedAt: endTime,
+        },
+      };
+      saveTestSession.mutate(session);
+    }
+    setStep("thankyou");
   };
 
   const handleNewTest = () => {
-    setStep(1);
+    setStep("landing");
     setPatient(null);
     setLanguage("en");
+    setLoggedDoctorName("");
+    setTrialResult(null);
   };
 
-  if (step === 1) return <PatientDetailsStep onNext={handlePatient} />;
-  if (step === 2) return <LanguageStep onNext={handleLanguage} />;
-  if (step === 3)
-    return <InstructionsStep language={language} onNext={() => setStep(4)} />;
-  if (step === 4) return <ConfirmationStep onNext={() => setStep(5)} />;
-  if (step === 5)
-    return <TrialStep language={language} onNext={() => setStep(5.5)} />;
-  if (step === 5.5) return <ReadyStep onStart={() => setStep(6)} />;
-  if (step === 6) return <TestStep onStop={handleStop} />;
-  if (step === 7) return <ThankYouStep onNewTest={handleNewTest} />;
+  if (step === "landing")
+    return (
+      <LandingStep
+        onPatientLogin={() => setStep("patient-details")}
+        onDoctorLogin={() => setStep("doctor-dashboard-login")}
+      />
+    );
+  if (step === "doctor-dashboard-login")
+    return (
+      <DoctorLoginStep
+        onNext={handleDoctorLoginForDashboard}
+        isDashboardLogin
+      />
+    );
+  if (step === "dashboard")
+    if (step === "dashboard")
+      return (
+        <DoctorDashboardStep
+          onBack={() => setStep("landing")}
+          loggedDoctorName={loggedDoctorName}
+        />
+      );
+  if (step === "patient-details")
+    return (
+      <PatientDetailsStep
+        onNext={handlePatient}
+        prefillDoctorName={loggedDoctorName}
+      />
+    );
+  if (step === "language") return <LanguageStep onNext={handleLanguage} />;
+  if (step === "instructions")
+    return (
+      <InstructionsStep
+        language={language}
+        onNext={() => setStep("confirmation")}
+      />
+    );
+  if (step === "confirmation")
+    return <ConfirmationStep onNext={() => setStep("trial")} />;
+  if (step === "trial")
+    return <TrialStep language={language} onNext={handleTrialComplete} />;
+  if (step === "ready") return <ReadyStep onStart={() => setStep("test")} />;
+  if (step === "test") return <TestStep onStop={handleStop} />;
+  if (step === "thankyou") return <ThankYouStep onNewTest={handleNewTest} />;
 
   return null;
 }

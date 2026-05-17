@@ -12,24 +12,68 @@ export const Patient = IDL.Record({
   'age' : IDL.Nat,
   'patientId' : IDL.Text,
   'name' : IDL.Text,
+  'language' : IDL.Text,
+  'highestEducation' : IDL.Text,
   'gender' : IDL.Text,
+  'doctorName' : IDL.Text,
+});
+export const GridSnapshot = IDL.Record({
+  'markedIds' : IDL.Vec(IDL.Text),
+  'rows' : IDL.Vec(IDL.Vec(IDL.Text)),
+});
+export const TestResult = IDL.Record({
+  'completedAt' : IDL.Int,
+  'totalTargets' : IDL.Nat,
+  'correctStrikes' : IDL.Nat,
+  'omissions' : IDL.Nat,
+  'elapsedSeconds' : IDL.Nat,
+  'commissions' : IDL.Nat,
+  'classification' : IDL.Text,
+});
+export const TrialResult = IDL.Record({
+  'totalTargets' : IDL.Nat,
+  'correctStrikes' : IDL.Nat,
+  'omissions' : IDL.Nat,
+  'attemptedAt' : IDL.Int,
+  'commissions' : IDL.Nat,
 });
 export const TestSession = IDL.Record({
   'startTime' : IDL.Nat,
+  'gridSnapshot' : IDL.Opt(GridSnapshot),
+  'testResult' : IDL.Opt(TestResult),
   'endTime' : IDL.Nat,
   'languageSelected' : IDL.Text,
   'patientId' : IDL.Text,
+  'patientName' : IDL.Text,
+  'doctorName' : IDL.Text,
+  'trialResult' : IDL.Opt(TrialResult),
 });
 
 export const idlService = IDL.Service({
   'getAllPatients' : IDL.Func([], [IDL.Vec(Patient)], ['query']),
   'getAllTestSessions' : IDL.Func([], [IDL.Vec(TestSession)], ['query']),
+  'getDoctors' : IDL.Func([], [IDL.Vec(IDL.Text)], ['query']),
   'getPatient' : IDL.Func([IDL.Text], [IDL.Opt(Patient)], ['query']),
+  'getPatientFullRecord' : IDL.Func(
+      [IDL.Text],
+      [
+        IDL.Opt(
+          IDL.Record({ 'patient' : Patient, 'sessions' : IDL.Vec(TestSession) })
+        ),
+      ],
+      ['query'],
+    ),
+  'getSessionsByDoctor' : IDL.Func(
+      [IDL.Text],
+      [IDL.Vec(TestSession)],
+      ['query'],
+    ),
   'getSessionsByPatientId' : IDL.Func(
       [IDL.Text],
       [IDL.Vec(TestSession)],
       ['query'],
     ),
+  'saveDoctor' : IDL.Func([IDL.Text], [], []),
   'savePatient' : IDL.Func([Patient], [], []),
   'saveTestSession' : IDL.Func([TestSession], [], []),
 });
@@ -41,24 +85,71 @@ export const idlFactory = ({ IDL }) => {
     'age' : IDL.Nat,
     'patientId' : IDL.Text,
     'name' : IDL.Text,
+    'language' : IDL.Text,
+    'highestEducation' : IDL.Text,
     'gender' : IDL.Text,
+    'doctorName' : IDL.Text,
+  });
+  const GridSnapshot = IDL.Record({
+    'markedIds' : IDL.Vec(IDL.Text),
+    'rows' : IDL.Vec(IDL.Vec(IDL.Text)),
+  });
+  const TestResult = IDL.Record({
+    'completedAt' : IDL.Int,
+    'totalTargets' : IDL.Nat,
+    'correctStrikes' : IDL.Nat,
+    'omissions' : IDL.Nat,
+    'elapsedSeconds' : IDL.Nat,
+    'commissions' : IDL.Nat,
+    'classification' : IDL.Text,
+  });
+  const TrialResult = IDL.Record({
+    'totalTargets' : IDL.Nat,
+    'correctStrikes' : IDL.Nat,
+    'omissions' : IDL.Nat,
+    'attemptedAt' : IDL.Int,
+    'commissions' : IDL.Nat,
   });
   const TestSession = IDL.Record({
     'startTime' : IDL.Nat,
+    'gridSnapshot' : IDL.Opt(GridSnapshot),
+    'testResult' : IDL.Opt(TestResult),
     'endTime' : IDL.Nat,
     'languageSelected' : IDL.Text,
     'patientId' : IDL.Text,
+    'patientName' : IDL.Text,
+    'doctorName' : IDL.Text,
+    'trialResult' : IDL.Opt(TrialResult),
   });
   
   return IDL.Service({
     'getAllPatients' : IDL.Func([], [IDL.Vec(Patient)], ['query']),
     'getAllTestSessions' : IDL.Func([], [IDL.Vec(TestSession)], ['query']),
+    'getDoctors' : IDL.Func([], [IDL.Vec(IDL.Text)], ['query']),
     'getPatient' : IDL.Func([IDL.Text], [IDL.Opt(Patient)], ['query']),
+    'getPatientFullRecord' : IDL.Func(
+        [IDL.Text],
+        [
+          IDL.Opt(
+            IDL.Record({
+              'patient' : Patient,
+              'sessions' : IDL.Vec(TestSession),
+            })
+          ),
+        ],
+        ['query'],
+      ),
+    'getSessionsByDoctor' : IDL.Func(
+        [IDL.Text],
+        [IDL.Vec(TestSession)],
+        ['query'],
+      ),
     'getSessionsByPatientId' : IDL.Func(
         [IDL.Text],
         [IDL.Vec(TestSession)],
         ['query'],
       ),
+    'saveDoctor' : IDL.Func([IDL.Text], [], []),
     'savePatient' : IDL.Func([Patient], [], []),
     'saveTestSession' : IDL.Func([TestSession], [], []),
   });

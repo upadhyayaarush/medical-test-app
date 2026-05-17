@@ -2,15 +2,20 @@ import Map "mo:core/Map";
 import Text "mo:core/Text";
 import List "mo:core/List";
 import Order "mo:core/Order";
-import Runtime "mo:core/Runtime";
-import Iter "mo:core/Iter";
+import Migration "migration";
 
+
+
+(with migration = Migration.run)
 actor {
   type Patient = {
     name : Text;
     age : Nat;
     gender : Text;
     patientId : Text;
+    doctorName : Text;
+    highestEducation : Text;
+    language : Text;
   };
 
   module Patient {
@@ -19,11 +24,39 @@ actor {
     };
   };
 
+  type TrialResult = {
+    totalTargets : Nat;
+    correctStrikes : Nat;
+    omissions : Nat;
+    commissions : Nat;
+    attemptedAt : Int;
+  };
+
+  type TestResult = {
+    totalTargets : Nat;
+    correctStrikes : Nat;
+    omissions : Nat;
+    commissions : Nat;
+    elapsedSeconds : Nat;
+    classification : Text;
+    completedAt : Int;
+  };
+
+  type GridSnapshot = {
+    rows : [[Text]];
+    markedIds : [Text];
+  };
+
   type TestSession = {
     patientId : Text;
     languageSelected : Text;
     startTime : Nat;
     endTime : Nat;
+    trialResult : ?TrialResult;
+    testResult : ?TestResult;
+    doctorName : Text;
+    patientName : Text;
+    gridSnapshot : ?GridSnapshot;
   };
 
   module TestSession {
@@ -34,20 +67,21 @@ actor {
 
   let patients = Map.empty<Text, Patient>();
   let testSessions = List.empty<TestSession>();
+  let doctors = Map.empty<Text, Text>();
 
-  public shared ({ caller }) func savePatient(patient : Patient) : async () {
+  public shared func savePatient(patient : Patient) : async () {
     patients.add(patient.patientId, patient);
   };
 
-  public query ({ caller }) func getPatient(patientId : Text) : async ?Patient {
+  public query func getPatient(patientId : Text) : async ?Patient {
     patients.get(patientId);
   };
 
-  public shared ({ caller }) func saveTestSession(session : TestSession) : async () {
+  public shared func saveTestSession(session : TestSession) : async () {
     testSessions.add(session);
   };
 
-  public query ({ caller }) func getSessionsByPatientId(patientId : Text) : async [TestSession] {
+  public query func getSessionsByPatientId(patientId : Text) : async [TestSession] {
     testSessions.values().toArray().filter(
       func(session) {
         session.patientId == patientId;
@@ -55,11 +89,41 @@ actor {
     ).sort(TestSession.compareByStartTime);
   };
 
-  public query ({ caller }) func getAllPatients() : async [Patient] {
+  public query func getAllPatients() : async [Patient] {
     patients.values().toArray().sort();
   };
 
-  public query ({ caller }) func getAllTestSessions() : async [TestSession] {
+  public query func getAllTestSessions() : async [TestSession] {
     testSessions.toArray().sort(TestSession.compareByStartTime);
+  };
+
+  public query func getPatientFullRecord(patientId : Text) : async ?{ patient : Patient; sessions : [TestSession] } {
+    switch (patients.get(patientId)) {
+      case null null;
+      case (?patient) {
+        let sessions = testSessions.values().toArray().filter(
+          func(session) {
+            session.patientId == patientId;
+          }
+        ).sort(TestSession.compareByStartTime);
+        ?{ patient; sessions };
+      };
+    };
+  };
+
+  public shared func saveDoctor(name : Text) : async () {
+    doctors.add(name, name);
+  };
+
+  public query func getDoctors() : async [Text] {
+    doctors.values().toArray();
+  };
+
+  public query func getSessionsByDoctor(doctorName : Text) : async [TestSession] {
+    testSessions.values().toArray().filter(
+      func(session) {
+        session.doctorName == doctorName;
+      }
+    ).sort(TestSession.compareByStartTime);
   };
 };
