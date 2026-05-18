@@ -24,6 +24,8 @@ import type { CaptureStatus } from "@/hooks/useReportCapture";
 import {
   savePatientToSupabase,
   saveTestResultToSupabase,
+  verifyDoctorPassword,
+  upsertDoctorPassword,
   type SupabasePatientData,
   type SupabaseTestResultData,
 } from "./lib/supabaseService";
@@ -42,6 +44,7 @@ import {
   FileText,
   LayoutDashboard,
   Loader2,
+  Lock,
   Minus,
   RefreshCw,
   RotateCcw,
@@ -128,15 +131,15 @@ const AGE_NORMS: {
   aboveMin: number;
   avgMin: number;
 }[] = [
-  { minAge: 18, maxAge: 19, mean: 70.3, aboveMin: 81, avgMin: 60 },
-  { minAge: 20, maxAge: 29, mean: 71.8, aboveMin: 83, avgMin: 61 },
-  { minAge: 30, maxAge: 39, mean: 65.6, aboveMin: 73, avgMin: 58 },
-  { minAge: 40, maxAge: 49, mean: 60.2, aboveMin: 71, avgMin: 50 },
-  { minAge: 50, maxAge: 59, mean: 56.6, aboveMin: 68, avgMin: 45 },
-  { minAge: 60, maxAge: 69, mean: 52.7, aboveMin: 63, avgMin: 43 },
-  { minAge: 70, maxAge: 79, mean: 46.2, aboveMin: 55, avgMin: 37 },
-  { minAge: 80, maxAge: 999, mean: 39.7, aboveMin: 48, avgMin: 31 },
-];
+    { minAge: 18, maxAge: 19, mean: 70.3, aboveMin: 81, avgMin: 60 },
+    { minAge: 20, maxAge: 29, mean: 71.8, aboveMin: 83, avgMin: 61 },
+    { minAge: 30, maxAge: 39, mean: 65.6, aboveMin: 73, avgMin: 58 },
+    { minAge: 40, maxAge: 49, mean: 60.2, aboveMin: 71, avgMin: 50 },
+    { minAge: 50, maxAge: 59, mean: 56.6, aboveMin: 68, avgMin: 45 },
+    { minAge: 60, maxAge: 69, mean: 52.7, aboveMin: 63, avgMin: 43 },
+    { minAge: 70, maxAge: 79, mean: 46.2, aboveMin: 55, avgMin: 37 },
+    { minAge: 80, maxAge: 999, mean: 39.7, aboveMin: 48, avgMin: 31 },
+  ];
 
 type Classification = "Above Average" | "Average" | "Below Average";
 
@@ -224,11 +227,10 @@ function GridSnapshotView({
                 <span
                   // biome-ignore lint/suspicious/noArrayIndexKey: static letter positions, order never changes
                   key={`cell-${ri}-${ci}`}
-                  className={`${isLarge ? "text-[11px] px-[1px]" : "text-[7px] px-[1px]"} font-mono leading-none ${
-                    isMarked
+                  className={`${isLarge ? "text-[11px] px-[1px]" : "text-[7px] px-[1px]"} font-mono leading-none ${isMarked
                       ? "line-through text-red-600 font-bold"
                       : "text-foreground/70"
-                  }`}
+                    }`}
                 >
                   {letter}
                 </span>
@@ -340,7 +342,7 @@ function LandingStep({
       {/* Footer */}
       <footer className="bg-muted/40 border-t border-border py-4 px-6">
         <p className="text-center text-xs text-muted-foreground">
-          © {new Date().getFullYear()}.
+          Double Alphabet Test
         </p>
       </footer>
     </div>
@@ -789,7 +791,7 @@ function DoctorDashboardStep({
                                             {formatTime(session.elapsed_seconds)}
                                           </span>
                                         </div>
-                                        
+
                                         {session.grid_snapshot && (
                                           <GridSnapshotView
                                             snapshotKey={`dlct_snapshot_${p.patient_id}_${String(session.created_at)}`}
@@ -798,7 +800,7 @@ function DoctorDashboardStep({
                                         )}
                                       </div>
                                     </div>
-                                    
+
                                     {/* PDF Download Button below the two columns */}
                                     <div className="mt-4 pt-4 border-t border-border flex justify-end">
                                       {session.pdf_report_url ? (
@@ -839,15 +841,7 @@ function DoctorDashboardStep({
 
       <footer className="bg-muted/40 border-t border-border py-4 px-6">
         <p className="text-center text-xs text-muted-foreground">
-          © {new Date().getFullYear()}. Built with love using{" "}
-          <a
-            href={`https://caffeine.ai?utm_source=caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(window.location.hostname)}`}
-            className="underline hover:text-foreground transition-colors"
-            target="_blank"
-            rel="noreferrer"
-          >
-            caffeine.ai
-          </a>
+          Double Alphabet Test
         </p>
       </footer>
     </div>
@@ -889,6 +883,7 @@ function DoctorLoginStep({
   const [selectedFromCarousel, setSelectedFromCarousel] = useState<
     string | null
   >(null);
+  const [password, setPassword] = useState("");
 
   const VISIBLE_COUNT = 3;
 
@@ -908,10 +903,25 @@ function DoctorLoginStep({
     );
   };
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     const trimmed = inputName.trim();
     if (!trimmed) {
       setError("Please enter or select a doctor name.");
+      return;
+    }
+    if (!password) {
+      setError("Please enter your password.");
+      return;
+    }
+    setError("");
+    try {
+      const valid = await verifyDoctorPassword(trimmed, password);
+      if (!valid) {
+        // Doctor not found — first-time setup: save credentials to Supabase
+        await upsertDoctorPassword(trimmed, password);
+      }
+    } catch {
+      setError("Could not verify credentials. Please check your connection.");
       return;
     }
     // Save to localStorage if not already present
@@ -985,6 +995,34 @@ function DoctorLoginStep({
                   {error}
                 </p>
               )}
+            </div>
+
+            {/* Password input */}
+            <div className="space-y-1.5">
+              <Label
+                htmlFor="doctorPassword"
+                className="text-sm font-semibold text-foreground"
+              >
+                Password <span className="text-destructive">*</span>
+              </Label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input
+                  id="doctorPassword"
+                  data-ocid="doctor-login.password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    setError("");
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") handleContinue();
+                  }}
+                  placeholder="Enter password"
+                  className="h-11 pl-9 text-base border-input focus:border-primary"
+                />
+              </div>
             </div>
 
             {/* Saved doctors carousel */}
@@ -1087,15 +1125,7 @@ function DoctorLoginStep({
         </Card>
 
         <p className="text-center text-xs text-muted-foreground mt-6">
-          © {new Date().getFullYear()}. Built with love using{" "}
-          <a
-            href={`https://caffeine.ai?utm_source=caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(window.location.hostname)}`}
-            className="underline hover:text-foreground transition-colors"
-            target="_blank"
-            rel="noreferrer"
-          >
-            caffeine.ai
-          </a>
+          Double Alphabet Test
         </p>
       </div>
     </div>
@@ -1324,15 +1354,7 @@ function PatientDetailsStep({
         </Card>
 
         <p className="text-center text-xs text-muted-foreground mt-6">
-          © {new Date().getFullYear()}. Built with love using{" "}
-          <a
-            href={`https://caffeine.ai?utm_source=caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(window.location.hostname)}`}
-            className="underline hover:text-foreground transition-colors"
-            target="_blank"
-            rel="noreferrer"
-          >
-            caffeine.ai
-          </a>
+          Double Alphabet Test
         </p>
       </div>
     </div>
@@ -1705,11 +1727,10 @@ function TrialStep({
         {/* Feedback Banner */}
         {submitted && (
           <div
-            className={`rounded-xl border-2 px-5 py-4 mb-5 ${
-              isPerfect
+            className={`rounded-xl border-2 px-5 py-4 mb-5 ${isPerfect
                 ? "bg-green-50 border-green-400"
                 : "bg-amber-50 border-amber-400"
-            }`}
+              }`}
             data-ocid="trial.success_state"
           >
             <div className="flex items-start gap-3">
@@ -2156,168 +2177,168 @@ function ResultStep({ onNewTest, patient, testData, supabaseRowId }: ResultStepP
 
         {/* ── Hidden Result Card (captured as PDF) ── */}
         <div style={{ position: "absolute", left: "-9999px", top: "-9999px" }}>
-          <div 
-            ref={resultRef} 
+          <div
+            ref={resultRef}
             data-report-capture
             className="bg-background text-foreground"
             style={{ width: "800px", padding: "20px" }}
           >
-          <Card className="shadow-lg border-border mb-6">
-            <CardHeader className="pb-3 border-b border-border">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <FileText className="w-5 h-5 text-primary" />
-                  <CardTitle className="text-lg font-bold">
-                    Assessment Report
-                  </CardTitle>
+            <Card className="shadow-lg border-border mb-6">
+              <CardHeader className="pb-3 border-b border-border">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <FileText className="w-5 h-5 text-primary" />
+                    <CardTitle className="text-lg font-bold">
+                      Assessment Report
+                    </CardTitle>
+                  </div>
+                  <span className="text-xs text-muted-foreground">
+                    {new Date().toLocaleDateString("en-IN", {
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                    })}
+                  </span>
                 </div>
-                <span className="text-xs text-muted-foreground">
-                  {new Date().toLocaleDateString("en-IN", {
-                    day: "2-digit",
-                    month: "short",
-                    year: "numeric",
-                  })}
-                </span>
-              </div>
-            </CardHeader>
-            <CardContent className="p-6 space-y-6">
-              {/* Patient Info */}
-              <div>
-                <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">
-                  Patient Information
-                </h3>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-3 text-sm">
-                  <div>
-                    <span className="text-muted-foreground text-xs">Full Name</span>
-                    <p className="font-semibold text-foreground">{patient.name}</p>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground text-xs">Patient ID</span>
-                    <p className="font-mono font-semibold text-foreground">
-                      {patient.patientId}
-                    </p>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground text-xs">Age</span>
-                    <p className="font-semibold text-foreground">{patient.age}</p>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground text-xs">Gender</span>
-                    <p className="font-semibold text-foreground">{patient.gender}</p>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground text-xs">Education</span>
-                    <p className="font-semibold text-foreground">
-                      {patient.highestEducation}
-                    </p>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground text-xs">Doctor</span>
-                    <p className="font-semibold text-foreground">
-                      {patient.doctorName}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <Separator />
-
-              {/* Test Scores */}
-              <div>
-                <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">
-                  Test Results
-                </h3>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                  <div className="bg-muted/30 rounded-xl p-4 text-center">
-                    <p className="text-2xl font-bold text-green-700 tabular-nums">
-                      {testData.correctStrikes}
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">Correct</p>
-                  </div>
-                  <div className="bg-muted/30 rounded-xl p-4 text-center">
-                    <p className="text-2xl font-bold text-amber-700 tabular-nums">
-                      {testData.omissions}
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">Omissions</p>
-                  </div>
-                  <div className="bg-muted/30 rounded-xl p-4 text-center">
-                    <p className="text-2xl font-bold text-red-700 tabular-nums">
-                      {testData.commissions}
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">Commissions</p>
-                  </div>
-                  <div className="bg-muted/30 rounded-xl p-4 text-center">
-                    <p className="text-2xl font-bold text-foreground tabular-nums">
-                      {formatTime(testData.elapsedSeconds)}
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">Time</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Classification */}
-              <div
-                className={`flex items-center gap-3 rounded-xl border-2 px-5 py-4 ${classBg}`}
-              >
-                {classIcon}
+              </CardHeader>
+              <CardContent className="p-6 space-y-6">
+                {/* Patient Info */}
                 <div>
-                  <p className="text-sm font-bold">{classification}</p>
-                  <p className="text-xs opacity-80">
-                    Age group norm: {normMean} correct (age {patient.age})
-                  </p>
-                </div>
-              </div>
-
-              {/* Practice Trial (for PDF) */}
-              {testData.trialResult && (
-                <>
-                  <Separator />
-                  <div>
-                    <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">
-                      Practice Trial
-                    </h3>
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                      <div className="bg-muted/30 rounded-xl p-4 text-center">
-                        <p className="text-xl font-bold tabular-nums">
-                          {Number(testData.trialResult.totalTargets)}
-                        </p>
-                        <p className="text-xs text-muted-foreground mt-1">Targets</p>
-                      </div>
-                      <div className="bg-muted/30 rounded-xl p-4 text-center">
-                        <p className="text-xl font-bold text-green-700 tabular-nums">
-                          {Number(testData.trialResult.correctStrikes)}
-                        </p>
-                        <p className="text-xs text-muted-foreground mt-1">Correct</p>
-                      </div>
-                      <div className="bg-muted/30 rounded-xl p-4 text-center">
-                        <p className="text-xl font-bold text-amber-700 tabular-nums">
-                          {Number(testData.trialResult.omissions)}
-                        </p>
-                        <p className="text-xs text-muted-foreground mt-1">Omissions</p>
-                      </div>
-                      <div className="bg-muted/30 rounded-xl p-4 text-center">
-                        <p className="text-xl font-bold text-red-700 tabular-nums">
-                          {Number(testData.trialResult.commissions)}
-                        </p>
-                        <p className="text-xs text-muted-foreground mt-1">Commissions</p>
-                      </div>
+                  <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">
+                    Patient Information
+                  </h3>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-3 text-sm">
+                    <div>
+                      <span className="text-muted-foreground text-xs">Full Name</span>
+                      <p className="font-semibold text-foreground">{patient.name}</p>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground text-xs">Patient ID</span>
+                      <p className="font-mono font-semibold text-foreground">
+                        {patient.patientId}
+                      </p>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground text-xs">Age</span>
+                      <p className="font-semibold text-foreground">{patient.age}</p>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground text-xs">Gender</span>
+                      <p className="font-semibold text-foreground">{patient.gender}</p>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground text-xs">Education</span>
+                      <p className="font-semibold text-foreground">
+                        {patient.highestEducation}
+                      </p>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground text-xs">Doctor</span>
+                      <p className="font-semibold text-foreground">
+                        {patient.doctorName}
+                      </p>
                     </div>
                   </div>
-                </>
-              )}
+                </div>
 
-              {/* Grid Snapshot (for PDF) */}
-              {testData.gridSnapshot && (
-                <>
-                  <Separator />
-                  <div className="bg-muted/10 rounded-xl p-4 border border-border">
-                    <GridSnapshotView snapshotKey="" gridSnapshot={testData.gridSnapshot} isLarge />
+                <Separator />
+
+                {/* Test Scores */}
+                <div>
+                  <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">
+                    Test Results
+                  </h3>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    <div className="bg-muted/30 rounded-xl p-4 text-center">
+                      <p className="text-2xl font-bold text-green-700 tabular-nums">
+                        {testData.correctStrikes}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">Correct</p>
+                    </div>
+                    <div className="bg-muted/30 rounded-xl p-4 text-center">
+                      <p className="text-2xl font-bold text-amber-700 tabular-nums">
+                        {testData.omissions}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">Omissions</p>
+                    </div>
+                    <div className="bg-muted/30 rounded-xl p-4 text-center">
+                      <p className="text-2xl font-bold text-red-700 tabular-nums">
+                        {testData.commissions}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">Commissions</p>
+                    </div>
+                    <div className="bg-muted/30 rounded-xl p-4 text-center">
+                      <p className="text-2xl font-bold text-foreground tabular-nums">
+                        {formatTime(testData.elapsedSeconds)}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">Time</p>
+                    </div>
                   </div>
-                </>
-              )}
-            </CardContent>
-          </Card>
-        </div>
+                </div>
+
+                {/* Classification */}
+                <div
+                  className={`flex items-center gap-3 rounded-xl border-2 px-5 py-4 ${classBg}`}
+                >
+                  {classIcon}
+                  <div>
+                    <p className="text-sm font-bold">{classification}</p>
+                    <p className="text-xs opacity-80">
+                      Age group norm: {normMean} correct (age {patient.age})
+                    </p>
+                  </div>
+                </div>
+
+                {/* Practice Trial (for PDF) */}
+                {testData.trialResult && (
+                  <>
+                    <Separator />
+                    <div>
+                      <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">
+                        Practice Trial
+                      </h3>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                        <div className="bg-muted/30 rounded-xl p-4 text-center">
+                          <p className="text-xl font-bold tabular-nums">
+                            {Number(testData.trialResult.totalTargets)}
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-1">Targets</p>
+                        </div>
+                        <div className="bg-muted/30 rounded-xl p-4 text-center">
+                          <p className="text-xl font-bold text-green-700 tabular-nums">
+                            {Number(testData.trialResult.correctStrikes)}
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-1">Correct</p>
+                        </div>
+                        <div className="bg-muted/30 rounded-xl p-4 text-center">
+                          <p className="text-xl font-bold text-amber-700 tabular-nums">
+                            {Number(testData.trialResult.omissions)}
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-1">Omissions</p>
+                        </div>
+                        <div className="bg-muted/30 rounded-xl p-4 text-center">
+                          <p className="text-xl font-bold text-red-700 tabular-nums">
+                            {Number(testData.trialResult.commissions)}
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-1">Commissions</p>
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {/* Grid Snapshot (for PDF) */}
+                {testData.gridSnapshot && (
+                  <>
+                    <Separator />
+                    <div className="bg-muted/10 rounded-xl p-4 border border-border">
+                      <GridSnapshotView snapshotKey="" gridSnapshot={testData.gridSnapshot} isLarge />
+                    </div>
+                  </>
+                )}
+              </CardContent>
+            </Card>
+          </div>
         </div>
 
         {/* ── PDF Generation Status ── */}
@@ -2332,13 +2353,12 @@ function ResultStep({ onNewTest, patient, testData, supabaseRowId }: ResultStepP
             )}
             <div className="flex-1">
               <p
-                className={`text-sm font-semibold ${
-                  status === "done"
+                className={`text-sm font-semibold ${status === "done"
                     ? "text-green-700"
                     : status === "error"
                       ? "text-red-700"
                       : "text-foreground"
-                }`}
+                  }`}
               >
                 {STATUS_LABELS[status]}
               </p>

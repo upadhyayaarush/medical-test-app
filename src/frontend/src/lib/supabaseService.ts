@@ -111,3 +111,51 @@ export async function updateTestResultUrls(
     throw new Error(`Failed to update file URLs: ${error.message}`);
   }
 }
+
+// ─── Doctor credentials (stored in `doctors` table) ─────────────────────────
+//   Table schema:
+//     id          uuid primary key default gen_random_uuid()
+//     name        text unique not null
+//     password    text not null
+//     created_at  timestamptz default now()
+
+/**
+ * Verify a doctor's password against the value stored in Supabase.
+ * Returns true if the name exists and the password matches, false otherwise.
+ */
+export async function verifyDoctorPassword(
+  name: string,
+  password: string,
+): Promise<boolean> {
+  const { data, error } = await supabase
+    .from("doctors")
+    .select("password")
+    .eq("name", name)
+    .maybeSingle();
+
+  if (error) {
+    console.error("Supabase doctor verify error:", error);
+    return false;
+  }
+  if (!data) return false;
+  return data.password === password;
+}
+
+/**
+ * Save (upsert) a doctor's name + password into Supabase.
+ * Useful when a doctor logs in for the first time.
+ */
+export async function upsertDoctorPassword(
+  name: string,
+  password: string,
+): Promise<void> {
+  const { error } = await supabase
+    .from("doctors")
+    .upsert({ name, password }, { onConflict: "name" });
+
+  if (error) {
+    console.error("Supabase doctor upsert error:", error);
+    throw new Error(`Failed to save doctor credentials: ${error.message}`);
+  }
+}
+
