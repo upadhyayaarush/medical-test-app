@@ -914,16 +914,29 @@ function DoctorLoginStep({
       return;
     }
     setError("");
+
+    // Fixed admin/master password (can be overridden via VITE_DOCTOR_PASSWORD env var)
+    const ADMIN_PASSWORD = import.meta.env.VITE_DOCTOR_PASSWORD ?? "doctor@123";
+
     try {
       const valid = await verifyDoctorPassword(trimmed, password);
       if (!valid) {
-        // Doctor not found — first-time setup: save credentials to Supabase
+        // Not found in Supabase — check against admin master password
+        if (password !== ADMIN_PASSWORD) {
+          setError("Incorrect password. Please try again.");
+          return;
+        }
+        // Admin password matched — save this doctor to Supabase
         await upsertDoctorPassword(trimmed, password);
       }
     } catch {
-      setError("Could not verify credentials. Please check your connection.");
-      return;
+      // Supabase unreachable — fall back to admin password only
+      if (password !== ADMIN_PASSWORD) {
+        setError("Incorrect password. Please try again.");
+        return;
+      }
     }
+
     // Save to localStorage if not already present
     if (!savedDoctors.includes(trimmed)) {
       const updated = [trimmed, ...savedDoctors].slice(0, 12);
